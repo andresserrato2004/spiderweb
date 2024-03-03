@@ -102,8 +102,33 @@ public class SpiderwebC2Test {
         assertFalse(spiderWeb.ok());
     }
     
+    //delSpot
+    //ok
+    @Test
+    public void accordingGSShouldDelSpot() {
+        spiderWeb.delSpot("green");
+        assertTrue(spiderWeb.ok());
+    }
+    //noOk
+    @Test
+    public void accordingGSNotShouldDelSpot() {
+        spiderWeb.delSpot("balck");
+        assertFalse(spiderWeb.ok());
+    }
     
-    
+    //spiderSit
+    //ok
+    @Test
+    public void accordingGSShouldSpiderSit() {
+        spiderWeb.spiderSit(4);
+        assertTrue(spiderWeb.ok());
+    }
+    //noOk
+    @Test
+    public void accordingGSNotSpiderSit() {
+        spiderWeb.delSpot("balck");
+        assertFalse(spiderWeb.ok());
+    }
     
     
     

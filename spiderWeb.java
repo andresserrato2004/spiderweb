@@ -81,9 +81,9 @@ public class spiderWeb {
         for(int i = 0; i < strands ;i++){
             bridgesByStrand.put(i, new ArrayList<>());
         }
-
         cordenates();
     }
+    
 
     /**
      * Calcula las coordenadas de los brazos de la telaraña y crea líneas para representarlos.
@@ -146,7 +146,6 @@ public class spiderWeb {
      * @param firstStrand El número del brazo donde se conectará el puente.
      */
     public void addBridge(String color, int distance, int firstStrand){
-        //se verifica que no se repita el color
         boolean colorRepe = false;
         for(String color0 : colorBridges){
            if (color0 == color){
@@ -155,25 +154,26 @@ public class spiderWeb {
         }
         if (colorRepe){
             JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
-            return;
+            isOk = false;
+        }else{
+            angleFirstStrand = (firstStrand - 1) * angle;
+            angleSecondStrand = firstStrand * angle;
+            this.firstStrand = firstStrand;
+            pointBridge = 0;
+            xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
+            yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
+            x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
+            y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
+            // Creación y configuración del puente
+            Line bridge = new Line(xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard - y2Bridge);
+            bridge.changeColor(color);
+            bridgesColor.put(color, bridge);
+            showBridges(pointBridge);
+            colorBridges.add(color);
+            bridgesNoUsed.add(color);
+            bridgesByStrand.get(firstStrand-1).add(bridge);
+            isOk = true;
         }
-        // Cálculo de las coordenadas del puente
-        angleFirstStrand = (firstStrand - 1) * angle;
-        angleSecondStrand = firstStrand * angle;
-        this.firstStrand = firstStrand;
-        pointBridge = 0;
-        xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
-        yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
-        x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
-        y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
-        // Creación y configuración del puente
-        Line bridge = new Line(xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard - y2Bridge);
-        bridge.changeColor(color);
-        bridgesColor.put(color, bridge);
-        showBridges(pointBridge);
-        colorBridges.add(color);
-        bridgesNoUsed.add(color);
-        bridgesByStrand.get(firstStrand-1).add(bridge);
     }
 
      /**
@@ -183,18 +183,22 @@ public class spiderWeb {
      * @param distance La nueva distancia desde el centro hasta el punto donde comienza el puente.
      */
     public void relocateBridge(String color, int distance){
-        pointBridge = 1;
-
-        xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
-        yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
-        x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
-        y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
-
-        Line bridge = new Line (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge);
-        bridge.changeColor(color);
-        hideBridges();
-        bridgesColor.put(color, bridge);
-        showBridges(pointBridge);
+        if (distance < 0) {
+            JOptionPane.showMessageDialog(null, "No se puede reubicar el puente con una distancia negativa.");
+            isOk = false;
+        }else{
+            pointBridge = 1;
+            xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
+            yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
+            x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
+            y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
+            Line bridge = new Line (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge);
+            bridge.changeColor(color);
+            hideBridges();
+            bridgesColor.put(color, bridge);
+            showBridges(pointBridge);
+            isOk = true;
+        }
     }
 
     /**
@@ -247,14 +251,15 @@ public class spiderWeb {
      */
     public void addSpot(String color, int strand){
         boolean colorRepe = false;
+        boolean isOk = false;
         for(String color0 : colorsports){
            if (color0 == color){
                colorRepe = true;
             }
         }
-
         if (colorRepe){
-            JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
+            isOk = false;
+            JOptionPane.showMessageDialog(null, "No se puede añadir spot del mismo color.");
             return;
         }
         Line arm = lineList.get(strand-1);
@@ -263,7 +268,9 @@ public class spiderWeb {
         makeVisible();
         spotColor.put(color,strand-1);
         colorsports.add(color);
+        isOk = true;
     }
+
 
     /**
      * Elimina un punto de referencia de la red de telaraña.
@@ -271,15 +278,23 @@ public class spiderWeb {
      * @param color El color del punto de referencia que se desea eliminar.
      */
     public void delSpot(String color){
-        int strand = spotColor.get(color);
-        Line arm = lineList.get(strand);
-        arm.changeColor("black");
-        lineList.set(strand,arm);
-        makeVisible();
-        spotColor.remove(color);
-        colorsports.remove(color);
+        if (!spotColor.containsKey(color)) {
+            JOptionPane.showMessageDialog(null, "El spot no existe.");
+            this.isOk = false;
+        } else {
+            int strand = spotColor.get(color);
+            Line arm = lineList.get(strand);
+            arm.changeColor("black");
+            lineList.set(strand, arm);
+            makeVisible();
+            spotColor.remove(color);
+            colorsports.remove(color);
+            isOk = true;
+            }
+        return;
     }
-
+    
+    
     /**
      * Oculta todos los puentes de la red de telaraña.
      */
