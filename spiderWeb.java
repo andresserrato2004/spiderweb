@@ -53,6 +53,7 @@ public class spiderWeb {
     private Map<Integer,ArrayList<Line>> bridgesByStrand = new HashMap<Integer,ArrayList<Line>>();
     private ArrayList<String> bridgesNoUsed = new ArrayList<String>();
     private List<Integer> hilosTomados;
+    private boolean isOk;
 
     /**
      * Constructor de la clase spiderWeb.
@@ -223,14 +224,21 @@ public class spiderWeb {
      *
      * @param color El color del puente que se desea eliminar.
      */
-    public void delBridge(String color){
+    public boolean delBridge(String color){
         Line delbridge = bridgesColor.get(color);
-        delbridge.makeInvisible();
-        bridgesColor.remove(color);
-        colorBridges.remove(color);
-        bridgesNoUsed.remove(color);
+        if (delbridge == null) {
+            JOptionPane.showMessageDialog(null, "El puente no existe.");
+            this.isOk = false; 
+        } else {
+            delbridge.makeInvisible();
+            bridgesColor.remove(color);
+            colorBridges.remove(color);
+            bridgesNoUsed.remove(color);
+            isOk= true;
+        }
+        return isOk; 
     }
-
+    
     /**
      * Agrega un punto de referencia a la red de telaraña.
      *
@@ -335,12 +343,10 @@ public class spiderWeb {
             // Hay un puente en este brazo, atraviesa el puente y mueve la araña al siguiente brazo
             Line bridge = bridgesByStrand.get(strand - 1).get(0);
             // Calcula las coordenadas relativas al puente
-
             this.x1cordenate = bridge.getX1();
             this.y1cordenate = bridge.getY1();
             this.x2cordenate = bridge.getX2();
             this.y2cordenate = bridge.getY2();
-
             float vx = x2cordenate - x1cordenate;
             float vy = y2cordenate - y1cordenate;
             for (float t = 0.0f; t <= 1.0f; t += 0.05f) { // Ajusta el paso según sea necesario
@@ -350,6 +356,7 @@ public class spiderWeb {
             }
         }
     }
+    
     /**
      * Devuelve una lista de los colores de los puentes en la red de telaraña.
      *
@@ -450,23 +457,30 @@ public class spiderWeb {
      *
      * @param porcentage El porcentaje por el cual se aumentará el tamaño de la red.
      */
-    public void enlarge(int porcentage){
+    public boolean enlarge(int porcentage) {
         makeInvisible();
-        this.radio = radio*(100+porcentage)/100;
+        boolean isOK = true;
+        if (porcentage < 0) {
+            JOptionPane.showMessageDialog(null, "No se puede agrandar con numeros negativos.", "Error", JOptionPane.INFORMATION_MESSAGE);
+            makeVisible(); 
+            return false;
+        }
+        this.radio = radio * (100 + porcentage) / 100;
         list = new angles(radio, strands);
         this.angle = list.getCant();
         this.lists = list.getList();
         this.lineList = new ArrayList<>();
         cordenates();
-
-        for (String color :  spotColor.keySet()){
+        for (String color : spotColor.keySet()) {
             int strand = spotColor.get(color);
             Line arm = lineList.get(strand);
             arm.changeColor(color);
             lineList.set(strand, arm);
         }
         makeVisible();
-    }
+        return true;
+        }
+
 
         /**
      * Devuelve una lista de puentes sin usar en la red de telaraña.
@@ -502,5 +516,9 @@ public class spiderWeb {
         spotColor.clear();
         bridgesByStrand.clear();
         System.exit(0);
+    }
+    
+    public boolean ok(){
+        return isOk;
     }
 }

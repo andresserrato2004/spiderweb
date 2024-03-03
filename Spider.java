@@ -165,7 +165,6 @@ public class Spider {
     public void moveTo(int xdistance, int ydistance) {
         int dx = xdistance - getXPosition();
         int dy = ydistance - getYPosition();
-
         body.moveHorizontal(dx);
         body.moveVertical(dy);
         makeInvisible();
@@ -173,8 +172,6 @@ public class Spider {
         organizeHead();
         makeVisible();
     }
-
-
 }
 
         
