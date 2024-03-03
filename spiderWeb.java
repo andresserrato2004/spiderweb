@@ -326,35 +326,59 @@ public class spiderWeb {
     public void spiderWalk(boolean advance){
         moveSpider((int)strand);
     }
+    
+    private ArrayList<ArrayList<Integer>> isPosible(int strand){
+        boolean finishWalk = true;
+        ArrayList<ArrayList<Integer>> walk = new ArrayList<ArrayList<Integer>>();
+        while (finishWalk){
+            if (spotColor.get(colorsports.get(0)) == strand){
+                finishWalk = false;
+                ArrayList<Integer> finishPoint = new ArrayList<Integer>();
+                Line arm = lineList.get(strand);
+                float x2 = arm.getX2();
+                float y2 = arm.getY2();
+                finishPoint.add((int) x2);
+                finishPoint.add((int) y2);
+                walk.add(finishPoint);
+                break;
+            }
+            if (bridgesByStrand.get(strand).size() > 0){
+                Line brigde = bridgesByStrand.get(strand).get(0);
+                float x1 = brigde.getX1();
+                float x2 = brigde.getX2();
+                float y1 = brigde.getY1();
+                float y2 = brigde.getY2();
+                ArrayList<Integer> firtPoint = new ArrayList<Integer>();
+                ArrayList<Integer> secondPoint = new ArrayList<Integer>();
+                firtPoint.add((int) x1);
+                firtPoint.add((int) y1);
+                secondPoint.add((int) x2);
+                secondPoint.add((int) y2);
+                walk.add(firtPoint);
+                walk.add(secondPoint);
+                strand += 1;
+            }
+            else{
+                finishWalk = false;
+                System.out.println("No termina el camino.");
+            }
+        }
+        return walk;
+    }
 
     /**
      * Mueve la araña a lo largo del brazo de la telaraña.
      *
      * @param strand El número del brazo por el cual se mueve la araña.
      */
-    private void moveSpider(int strand) {
-        if (bridgesByStrand.get(strand - 1).size() == 0) {
-            // No hay puentes en este brazo, simplemente mueve la araña al final del brazo
-            Pair<Float, Float> cordenatepair = lists.get(strand);
-            this.x1cordenate = cordenatepair.getFirst();
-            this.y1cordenate = cordenatepair.getSecond();
-            spider.moveTo((int) x1cordenate, (int) y1cordenate);
-        } else {
-            // Hay un puente en este brazo, atraviesa el puente y mueve la araña al siguiente brazo
-            Line bridge = bridgesByStrand.get(strand - 1).get(0);
-            // Calcula las coordenadas relativas al puente
-            this.x1cordenate = bridge.getX1();
-            this.y1cordenate = bridge.getY1();
-            this.x2cordenate = bridge.getX2();
-            this.y2cordenate = bridge.getY2();
-            float vx = x2cordenate - x1cordenate;
-            float vy = y2cordenate - y1cordenate;
-            for (float t = 0.0f; t <= 1.0f; t += 0.05f) { // Ajusta el paso según sea necesario
-                float newX = x1cordenate + t * vx;
-                float newY = y1cordenate + t * vy;
-                spider.moveTo((int) newX, (int) newY);
-            }
+    private void moveSpider(int strand){
+        ArrayList<ArrayList<Integer>> walk = isPosible(strand-1);
+        System.out.println(walk);
+        for (ArrayList<Integer> point : walk){
+           spider.moveTo(point.get(0),point.get(1));
+            
         }
+        
     }
     
     /**

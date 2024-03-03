@@ -162,7 +162,7 @@ public class Spider {
      * @param xdistance La nueva coordenada x de la posición de la araña.
      * @param ydistance La nueva coordenada y de la posición de la araña.
      */
-    public void moveTo(int xdistance, int ydistance) {
+   public void moveTo(int xdistance, int ydistance) {
         int dx = xdistance - getXPosition();
         int dy = ydistance - getYPosition();
         body.moveHorizontal(dx);
@@ -171,6 +171,11 @@ public class Spider {
         organizeFeet();
         organizeHead();
         makeVisible();
+        try {
+            Thread.sleep(500); // Puedes ajustar el tiempo de espera según sea necesario
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
