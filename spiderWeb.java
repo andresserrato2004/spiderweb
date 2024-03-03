@@ -342,7 +342,7 @@ public class spiderWeb {
             // Mueve la araña al inicio del puente
             spider.moveTo((int) x1cordenate, (int) y1cordenate);
             // Mueve la araña al final del puente
-            spider.moveTo((int) -x2cordenate, (int) -y2cordenate);
+            spider.moveTo((int) x2cordenate, (int) y2cordenate);
            }
     }
 
