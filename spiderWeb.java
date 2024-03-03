@@ -335,17 +335,21 @@ public class spiderWeb {
             // Hay un puente en este brazo, atraviesa el puente y mueve la araña al siguiente brazo
             Line bridge = bridgesByStrand.get(strand - 1).get(0);
             // Calcula las coordenadas relativas al puente
+
             this.x1cordenate = bridge.getX1();
             this.y1cordenate = bridge.getY1();
             this.x2cordenate = bridge.getX2();
             this.y2cordenate = bridge.getY2();
-            // Mueve la araña al inicio del puente
-            spider.moveTo((int) x1cordenate, (int) y1cordenate);
-            // Mueve la araña al final del puente
-            spider.moveTo((int) x2cordenate, (int) y2cordenate);
-           }
-    }
 
+            float vx = x2cordenate - x1cordenate;
+            float vy = y2cordenate - y1cordenate;
+            for (float t = 0.0f; t <= 1.0f; t += 0.05f) { // Ajusta el paso según sea necesario
+                float newX = x1cordenate + t * vx;
+                float newY = y1cordenate + t * vy;
+                spider.moveTo((int) newX, (int) newY);
+            }
+        }
+    }
     /**
      * Devuelve una lista de los colores de los puentes en la red de telaraña.
      *

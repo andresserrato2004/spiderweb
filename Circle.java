@@ -150,7 +150,7 @@ public class Circle{
 
     /**
      * Change the color. 
-     * @param color the new color. Valid colors are "red", "yellow", "blue", "green",
+     * @param newColor the new color. Valid colors are "red", "yellow", "blue", "green",
      * "magenta" and "black".
      */
     public void changeColor(String newColor){

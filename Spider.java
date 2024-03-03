@@ -159,8 +159,8 @@ public class Spider {
     /**
      * Método que mueve la araña a las coordenadas especificadas.
      * 
-     * @param x La nueva coordenada x de la posición de la araña.
-     * @param y La nueva coordenada y de la posición de la araña.
+     * @param xdistance La nueva coordenada x de la posición de la araña.
+     * @param ydistance La nueva coordenada y de la posición de la araña.
      */
     public void moveTo(int xdistance, int ydistance) {
         int dx = xdistance - getXPosition();
