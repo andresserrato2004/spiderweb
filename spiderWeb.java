@@ -365,7 +365,6 @@ public class spiderWeb {
         if (advance){
             for (ArrayList<Integer> point : walk){
                spider.moveTo(point.get(0),point.get(1));
-            
             }
         }else{
             ArrayList<Integer> finishPoint = new ArrayList<Integer>();
@@ -419,6 +418,8 @@ public class spiderWeb {
         }
         return walk;
     }
+
+    
     
     public ArrayList<String> reachableSpot(){
         boolean finishWalk = true;

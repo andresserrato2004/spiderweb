@@ -172,7 +172,7 @@ public class Spider {
         organizeHead();
         makeVisible();
         try {
-            Thread.sleep(500); // Puedes ajustar el tiempo de espera según sea necesario
+            Thread.sleep(500); 
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
