@@ -324,7 +324,24 @@ public class spiderWeb {
      * @param advance Indica si la araña debe avanzar en el brazo o retroceder.
      */
     public void spiderWalk(boolean advance){
-        moveSpider((int)strand);
+        ArrayList<ArrayList<Integer>> walk = isPosible((int)strand-1);
+        if (advance){
+            for (ArrayList<Integer> point : walk){
+               spider.moveTo(point.get(0),point.get(1));
+            
+            }
+        }else{
+            ArrayList<Integer> finishPoint = new ArrayList<Integer>();
+            float x2 = 300;
+            float y2 = 300;
+            finishPoint.add((int) x2);
+            finishPoint.add((int) y2);
+            walk.add(0,finishPoint);
+            for (int i = walk.size() - 1; i >= 0; i--) {
+                ArrayList<Integer> point = walk.get(i);
+                spider.moveTo(point.get(0), point.get(1));
+            }
+        }
     }
     
     private ArrayList<ArrayList<Integer>> isPosible(int strand){
@@ -365,20 +382,29 @@ public class spiderWeb {
         }
         return walk;
     }
-
-    /**
-     * Mueve la araña a lo largo del brazo de la telaraña.
-     *
-     * @param strand El número del brazo por el cual se mueve la araña.
-     */
-    private void moveSpider(int strand){
-        ArrayList<ArrayList<Integer>> walk = isPosible(strand-1);
-        System.out.println(walk);
-        for (ArrayList<Integer> point : walk){
-           spider.moveTo(point.get(0),point.get(1));
-            
+    
+    public ArrayList<String> reachableSpot(){
+        boolean finishWalk = true;
+        ArrayList<String> spots = new ArrayList<String>();
+        for (String color : colorsports){
+            int hilos = (int) this.strand;
+            System.out.println(colorsports);
+            while (finishWalk){
+                if (spotColor.get(color) == hilos-1 && lineList.get(hilos-1).getColor() == color){
+                    finishWalk = false;
+                    spots.add(color);
+                }
+                else if (bridgesByStrand.get(hilos-1).size() > 0){
+                    hilos += 1;
+                }
+                else{
+                    finishWalk = false;
+                }
+                
+            }
+            finishWalk = true;
         }
-        
+        return spots;
     }
     
     /**
