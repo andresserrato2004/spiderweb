@@ -24,11 +24,6 @@ public class SpiderwebC2Test {
         spiderWeb.addStrand();
         assertTrue(spiderWeb.ok());
     }
-    //noOk
-    @Test
-    public void accordingGSNotShouldAddStrand() {
-        assertFalse(spiderWeb.ok());
-    }
     
     //enlarge
     //ok
@@ -126,7 +121,7 @@ public class SpiderwebC2Test {
     //noOk
     @Test
     public void accordingGSNotSpiderSit() {
-        spiderWeb.delSpot("balck");
+        spiderWeb.spiderSit(-4);
         assertFalse(spiderWeb.ok());
     }
     

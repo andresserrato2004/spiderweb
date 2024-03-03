@@ -103,7 +103,6 @@ public class spiderWeb {
         cordenates();
     }
     
-
     /**
      * Calcula las coordenadas de los brazos de la telaraña y crea líneas para representarlos.
      */
@@ -268,9 +267,8 @@ public class spiderWeb {
      * @param color El color del punto de referencia.
      * @param strand El número del brazo donde se agregará el punto de referencia.
      */
-    public void addSpot(String color, int strand){
+   public void addSpot(String color, int strand){
         boolean colorRepe = false;
-        boolean isOk = false;
         for(String color0 : colorsports){
            if (color0 == color){
                colorRepe = true;
@@ -279,17 +277,16 @@ public class spiderWeb {
         if (colorRepe){
             isOk = false;
             JOptionPane.showMessageDialog(null, "No se puede añadir spot del mismo color.");
-            return;
+        }else{
+            Line arm = lineList.get(strand-1);
+            arm.changeColor(color);
+            lineList.set(strand-1,arm);
+            makeVisible();
+            spotColor.put(color,strand-1);
+            colorsports.add(color);
+            isOk = true;
         }
-        Line arm = lineList.get(strand-1);
-        arm.changeColor(color);
-        lineList.set(strand-1,arm);
-        makeVisible();
-        spotColor.put(color,strand-1);
-        colorsports.add(color);
-        isOk = true;
     }
-
 
     /**
      * Elimina un punto de referencia de la red de telaraña.
@@ -349,7 +346,13 @@ public class spiderWeb {
      * @param strand El número del brazo donde se desea que la araña se siente.
      */
     public void spiderSit(int strand){
-        this.strand = strand;
+        if (strand > 0){
+            this.strand = strand;
+            isOk = true;
+        }else{
+            JOptionPane.showMessageDialog(null, "El strand no existe para sentar a la araña.");
+            isOk = false;
+        }
     }
 
     /**
@@ -526,7 +529,6 @@ public class spiderWeb {
                 relocateBridgeAutomatico(l.getColor(), strand, (int) distance);
             }
         }
-
         for (String color :  spotColor.keySet()){
             int strand = spotColor.get(color);
             Line arm = lineList.get(strand);
@@ -534,7 +536,7 @@ public class spiderWeb {
             lineList.set(strand, arm);
         }
         makeVisible();
-        }
+    }
 
     /**
      * Aumenta el tamaño de la red de telaraña según un porcentaje dado.
@@ -543,27 +545,28 @@ public class spiderWeb {
      */
     public boolean enlarge(int porcentage) {
         makeInvisible();
-        boolean isOK = true;
         if (porcentage < 0) {
             JOptionPane.showMessageDialog(null, "No se puede agrandar con numeros negativos.", "Error", JOptionPane.INFORMATION_MESSAGE);
             makeVisible(); 
-            return false;
+            isOk = false;
+        }else{
+            this.radio = radio * (100 + porcentage) / 100;
+            list = new angles(radio, strands);
+            this.angle = list.getCant();
+            this.lists = list.getList();
+            this.lineList = new ArrayList<>();
+            cordenates();
+            for (String color : spotColor.keySet()) {
+                int strand = spotColor.get(color);
+                Line arm = lineList.get(strand);
+                arm.changeColor(color);
+                lineList.set(strand, arm);
+            }
+            makeVisible();
+            isOk = true;
         }
-        this.radio = radio * (100 + porcentage) / 100;
-        list = new angles(radio, strands);
-        this.angle = list.getCant();
-        this.lists = list.getList();
-        this.lineList = new ArrayList<>();
-        cordenates();
-        for (String color : spotColor.keySet()) {
-            int strand = spotColor.get(color);
-            Line arm = lineList.get(strand);
-            arm.changeColor(color);
-            lineList.set(strand, arm);
-        }
-        makeVisible();
-        return true;
-        }
+        return isOk;
+    }
 
 
         /**
