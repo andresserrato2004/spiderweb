@@ -164,23 +164,18 @@ public class Spider {
      */
     public void moveTo(int xdistance, int ydistance) {
         int deltaX, deltaY, xnueva=body.getxPosition(), ynueva=body.getyPosition();
+        deltaY = 5;
         if (xdistance < 0) {
             deltaX = -5;
             xdistance = -xdistance;
         } else {
             deltaX = 5;
         }
-        if (ydistance < 0) {
-            deltaY = -5;
-            ydistance = -ydistance;
-        } else {
-            deltaY = 5;
-        }
         for (int i = 0; i < Math.max(xdistance, ydistance); i++) {
             if (i >= xdistance) {
                 deltaX = 0;
             }
-            if (i >= ydistance) {
+            if (i >= Math.abs(ydistance)) {
                 deltaY = 0;
             }
             body.slowMove(deltaX,deltaY);
@@ -191,4 +186,5 @@ public class Spider {
         }
     }
 }
+
         

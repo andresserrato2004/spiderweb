@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=angles
-comment0.text=\r\n\ Una\ clase\ para\ generar\ una\ lista\ de\ pares\ de\ coordenadas\ a\ partir\ de\ un\ radio\ y\ una\ cantidad.\r\n
+comment0.text=\r\n\ Una\ clase\ para\ generar\ ola\ una\ lista\ de\ pares\ de\ coordenadas\ a\ partir\ de\ un\ radio\ y\ una\ cantidad.\r\n
 comment1.params=first\ second
 comment1.target=Pair(java.lang.Object,\ java.lang.Object)
 comment1.text=\r\n\ Crea\ un\ nuevo\ par\ de\ elementos.\r\n\ @param\ first\ El\ primer\ elemento\ del\ par.\r\n\ @param\ second\ El\ segundo\ elemento\ del\ par.\r\n

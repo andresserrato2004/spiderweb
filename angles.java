@@ -48,7 +48,7 @@ class Pair<X,Y>{
 }
 
     /**
-     * Una clase para generar una lista de pares de coordenadas a partir de un radio y una cantidad.
+     * Una clase para generar ola una lista de pares de coordenadas a partir de un radio y una cantidad.
      */
 public class angles{
     private List<Pair<Float, Float>> list;
