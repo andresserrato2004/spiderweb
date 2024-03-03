@@ -163,28 +163,18 @@ public class Spider {
      * @param y La nueva coordenada y de la posición de la araña.
      */
     public void moveTo(int xdistance, int ydistance) {
-        int deltaX, deltaY, xnueva=body.getxPosition(), ynueva=body.getyPosition();
-        deltaY = 5;
-        if (xdistance < 0) {
-            deltaX = -5;
-            xdistance = -xdistance;
-        } else {
-            deltaX = 5;
-        }
-        for (int i = 0; i < Math.max(xdistance, ydistance); i++) {
-            if (i >= xdistance) {
-                deltaX = 0;
-            }
-            if (i >= Math.abs(ydistance)) {
-                deltaY = 0;
-            }
-            body.slowMove(deltaX,deltaY);
-            head.slowMove(deltaX,deltaY);
-            for(Line l: feet){
-                l.slowMove(deltaX,deltaY);
-            }   
-        }
+        int dx = xdistance - getXPosition();
+        int dy = ydistance - getYPosition();
+
+        body.moveHorizontal(dx);
+        body.moveVertical(dy);
+        makeInvisible();
+        organizeFeet();
+        organizeHead();
+        makeVisible();
     }
+
+
 }
 
         

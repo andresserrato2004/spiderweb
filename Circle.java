@@ -111,17 +111,17 @@ public class Circle{
     int deltaX, deltaY;
 
     if (xdistance < 0) {
-        deltaX = -1;
+        deltaX = -5;
         xdistance = -xdistance;
     } else {
-        deltaX = 1;
+        deltaX = 5;
     }
 
     if (ydistance < 0) {
-        deltaY = -1;
+        deltaY = -5;
         ydistance = -ydistance;
     } else {
-        deltaY = 1;
+        deltaY = 5;
     }
 
     for (int i = 0; i < Math.max(xdistance, ydistance); i++) {

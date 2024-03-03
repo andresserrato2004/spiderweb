@@ -6,11 +6,11 @@ import javax.swing.JOptionPane;
  * Clase que representa una red de telaraña con puentes y puntos de referencia.
  * Esta clase permite agregar, eliminar y reubicar puentes y puntos de referencia,
  * así como también mover una araña a lo largo de los puentes.
- * 
+ *
  * La red de telaraña está formada por una serie de líneas que representan los brazos
  * de la telaraña, y puentes que conectan estos brazos. Los puentes pueden ser de diferentes
  * colores y se pueden agregar a una posición específica de un brazo.
- * 
+ *
  * Los puntos de referencia son también líneas, y se pueden agregar a un brazo para indicar
  * un punto de interés.
  * 
@@ -53,11 +53,11 @@ public class spiderWeb {
     private Map<Integer,ArrayList<Line>> bridgesByStrand = new HashMap<Integer,ArrayList<Line>>();
     private ArrayList<String> bridgesNoUsed = new ArrayList<String>();
     private List<Integer> hilosTomados;
-    
+
     /**
      * Constructor de la clase spiderWeb.
      * Crea una nueva red de telaraña con el radio y la cantidad de brazos especificados.
-     * 
+     *
      * @param radio El radio de la telaraña.
      * @param strands La cantidad de brazos de la telaraña.
      */
@@ -76,14 +76,14 @@ public class spiderWeb {
         this.lineList = new ArrayList<Line>();
         xStard = 300;
         yStard = 300;
-        
+
         for(int i = 0; i < strands ;i++){
             bridgesByStrand.put(i, new ArrayList<>());
         }
-        
+
         cordenates();
     }
-    
+
     /**
      * Calcula las coordenadas de los brazos de la telaraña y crea líneas para representarlos.
      */
@@ -97,8 +97,8 @@ public class spiderWeb {
             lineList.add(arm);
         }
     }
-    
-    
+
+
     /**
      * Hace visible la red de telaraña y todos los elementos.
      * Si la red no ha sido visible antes, muestra las líneas de los brazos
@@ -111,7 +111,7 @@ public class spiderWeb {
                 arms.makeVisible();
             }
             spider = new Spider((int) xStard, (int) yStard);
-            
+
             for (String color : bridgesColor.keySet()) {
             Line bridge = bridgesColor.get(color);
             bridge.makeVisible();
@@ -119,7 +119,7 @@ public class spiderWeb {
             spider.makeVisible();
         }
     }
-    
+
     /**
      * Hace invisible la red de telaraña y todos los elementos.
      * Oculta todas las líneas y los puentes de la red de telaraña.
@@ -136,10 +136,10 @@ public class spiderWeb {
         spider.makeInvisible();
     }
 
-    
+
     /**
      * Agrega un puente a la red de telaraña.
-     * 
+     *
      * @param color El color del puente.
      * @param distance La distancia desde el centro hasta el punto donde comienza el puente.
      * @param firstStrand El número del brazo donde se conectará el puente.
@@ -174,10 +174,10 @@ public class spiderWeb {
         bridgesNoUsed.add(color);
         bridgesByStrand.get(firstStrand-1).add(bridge);
     }
-    
+
      /**
      * Relocaliza un puente existente en la red de telaraña.
-     * 
+     *
      * @param color El color del puente que se desea relocalizar.
      * @param distance La nueva distancia desde el centro hasta el punto donde comienza el puente.
      */
@@ -188,14 +188,14 @@ public class spiderWeb {
         yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
         x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
         y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
-        
+
         Line bridge = new Line (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge);
         bridge.changeColor(color);
         hideBridges();
         bridgesColor.put(color, bridge);
         showBridges(pointBridge);
     }
-    
+
     /**
      * Relocaliza automáticamente un puente en un brazo específico de la red de telaraña.
      */
@@ -210,17 +210,17 @@ public class spiderWeb {
         yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
         x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
         y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
-        
+
         Line bridge = new Line (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge);
         bridge.changeColor(color);
         hideBridges();
         bridgesColor.put(color, bridge);
         showBridges(pointBridge);
     }
-    
+
     /**
      * Elimina un puente de la red de telaraña.
-     * 
+     *
      * @param color El color del puente que se desea eliminar.
      */
     public void delBridge(String color){
@@ -230,10 +230,10 @@ public class spiderWeb {
         colorBridges.remove(color);
         bridgesNoUsed.remove(color);
     }
-    
+
     /**
      * Agrega un punto de referencia a la red de telaraña.
-     * 
+     *
      * @param color El color del punto de referencia.
      * @param strand El número del brazo donde se agregará el punto de referencia.
      */
@@ -256,10 +256,10 @@ public class spiderWeb {
         spotColor.put(color,strand-1);
         colorsports.add(color);
     }
-    
+
     /**
      * Elimina un punto de referencia de la red de telaraña.
-     * 
+     *
      * @param color El color del punto de referencia que se desea eliminar.
      */
     public void delSpot(String color){
@@ -271,7 +271,7 @@ public class spiderWeb {
         spotColor.remove(color);
         colorsports.remove(color);
     }
-    
+
     /**
      * Oculta todos los puentes de la red de telaraña.
      */
@@ -281,10 +281,10 @@ public class spiderWeb {
             bridge.makeInvisible();
         }
     }
-    
+
     /**
      * Muestra todos los puentes de la red de telaraña.
-     * 
+     *
      * @param pointBridge Un indicador de si se debe mostrar el puente en una posición específica.
      */
     private void showBridges(int pointBridge){
@@ -300,82 +300,55 @@ public class spiderWeb {
             }
         }
     }
-    
+
     /**
      * Hace que la araña se siente en un brazo específico de la telaraña.
-     * 
+     *
      * @param strand El número del brazo donde se desea que la araña se siente.
      */
     public void spiderSit(int strand){
         this.strand = strand;
     }
-    
+
     /**
      * Hace que la araña camine a lo largo del brazo de la telaraña.
-     * 
+     *
      * @param advance Indica si la araña debe avanzar en el brazo o retroceder.
      */
     public void spiderWalk(boolean advance){
         moveSpider((int)strand);
     }
-    
+
     /**
      * Mueve la araña a lo largo del brazo de la telaraña.
      *
      * @param strand El número del brazo por el cual se mueve la araña.
      */
-    private void moveSpider(int strand){
-        ArrayList<ArrayList<Integer>> walk = isPosible(strand-1);
-        System.out.println(walk);
-        for (ArrayList<Integer> point : walk){
-            spider.moveTo(point.get(0),point.get(1));
-            
-        }
-        
+    private void moveSpider(int strand) {
+        if (bridgesByStrand.get(strand - 1).size() == 0) {
+            // No hay puentes en este brazo, simplemente mueve la araña al final del brazo
+            Pair<Float, Float> cordenatepair = lists.get(strand);
+            this.x1cordenate = cordenatepair.getFirst();
+            this.y1cordenate = cordenatepair.getSecond();
+            spider.moveTo((int) x1cordenate, (int) y1cordenate);
+        } else {
+            // Hay un puente en este brazo, atraviesa el puente y mueve la araña al siguiente brazo
+            Line bridge = bridgesByStrand.get(strand - 1).get(0);
+            // Calcula las coordenadas relativas al puente
+            this.x1cordenate = bridge.getX1();
+            this.y1cordenate = bridge.getY1();
+            this.x2cordenate = bridge.getX2();
+            this.y2cordenate = bridge.getY2();
+            // Mueve la araña al inicio del puente
+            spider.moveTo((int) x1cordenate, (int) y1cordenate);
+            // Mueve la araña al final del puente
+            spider.moveTo((int) -x2cordenate, (int) -y2cordenate);
+           }
     }
-    
-    private ArrayList<ArrayList<Integer>> isPosible(int strand){
-        boolean finishWalk = true;
-        ArrayList<ArrayList<Integer>> walk = new ArrayList<ArrayList<Integer>>();
-        while (finishWalk){
-            if (spotColor.get(colorsports.get(0)) == strand){
-                finishWalk = false;
-                ArrayList<Integer> finishPoint = new ArrayList<Integer>();
-                Line arm = lineList.get(strand);
-                float x2 = arm.getX2();
-                float y2 = arm.getY2();
-                finishPoint.add((int) x2);
-                finishPoint.add((int) y2);
-                walk.add(finishPoint);
-                break;
-            }
-            if (bridgesByStrand.get(strand).size() > 0){
-                Line brigde = bridgesByStrand.get(strand).get(0);
-                float x1 = brigde.getX1();
-                float x2 = brigde.getX2();
-                float y1 = brigde.getY1();
-                float y2 = brigde.getY2();
-                ArrayList<Integer> firtPoint = new ArrayList<Integer>();
-                ArrayList<Integer> secondPoint = new ArrayList<Integer>();
-                firtPoint.add((int) x1);
-                firtPoint.add((int) y1);
-                secondPoint.add((int) x2);
-                secondPoint.add((int) y2);
-                walk.add(firtPoint);
-                walk.add(secondPoint);
-                strand += 1;
-            }
-            else{
-                finishWalk = false;
-                System.out.println("No termina el camino.");
-            }
-        }
-        return walk;
-    }
-    
+
     /**
      * Devuelve una lista de los colores de los puentes en la red de telaraña.
-     * 
+     *
      * @return Una lista de los colores de los puentes.
      */
     public ArrayList<String> bridges() {
@@ -388,10 +361,10 @@ public class spiderWeb {
         JOptionPane.showMessageDialog(null, bridgeColorsMessage, "Colores", JOptionPane.INFORMATION_MESSAGE);
         return null;
     }
-    
+
     /**
      * Devuelve una lista de los colores de los spots en la red de telaraña.
-     * 
+     *
      * @return Una lista de los colores de los spots.
      */
     public ArrayList<String> spots() {
@@ -402,10 +375,10 @@ public class spiderWeb {
         JOptionPane.showMessageDialog(null, spotColorsMessage.toString(), "Colores de los spots", JOptionPane.INFORMATION_MESSAGE);
         return null;
         }
-    
+
     /**
      * Retorna una lista de hilos (strands) en los cuales se encuentra un puente dado su color.
-     * 
+     *
      * @param color El color del puente.
      * @return Una lista de enteros que representan los hilos donde se encuentra el puente.
      */
@@ -418,12 +391,12 @@ public class spiderWeb {
                     if (strands-1 == i){
                         strandsWithBridge.add(i + 1);
                         strandsWithBridge.add(1);
-                        break; 
+                        break;
                     }
                     else{
                         strandsWithBridge.add(i + 1);
                         strandsWithBridge.add(i+2);
-                        break; 
+                        break;
                     }
                 }
             }
@@ -436,11 +409,11 @@ public class spiderWeb {
         JOptionPane.showMessageDialog(null, strandsMessage, "Strand", JOptionPane.INFORMATION_MESSAGE);
         return strandsWithBridge;
     }
-    
-    
+
+
     /**
      * Agrega un nuevo brazo a la red de telaraña.
-     * 
+     *
      * Este método incrementa el número de brazos en la red de telaraña, recalcula las coordenadas
      * de los brazos con el nuevo número de brazos y hace visible nuevamente la red de telaraña.
      */
@@ -458,7 +431,7 @@ public class spiderWeb {
                 relocateBridgeAutomatico(l.getColor(), strand, (int) distance);
             }
         }
-        
+
         for (String color :  spotColor.keySet()){
             int strand = spotColor.get(color);
             Line arm = lineList.get(strand);
@@ -467,10 +440,10 @@ public class spiderWeb {
         }
         makeVisible();
         }
-    
+
     /**
      * Aumenta el tamaño de la red de telaraña según un porcentaje dado.
-     * 
+     *
      * @param porcentage El porcentaje por el cual se aumentará el tamaño de la red.
      */
     public void enlarge(int porcentage){
@@ -481,7 +454,7 @@ public class spiderWeb {
         this.lists = list.getList();
         this.lineList = new ArrayList<>();
         cordenates();
-       
+
         for (String color :  spotColor.keySet()){
             int strand = spotColor.get(color);
             Line arm = lineList.get(strand);
@@ -490,7 +463,7 @@ public class spiderWeb {
         }
         makeVisible();
     }
-    
+
         /**
      * Devuelve una lista de puentes sin usar en la red de telaraña.
      *
@@ -499,8 +472,8 @@ public class spiderWeb {
     public ArrayList<String> unUsedBridges(){
         return bridgesNoUsed;
     }
-    
-    
+
+
     /**
      * Obtiene el listado de los hilos tomados por la araña la última vez que caminó.
      *
@@ -518,7 +491,7 @@ public class spiderWeb {
         makeInvisible();
         if (spider != null) {
             spider.makeInvisible();
-            spider = null; 
+            spider = null;
         }
         lineList.clear();
         bridgesColor.clear();
