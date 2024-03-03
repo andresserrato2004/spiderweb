@@ -1,5 +1,4 @@
 import java.util.*;
-import java.io.File;
 import javax.swing.JOptionPane;
 
 /**
@@ -78,6 +77,26 @@ public class spiderWeb {
         xStard = 300;
         yStard = 300;
 
+        for(int i = 0; i < strands ;i++){
+            bridgesByStrand.put(i, new ArrayList<>());
+        }
+        cordenates();
+    }
+
+    public spiderWeb(int strand, int bridge, int favoritestrand){
+        radio = 200;
+        this.strands = strand;
+        this.list = new angles(radio, strands);
+        this.angle = list.getCant();
+        this.lists = list.getList();
+        this.bridgesColor = new HashMap<>();
+        this.spotColor = new HashMap<>();
+        isVisible = false;
+        spiderCenter = true;
+        goodList = false;
+        this.lineList = new ArrayList<Line>();
+        xStard = 300;
+        yStard = 300;
         for(int i = 0; i < strands ;i++){
             bridgesByStrand.put(i, new ArrayList<>());
         }
