@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  * @author Andres Serrato-Zayra Gutierrez
  * @version 18/02/2024
  */
-public class spiderWeb {
+public class SpiderWeb {
     // Atributos de la clase
     private int radio;
     private int strands;
@@ -53,6 +53,7 @@ public class spiderWeb {
     private ArrayList<String> bridgesNoUsed = new ArrayList<String>();
     private List<Integer> hilosTomados;
     private boolean isOk;
+    private ArrayList<Line> recorrido = new ArrayList<Line>();
 
     /**
      * Constructor de la clase spiderWeb.
@@ -61,7 +62,7 @@ public class spiderWeb {
      * @param radio El radio de la telaraña.
      * @param strands La cantidad de brazos de la telaraña.
      */
-    public spiderWeb(int radio, int strands){
+    public SpiderWeb(int radio, int strands){
         // Inicialización de los atributos
         this.list = new angles(radio, strands);
         this.radio = radio;
@@ -83,7 +84,7 @@ public class spiderWeb {
         cordenates();
     }
 
-    public spiderWeb(int strand, int bridge, int favoritestrand){
+    public SpiderWeb(int strand, int bridge, int favoritestrand){
         radio = 200;
         this.strands = strand;
         this.list = new angles(radio, strands);
@@ -215,6 +216,17 @@ public class spiderWeb {
             hideBridges();
             bridgesColor.put(color, bridge);
             showBridges(pointBridge);
+            int index = 0;
+            for (int i =  0; i<strands; i++){
+                ArrayList<Line> listBridge = bridgesByStrand.get(i);
+                for (Line l : listBridge){
+                    if (l.getColor() == color){
+                        bridgesByStrand.get(i).set(index, bridge);
+                    }
+                    index += 1;
+                }
+                index = 0;
+            }
             isOk = true;
         }
     }
@@ -224,7 +236,6 @@ public class spiderWeb {
      */
     private void relocateBridgeAutomatico(String color, int FirstStrand, int distance){
         pointBridge = 1;
-
         angleFirstStrand = (firstStrand - 1) * angle;
         angleSecondStrand = firstStrand * angle;
         this.firstStrand = firstStrand;
@@ -233,11 +244,21 @@ public class spiderWeb {
         yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
         x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
         y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
-
         Line bridge = new Line (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge);
         bridge.changeColor(color);
         hideBridges();
         bridgesColor.put(color, bridge);
+        int index = 0;
+            for (int i =  0; i<strands; i++){
+                ArrayList<Line> listBridge = bridgesByStrand.get(i);
+                for (Line l : listBridge){
+                    if (l.getColor() == color){
+                        bridgesByStrand.get(i).set(index, bridge);
+                    }
+                    index += 1;
+                }
+                index = 0;
+            }
         showBridges(pointBridge);
     }
 
@@ -310,7 +331,6 @@ public class spiderWeb {
         return;
     }
     
-    
     /**
      * Oculta todos los puentes de la red de telaraña.
      */
@@ -363,8 +383,16 @@ public class spiderWeb {
     public void spiderWalk(boolean advance){
         ArrayList<ArrayList<Integer>> walk = isPosible((int)strand-1);
         if (advance){
+            int xAnterior = 300;
+            int yAnterior = 300;
             for (ArrayList<Integer> point : walk){
                spider.moveTo(point.get(0),point.get(1));
+               Line l = new Line(xAnterior, yAnterior,point.get(0), point.get(1));
+               l.changeColor("red");
+               l.makeVisible();
+               recorrido.add(l);
+               xAnterior = point.get(0);
+               yAnterior = point.get(1);
             }
         }else{
             ArrayList<Integer> finishPoint = new ArrayList<Integer>();
@@ -377,14 +405,30 @@ public class spiderWeb {
                 ArrayList<Integer> point = walk.get(i);
                 spider.moveTo(point.get(0), point.get(1));
             }
+            eraseRecorrido();
         }
     }
     
+    private void eraseRecorrido(){
+        for (Line l: recorrido){
+            l.makeInvisible();
+        }
+        recorrido = new ArrayList<Line>();
+    }
+    
+    /**
+     * Determina si es posible avanzar a lo largo del brazo de la telaraña desde una posición dada.
+     *
+     * @param strand El número del brazo de la telaraña desde el que se quiere comprobar si es posible avanzar.
+     * @return Una lista de listas de enteros que representan los puntos a lo largo del brazo de la telaraña que se pueden alcanzar desde la posición dada.
+     */
     private ArrayList<ArrayList<Integer>> isPosible(int strand){
         boolean finishWalk = true;
         ArrayList<ArrayList<Integer>> walk = new ArrayList<ArrayList<Integer>>();
+        hilosTomados = new ArrayList<Integer>();
         while (finishWalk){
             if (spotColor.get(colorsports.get(0)) == strand){
+                hilosTomados.add(strand +1);
                 finishWalk = false;
                 ArrayList<Integer> finishPoint = new ArrayList<Integer>();
                 Line arm = lineList.get(strand);
@@ -396,6 +440,7 @@ public class spiderWeb {
                 break;
             }
             if (bridgesByStrand.get(strand).size() > 0){
+                hilosTomados.add(strand +1);
                 Line brigde = bridgesByStrand.get(strand).get(0);
                 float x1 = brigde.getX1();
                 float x2 = brigde.getX2();
@@ -410,17 +455,20 @@ public class spiderWeb {
                 walk.add(firtPoint);
                 walk.add(secondPoint);
                 strand += 1;
-            }
-            else{
+            }else{
                 finishWalk = false;
                 System.out.println("No termina el camino.");
             }
         }
         return walk;
     }
-
     
-    
+    /**
+     * Devuelve una lista de colores de los spots que son alcanzables desde la posición actual de la araña en la telaraña.
+     *
+     * @return Una lista de cadenas que representan los colores de los spots alcanzables desde la posición actual de la araña.
+     */
+     
     public ArrayList<String> reachableSpot(){
         boolean finishWalk = true;
         ArrayList<String> spots = new ArrayList<String>();
@@ -445,20 +493,16 @@ public class spiderWeb {
         return spots;
     }
     
+    
+    
     /**
      * Devuelve una lista de los colores de los puentes en la red de telaraña.
      *
      * @return Una lista de los colores de los puentes.
      */
     public ArrayList<String> bridges() {
-        // Construir una cadena para almacenar los colores de los puentes
-        String bridgeColorsMessage = "Colores de los puentes:\n";
-        for (String color : colorBridges) {
-            bridgeColorsMessage += color + "\n";
-        }
-        // Mostrar el mensaje con los colores de los puentes
-        JOptionPane.showMessageDialog(null, bridgeColorsMessage, "Colores", JOptionPane.INFORMATION_MESSAGE);
-        return null;
+        System.out.println(colorBridges);
+        return  colorBridges;
     }
 
     /**
@@ -474,6 +518,24 @@ public class spiderWeb {
         JOptionPane.showMessageDialog(null, spotColorsMessage.toString(), "Colores de los spots", JOptionPane.INFORMATION_MESSAGE);
         return null;
         }
+    
+    /**
+     * Devuelve el número del brazo donde se encuentra un punto de referencia dado su color.
+     *
+     * @param color El color del punto de referencia.
+     * @return El número del brazo donde se encuentra el punto de referencia, 
+     */   
+    public int spot(String color) {
+        if (!spotColor.containsKey(color)) {
+            JOptionPane.showMessageDialog(null, "El spot de color " + color + " no existe en la telaraña.");
+            isOk = false;
+            return -1;
+        } else {
+            isOk = true;
+            return spotColor.get(color) + 1;
+        }
+    }
+
 
     /**
      * Retorna una lista de hilos (strands) en los cuales se encuentra un puente dado su color.
@@ -499,7 +561,7 @@ public class spiderWeb {
                     }
                 }
             }
-            }
+        }
         //manda el mensaje por una ventanita
         String strandsMessage = "Strand por los que atraviesa el puente:\n";
         for (Integer strand : strandsWithBridge) {
@@ -507,7 +569,7 @@ public class spiderWeb {
         }
         JOptionPane.showMessageDialog(null, strandsMessage, "Strand", JOptionPane.INFORMATION_MESSAGE);
         return strandsWithBridge;
-    }
+        }
 
 
     /**
@@ -524,6 +586,7 @@ public class spiderWeb {
         this.lists = list.getList();
         this.lineList = new ArrayList<>();
         cordenates();
+        bridgesByStrand.put(strands-1, new ArrayList<>());
         for (int strand : bridgesByStrand.keySet()){
             for (Line l : bridgesByStrand.get(strand)){
                 float distance = l.calcularDistancia();
@@ -536,6 +599,7 @@ public class spiderWeb {
             arm.changeColor(color);
             lineList.set(strand, arm);
         }
+        eraseRecorrido();
         makeVisible();
     }
 
@@ -569,8 +633,7 @@ public class spiderWeb {
         return isOk;
     }
 
-
-        /**
+    /**
      * Devuelve una lista de puentes sin usar en la red de telaraña.
      *
      * @return Una lista de cadenas que representan los colores de los puentes sin usar.
@@ -606,6 +669,12 @@ public class spiderWeb {
         System.exit(0);
     }
     
+    /**
+     * Devuelve el estado de los metodos.
+     *
+     * @return {@code true} si la araña está en un estado válido para continuar con las operaciones,
+     *         {@code false} de lo contrario.
+     */
     public boolean ok(){
         return isOk;
     }
