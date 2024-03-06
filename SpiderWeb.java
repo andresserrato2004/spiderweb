@@ -22,8 +22,8 @@ public class SpiderWeb {
     private int strands;
     private int pointBridge;
     private float angle;
-    private float xStard;
-    private float yStard;
+    private final float xStard;
+    private final float yStard;
     private float xBridge;
     private float yBridge;
     private float x2Bridge;
@@ -32,18 +32,11 @@ public class SpiderWeb {
     private float angleSecondStrand;
     private float firstStrand;
     private float strand;
-    private boolean isVisible;
-    private boolean spiderCenter;
-    private boolean goodList;
-    private float x1cordenate;
-    private float y1cordenate;
-    private float x2cordenate;
-    private float y2cordenate;
-    private Line bringe;
+    private final boolean isVisible;
     private Circle circle;
     private angles list;
     private List<Pair<Float, Float>> lists;
-    private ArrayList<Line> lineList;
+    private ArrayList<Strands> lineList;
     private Spider spider;
     private ArrayList<String> colorBridges = new ArrayList<String>();
     private ArrayList<String> colorsports = new ArrayList<String>();
@@ -72,9 +65,7 @@ public class SpiderWeb {
         this.bridgesColor = new HashMap<>();
         this.spotColor = new HashMap<>();
         isVisible = false;
-        spiderCenter = true;
-        goodList = false;
-        this.lineList = new ArrayList<Line>();
+        this.lineList = new ArrayList<Strands>();
         xStard = 300;
         yStard = 300;
 
@@ -84,7 +75,7 @@ public class SpiderWeb {
         cordenates();
     }
 
-    public SpiderWeb(int strand, int bridge, int favoritestrand){
+    public SpiderWeb(int strand, int bridge, int favoritestrand, float y2cordenate, float x2cordenate, float y1cordenate, float x1cordenate, Line bringe){
         radio = 200;
         this.strands = strand;
         this.list = new angles(radio, strands);
@@ -93,9 +84,7 @@ public class SpiderWeb {
         this.bridgesColor = new HashMap<>();
         this.spotColor = new HashMap<>();
         isVisible = false;
-        spiderCenter = true;
-        goodList = false;
-        this.lineList = new ArrayList<Line>();
+        this.lineList = new ArrayList<Strands>();
         xStard = 300;
         yStard = 300;
         for(int i = 0; i < strands ;i++){
@@ -103,7 +92,7 @@ public class SpiderWeb {
         }
         cordenates();
     }
-    
+
     /**
      * Calcula las coordenadas de los brazos de la telaraña y crea líneas para representarlos.
      */
@@ -113,7 +102,7 @@ public class SpiderWeb {
             float y;
             x = pair.getFirst();
             y = pair.getSecond();
-            Line arm = new Line(xStard, yStard, x+xStard, yStard-y);
+            Strands arm = new Strands(xStard, yStard, x+xStard, yStard-y);
             lineList.add(arm);
         }
     }
@@ -127,7 +116,7 @@ public class SpiderWeb {
      */
     public void makeVisible(){
         if(!isVisible){
-            for(Line arms : lineList){
+            for(Strands arms : lineList){
                 arms.makeVisible();
             }
             spider = new Spider((int) xStard, (int) yStard);
@@ -145,7 +134,7 @@ public class SpiderWeb {
      * Oculta todas las líneas y los puentes de la red de telaraña.
      */
     public void makeInvisible(){
-        for(Line arms : lineList){
+        for(Strands arms : lineList){
             arms.makeInvisible();
         }
         spider.makeInvisible();
@@ -299,7 +288,7 @@ public class SpiderWeb {
             isOk = false;
             JOptionPane.showMessageDialog(null, "No se puede añadir spot del mismo color.");
         }else{
-            Line arm = lineList.get(strand-1);
+            Strands arm = lineList.get(strand-1);
             arm.changeColor(color);
             lineList.set(strand-1,arm);
             makeVisible();
@@ -320,7 +309,8 @@ public class SpiderWeb {
             this.isOk = false;
         } else {
             int strand = spotColor.get(color);
-            Line arm = lineList.get(strand);
+
+            Strands arm = lineList.get(strand);
             arm.changeColor("black");
             lineList.set(strand, arm);
             makeVisible();
@@ -431,7 +421,7 @@ public class SpiderWeb {
                 hilosTomados.add(strand +1);
                 finishWalk = false;
                 ArrayList<Integer> finishPoint = new ArrayList<Integer>();
-                Line arm = lineList.get(strand);
+                Strands arm = lineList.get(strand);
                 float x2 = arm.getX2();
                 float y2 = arm.getY2();
                 finishPoint.add((int) x2);
@@ -595,7 +585,7 @@ public class SpiderWeb {
         }
         for (String color :  spotColor.keySet()){
             int strand = spotColor.get(color);
-            Line arm = lineList.get(strand);
+            Strands arm = lineList.get(strand);
             arm.changeColor(color);
             lineList.set(strand, arm);
         }
@@ -623,7 +613,7 @@ public class SpiderWeb {
             cordenates();
             for (String color : spotColor.keySet()) {
                 int strand = spotColor.get(color);
-                Line arm = lineList.get(strand);
+                Strands arm = lineList.get(strand);
                 arm.changeColor(color);
                 lineList.set(strand, arm);
             }
