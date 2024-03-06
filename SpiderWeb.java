@@ -47,9 +47,9 @@ public class SpiderWeb {
     private Spider spider;
     private ArrayList<String> colorBridges = new ArrayList<String>();
     private ArrayList<String> colorsports = new ArrayList<String>();
-    private Map<String,Line> bridgesColor;
+    private Map<String,Bridges> bridgesColor;
     private Map<String,Integer> spotColor;
-    private Map<Integer,ArrayList<Line>> bridgesByStrand = new HashMap<Integer,ArrayList<Line>>();
+    private Map<Integer,ArrayList<Bridges>> bridgesByStrand = new HashMap<Integer,ArrayList<Bridges>>();
     private ArrayList<String> bridgesNoUsed = new ArrayList<String>();
     private List<Integer> hilosTomados;
     private boolean isOk;
@@ -133,7 +133,7 @@ public class SpiderWeb {
             spider = new Spider((int) xStard, (int) yStard);
 
             for (String color : bridgesColor.keySet()) {
-            Line bridge = bridgesColor.get(color);
+            Bridges bridge = bridgesColor.get(color);
             bridge.makeVisible();
             }
             spider.makeVisible();
@@ -150,7 +150,7 @@ public class SpiderWeb {
         }
         spider.makeInvisible();
         for (String color : bridgesColor.keySet()) {
-            Line bridge = bridgesColor.get(color);
+            Bridges bridge = bridgesColor.get(color);
             bridge.makeInvisible();
         }
         spider.makeInvisible();
@@ -184,7 +184,7 @@ public class SpiderWeb {
             x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
             y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
             // Creación y configuración del puente
-            Line bridge = new Line(xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard - y2Bridge);
+            Bridges bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard - y2Bridge);
             bridge.changeColor(color);
             bridgesColor.put(color, bridge);
             showBridges(pointBridge);
@@ -211,15 +211,15 @@ public class SpiderWeb {
             yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
             x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
             y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
-            Line bridge = new Line (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge);
+            Bridges bridge = new Bridges (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge);
             bridge.changeColor(color);
             hideBridges();
             bridgesColor.put(color, bridge);
             showBridges(pointBridge);
             int index = 0;
             for (int i =  0; i<strands; i++){
-                ArrayList<Line> listBridge = bridgesByStrand.get(i);
-                for (Line l : listBridge){
+                ArrayList<Bridges> listBridge = bridgesByStrand.get(i);
+                for (Bridges l : listBridge){
                     if (l.getColor() == color){
                         bridgesByStrand.get(i).set(index, bridge);
                     }
@@ -244,14 +244,14 @@ public class SpiderWeb {
         yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
         x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
         y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
-        Line bridge = new Line (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge);
+        Bridges bridge = new Bridges (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge);
         bridge.changeColor(color);
         hideBridges();
         bridgesColor.put(color, bridge);
         int index = 0;
             for (int i =  0; i<strands; i++){
-                ArrayList<Line> listBridge = bridgesByStrand.get(i);
-                for (Line l : listBridge){
+                ArrayList<Bridges> listBridge = bridgesByStrand.get(i);
+                for (Bridges l : listBridge){
                     if (l.getColor() == color){
                         bridgesByStrand.get(i).set(index, bridge);
                     }
@@ -268,7 +268,7 @@ public class SpiderWeb {
      * @param color El color del puente que se desea eliminar.
      */
     public boolean delBridge(String color){
-        Line delbridge = bridgesColor.get(color);
+        Bridges delbridge = bridgesColor.get(color);
         if (delbridge == null) {
             JOptionPane.showMessageDialog(null, "El puente no existe.");
             this.isOk = false; 
@@ -279,7 +279,7 @@ public class SpiderWeb {
             bridgesNoUsed.remove(color);
             isOk= true;
         }
-        return isOk; 
+        return isOk;
     }
     
     /**
@@ -336,7 +336,7 @@ public class SpiderWeb {
      */
     private void hideBridges(){
         for(String color: bridgesColor.keySet()){
-            Line bridge = bridgesColor.get(color);
+            Bridges bridge = bridgesColor.get(color);
             bridge.makeInvisible();
         }
     }
@@ -349,12 +349,12 @@ public class SpiderWeb {
     private void showBridges(int pointBridge){
         if (pointBridge == 0){
             for(String color: bridgesColor.keySet()){
-                Line bridge = bridgesColor.get(color);
+                Bridges bridge = bridgesColor.get(color);
                 bridge.makeVisible();
             }
         }else{
             for(String color: bridgesColor.keySet()){
-                Line bridge = bridgesColor.get(color);
+                Bridges bridge = bridgesColor.get(color);
                 bridge.makeVisible();
             }
         }
@@ -441,7 +441,7 @@ public class SpiderWeb {
             }
             if (bridgesByStrand.get(strand).size() > 0){
                 hilosTomados.add(strand +1);
-                Line brigde = bridgesByStrand.get(strand).get(0);
+                Bridges brigde = bridgesByStrand.get(strand).get(0);
                 float x1 = brigde.getX1();
                 float x2 = brigde.getX2();
                 float y1 = brigde.getY1();
@@ -546,8 +546,8 @@ public class SpiderWeb {
     public ArrayList<Integer> bridge(String color) {
         ArrayList<Integer> strandsWithBridge = new ArrayList<>();
         for (int i = 0; i < strands; i++) {
-            ArrayList<Line> bridges = bridgesByStrand.get(i);
-            for (Line bridge : bridges) {
+            ArrayList<Bridges> bridges = bridgesByStrand.get(i);
+            for (Bridges bridge : bridges) {
                 if (bridge.getColor()==color ) {
                     if (strands-1 == i){
                         strandsWithBridge.add(i + 1);
@@ -588,7 +588,7 @@ public class SpiderWeb {
         cordenates();
         bridgesByStrand.put(strands-1, new ArrayList<>());
         for (int strand : bridgesByStrand.keySet()){
-            for (Line l : bridgesByStrand.get(strand)){
+            for (Bridges l : bridgesByStrand.get(strand)){
                 float distance = l.calcularDistancia();
                 relocateBridgeAutomatico(l.getColor(), strand, (int) distance);
             }
