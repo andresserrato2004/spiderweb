@@ -17,7 +17,6 @@ import javax.swing.JOptionPane;
  * @version 18/02/2024
  */
 public class SpiderWeb {
-    // Atributos de la clase
     private int radio;
     private int strands;
     private int pointBridge;
@@ -38,12 +37,12 @@ public class SpiderWeb {
     private List<Pair<Float, Float>> lists;
     private ArrayList<Strands> lineList;
     private Spider spider;
-    private ArrayList<String> colorBridges = new ArrayList<String>();
-    private ArrayList<String> colorsports = new ArrayList<String>();
-    private Map<String,Bridges> bridgesColor;
-    private Map<String,Integer> spotColor;
-    private Map<Integer,ArrayList<Bridges>> bridgesByStrand = new HashMap<Integer,ArrayList<Bridges>>();
-    private ArrayList<String> bridgesNoUsed = new ArrayList<String>();
+    private final ArrayList<String> colorBridges = new ArrayList<String>();
+    private final ArrayList<String> colorSports = new ArrayList<String>();
+    private final Map<String,Bridges> bridgesColor;
+    private final Map<String,Integer> spotColor;
+    private final Map<Integer,ArrayList<Bridges>> bridgesByStrand = new HashMap<Integer,ArrayList<Bridges>>();
+    private final ArrayList<String> bridgesNoUsed = new ArrayList<String>();
     private List<Integer> hilosTomados;
     private boolean isOk;
     private ArrayList<Line> recorrido = new ArrayList<Line>();
@@ -56,7 +55,7 @@ public class SpiderWeb {
      * @param strands La cantidad de brazos de la telaraña.
      */
     public SpiderWeb(int radio, int strands){
-        // Inicialización de los atributos
+
         this.list = new angles(radio, strands);
         this.radio = radio;
         this.strands = strands;
@@ -75,7 +74,7 @@ public class SpiderWeb {
         cordenates();
     }
 
-    public SpiderWeb(int strand, int bridge, int favoritestrand, float y2cordenate, float x2cordenate, float y1cordenate, float x1cordenate, Line bringe){
+    public SpiderWeb(int strand, int favoritestrand, ArrayList<ArrayList <Integer>> bridges){
         radio = 200;
         this.strands = strand;
         this.list = new angles(radio, strands);
@@ -156,8 +155,9 @@ public class SpiderWeb {
     public void addBridge(String color, int distance, int firstStrand){
         boolean colorRepe = false;
         for(String color0 : colorBridges){
-           if (color0 == color){
-               colorRepe = true;
+            if (color0 == color) {
+                colorRepe = true;
+                break;
             }
         }
         if (colorRepe){
@@ -279,9 +279,10 @@ public class SpiderWeb {
      */
    public void addSpot(String color, int strand){
         boolean colorRepe = false;
-        for(String color0 : colorsports){
-           if (color0 == color){
-               colorRepe = true;
+        for(String color0 : colorSports){
+            if (color0 == color) {
+                colorRepe = true;
+                break;
             }
         }
         if (colorRepe){
@@ -293,7 +294,7 @@ public class SpiderWeb {
             lineList.set(strand-1,arm);
             makeVisible();
             spotColor.put(color,strand-1);
-            colorsports.add(color);
+            colorSports.add(color);
             isOk = true;
         }
     }
@@ -315,10 +316,9 @@ public class SpiderWeb {
             lineList.set(strand, arm);
             makeVisible();
             spotColor.remove(color);
-            colorsports.remove(color);
+            colorSports.remove(color);
             isOk = true;
             }
-        return;
     }
     
     /**
@@ -418,8 +418,8 @@ public class SpiderWeb {
         hilosTomados = new ArrayList<Integer>();
         while (finishWalk){
             System.out.println(spotColor);
-            System.out.println(colorsports);
-            if (spotColor.get(colorsports.get(0)) == strand){
+            System.out.println(colorSports);
+            if (spotColor.get(colorSports.get(0)) == strand){
                 hilosTomados.add(strand +1);
                 finishWalk = false;
                 ArrayList<Integer> finishPoint = new ArrayList<Integer>();
@@ -464,9 +464,9 @@ public class SpiderWeb {
     public ArrayList<String> reachableSpot(){
         boolean finishWalk = true;
         ArrayList<String> spots = new ArrayList<String>();
-        for (String color : colorsports){
+        for (String color : colorSports){
             int hilos = (int) this.strand;
-            System.out.println(colorsports);
+            System.out.println(colorSports);
             while (finishWalk){
                 if (spotColor.get(color) == hilos-1 && lineList.get(hilos-1).getColor() == color){
                     finishWalk = false;
@@ -504,7 +504,7 @@ public class SpiderWeb {
      */
     public ArrayList<String> spots() {
         StringBuilder spotColorsMessage = new StringBuilder("Colores de los spots:\n");
-        for (String color : colorsports) {
+        for (String color : colorSports) {
             spotColorsMessage.append(color).append("\n");
         }
         JOptionPane.showMessageDialog(null, spotColorsMessage.toString(), "Colores de los spots", JOptionPane.INFORMATION_MESSAGE);
@@ -679,8 +679,8 @@ public class SpiderWeb {
         }
     }
     private class angles {
-        private List<Pair<Float, Float>> list;
-        private float cant;
+        private final List<Pair<Float, Float>> list;
+        private final float cant;
 
         /**
          * Crea una nueva instancia de la clase angles.
