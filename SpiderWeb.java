@@ -155,7 +155,7 @@ public class SpiderWeb {
     public void addBridge(String color, int distance, int firstStrand){
         boolean colorRepe = false;
         for(String color0 : colorBridges){
-            if (color0 == color) {
+            if (Objects.equals(color0, color)) {
                 colorRepe = true;
                 break;
             }
@@ -223,11 +223,10 @@ public class SpiderWeb {
     /**
      * Relocaliza automáticamente un puente en un brazo específico de la red de telaraña.
      */
-    private void relocateBridgeAutomatico(String color, int FirstStrand, int distance){
+    private void relocateBridgeAutomatico(String color, int distance){
         pointBridge = 1;
         angleFirstStrand = (firstStrand - 1) * angle;
         angleSecondStrand = firstStrand * angle;
-        this.firstStrand = firstStrand;
         pointBridge = 0;
         xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
         yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
