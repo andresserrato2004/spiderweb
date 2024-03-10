@@ -19,7 +19,6 @@ import javax.swing.JOptionPane;
 public class SpiderWeb {
     private int radio;
     private int strands;
-    private int pointBridge;
     private float angle;
     private final float xStard;
     private final float yStard;
@@ -32,6 +31,7 @@ public class SpiderWeb {
     private float firstStrand;
     private float strand;
     private final boolean isVisible;
+    private boolean isBridges;
     private Circle circle;
     private angles list;
     private List<Pair<Float, Float>> lists;
@@ -40,6 +40,7 @@ public class SpiderWeb {
     private final ArrayList<String> colorBridges = new ArrayList<String>();
     private final ArrayList<String> colorSports = new ArrayList<String>();
     private final Map<String,Bridges> bridgesColor;
+    private final Map<String,Integer> bridgeStrand = new HashMap<>();
     private final Map<String,Integer> spotColor;
     private final Map<Integer,ArrayList<Bridges>> bridgesByStrand = new HashMap<Integer,ArrayList<Bridges>>();
     private final ArrayList<String> bridgesNoUsed = new ArrayList<String>();
@@ -64,6 +65,7 @@ public class SpiderWeb {
         this.bridgesColor = new HashMap<>();
         this.spotColor = new HashMap<>();
         isVisible = false;
+        isBridges = false;
         this.lineList = new ArrayList<Strands>();
         xStard = 300;
         yStard = 300;
@@ -83,6 +85,7 @@ public class SpiderWeb {
         this.bridgesColor = new HashMap<>();
         this.spotColor = new HashMap<>();
         isVisible = false;
+        isBridges = false;
         this.lineList = new ArrayList<Strands>();
         xStard = 300;
         yStard = 300;
@@ -125,7 +128,10 @@ public class SpiderWeb {
             bridge.makeVisible();
             }
             spider.makeVisible();
+            isBridges = true;
+
         }
+
     }
 
     /**
@@ -142,6 +148,8 @@ public class SpiderWeb {
             bridge.makeInvisible();
         }
         spider.makeInvisible();
+        isBridges = false;
+
     }
 
 
@@ -167,7 +175,7 @@ public class SpiderWeb {
             angleFirstStrand = (firstStrand - 1) * angle;
             angleSecondStrand = firstStrand * angle;
             this.firstStrand = firstStrand;
-            pointBridge = 0;
+
             xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
             yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
             x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
@@ -176,11 +184,15 @@ public class SpiderWeb {
             Bridges bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard - y2Bridge);
             bridge.changeColor(color);
             bridgesColor.put(color, bridge);
-            showBridges(pointBridge);
             colorBridges.add(color);
             bridgesNoUsed.add(color);
             bridgesByStrand.get(firstStrand-1).add(bridge);
+            bridgeStrand.put(color, firstStrand);
             isOk = true;
+            if (isBridges){
+                bridge.makeVisible();
+            }
+
         }
     }
 
@@ -191,11 +203,17 @@ public class SpiderWeb {
      * @param distance La nueva distancia desde el centro hasta el punto donde comienza el puente.
      */
     public void relocateBridge(String color, int distance){
+
+
+        angleFirstStrand = (bridgeStrand.get(color) - 1) * angle;
+        angleSecondStrand = bridgeStrand.get(color) * angle;
+
+
         if (distance < 0) {
             JOptionPane.showMessageDialog(null, "No se puede reubicar el puente con una distancia negativa.");
             isOk = false;
         }else{
-            pointBridge = 1;
+
             xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
             yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
             x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
@@ -204,12 +222,12 @@ public class SpiderWeb {
             bridge.changeColor(color);
             hideBridges();
             bridgesColor.put(color, bridge);
-            showBridges(pointBridge);
+            showBridges();
             int index = 0;
             for (int i =  0; i<strands; i++){
                 ArrayList<Bridges> listBridge = bridgesByStrand.get(i);
                 for (Bridges l : listBridge){
-                    if (l.getColor() == color){
+                    if (Objects.equals(l.getColor(), color)){
                         bridgesByStrand.get(i).set(index, bridge);
                     }
                     index += 1;
@@ -224,10 +242,9 @@ public class SpiderWeb {
      * Relocaliza automáticamente un puente en un brazo específico de la red de telaraña.
      */
     private void relocateBridgeAutomatico(String color, int distance){
-        pointBridge = 1;
-        angleFirstStrand = (firstStrand - 1) * angle;
-        angleSecondStrand = firstStrand * angle;
-        pointBridge = 0;
+
+        angleFirstStrand = (bridgeStrand.get(color) - 1) * angle;
+        angleSecondStrand = bridgeStrand.get(color) * angle;
         xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
         yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
         x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
@@ -240,14 +257,14 @@ public class SpiderWeb {
             for (int i =  0; i<strands; i++){
                 ArrayList<Bridges> listBridge = bridgesByStrand.get(i);
                 for (Bridges l : listBridge){
-                    if (l.getColor() == color){
+                    if (Objects.equals(l.getColor(), color)){
                         bridgesByStrand.get(i).set(index, bridge);
                     }
                     index += 1;
                 }
                 index = 0;
             }
-        showBridges(pointBridge);
+        showBridges();
     }
 
     /**
@@ -277,9 +294,10 @@ public class SpiderWeb {
      * @param strand El número del brazo donde se agregará el punto de referencia.
      */
    public void addSpot(String color, int strand){
+       System.out.println(lineList);
         boolean colorRepe = false;
         for(String color0 : colorSports){
-            if (color0 == color) {
+            if (Objects.equals(color0, color)) {
                 colorRepe = true;
                 break;
             }
@@ -296,6 +314,7 @@ public class SpiderWeb {
             colorSports.add(color);
             isOk = true;
         }
+       System.out.println(lineList);
     }
 
     /**
@@ -332,21 +351,14 @@ public class SpiderWeb {
 
     /**
      * Muestra todos los puentes de la red de telaraña.
-     *
-     * @param pointBridge Un indicador de si se debe mostrar el puente en una posición específica.
      */
-    private void showBridges(int pointBridge){
-        if (pointBridge == 0){
-            for(String color: bridgesColor.keySet()){
-                Bridges bridge = bridgesColor.get(color);
-                bridge.makeVisible();
-            }
-        }else{
-            for(String color: bridgesColor.keySet()){
-                Bridges bridge = bridgesColor.get(color);
-                bridge.makeVisible();
-            }
+    private void showBridges(){
+        for(String color: bridgesColor.keySet()){
+            Bridges bridge = bridgesColor.get(color);
+            System.out.println(bridge);
+            bridge.makeVisible();
         }
+
     }
 
     /**
