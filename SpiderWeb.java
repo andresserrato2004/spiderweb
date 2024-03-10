@@ -581,7 +581,7 @@ public class SpiderWeb {
         for (int strand : bridgesByStrand.keySet()){
             for (Bridges l : bridgesByStrand.get(strand)){
                 float distance = l.calcularDistancia();
-                relocateBridgeAutomatico(l.getColor(), strand, (int) distance);
+                relocateBridgeAutomatico(l.getColor(), (int) distance);
             }
         }
         for (String color :  spotColor.keySet()){
