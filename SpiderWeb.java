@@ -417,6 +417,8 @@ public class SpiderWeb {
         ArrayList<ArrayList<Integer>> walk = new ArrayList<ArrayList<Integer>>();
         hilosTomados = new ArrayList<Integer>();
         while (finishWalk){
+            System.out.println(spotColor);
+            System.out.println(colorsports);
             if (spotColor.get(colorsports.get(0)) == strand){
                 hilosTomados.add(strand +1);
                 finishWalk = false;
@@ -658,7 +660,63 @@ public class SpiderWeb {
         bridgesByStrand.clear();
         System.exit(0);
     }
-    
+
+    private class Pair<K, V> {
+        private final K key;
+        private final V value;
+
+        public Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public K getFirst() {
+            return key;
+        }
+
+        public V getSecond() {
+            return value;
+        }
+    }
+    private class angles {
+        private List<Pair<Float, Float>> list;
+        private float cant;
+
+        /**
+         * Crea una nueva instancia de la clase angles.
+         * @param radio El radio del círculo.
+         * @param count La cantidad de pares de coordenadas a generar.
+         */
+        public angles(int radio , int count){
+            this.list = new ArrayList<>();
+            float totalAngle;
+            float angle;
+            angle = 0;
+            totalAngle = 360;
+            this.cant = totalAngle/count;
+            while (angle < totalAngle){
+                list.add(new Pair<>((float)Math.round((radio*Math.cos(Math.toRadians(angle)))),(float)Math.round((radio*Math.sin(Math.toRadians(angle))))));
+                angle += cant;
+            }
+        }
+
+        /**
+         * Obtiene la lista de pares de coordenadas generada.
+         * @return La lista de pares de coordenadas.
+         */
+        public List<Pair<Float, Float>> getList(){
+            return list;
+        }
+
+        /**
+         * Obtiene la cantidad de ángulo entre los pares de coordenadas.
+         * @return La cantidad de ángulo entre los pares de coordenadas.
+         */
+        public float getCant(){
+            return cant;
+        }
+    }
+
     /**
      * Devuelve el estado de los metodos.
      *
@@ -668,4 +726,6 @@ public class SpiderWeb {
     public boolean ok(){
         return isOk;
     }
+
+
 }
