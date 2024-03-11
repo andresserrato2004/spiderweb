@@ -176,7 +176,11 @@ public class Spider {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
+   }
+
+   public void spiderSit(){
+       head.changeColor("yellow");
+   }
 }
 
         

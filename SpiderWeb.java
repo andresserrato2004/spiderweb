@@ -387,6 +387,7 @@ public class SpiderWeb {
             JOptionPane.showMessageDialog(null, "El strand no existe para sentar a la araña.");
             isOk = false;
         }
+        spider.spiderSit();
     }
 
     /**
