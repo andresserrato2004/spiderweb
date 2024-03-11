@@ -28,12 +28,10 @@ public class SpiderWeb {
     private float y2Bridge;
     private float angleFirstStrand;
     private float angleSecondStrand;
-    private float firstStrand;
     private float strand;
     private final boolean isVisible;
     private boolean isBridges;
-    boolean isSpot ;
-    private Circle circle;
+    boolean isSpot = true;
     private angles list;
     private List<Pair<Float, Float>> lists;
     private ArrayList<Strands> lineList;
@@ -121,29 +119,19 @@ public class SpiderWeb {
      * nuevamente los elementos.
      */
     public void makeVisible(){
+        isSpot = false;
         if(!isVisible && !isSpot){
             for (String color : bridgesColor.keySet()) {
                 Bridges bridge = bridgesColor.get(color);
                 bridge.makeVisible();
             }
-
-            for(Strands arms : lineList){
-                arms.makeVisible();
-
-            }
-            spider.makeVisible();
-
-            isBridges = true;
-
-        }
-        if (isVisible && isSpot){
             for(Strands arms : lineList){
                 arms.makeVisible();
             }
             spider.makeVisible();
             isBridges = true;
-        }
 
+        }
     }
 
     /**
@@ -161,6 +149,7 @@ public class SpiderWeb {
         }
         spider.makeInvisible();
         isBridges = false;
+        isSpot = true;
 
     }
 
@@ -186,7 +175,6 @@ public class SpiderWeb {
         }else{
             angleFirstStrand = (firstStrand - 1) * angle;
             angleSecondStrand = firstStrand * angle;
-            this.firstStrand = firstStrand;
 
             xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
             yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
@@ -306,7 +294,7 @@ public class SpiderWeb {
      * @param strand El número del brazo donde se agregará el punto de referencia.
      */
    public void addSpot(String color, int strand){
-        isSpot = false;
+
         boolean colorRepe = false;
         for(String color0 : colorSports){
             if (Objects.equals(color0, color)) {
@@ -321,8 +309,9 @@ public class SpiderWeb {
             Strands arm = lineList.get(strand-1);
             arm.changeColor(color);
             lineList.set(strand-1,arm);
-
-            makeVisible();
+            if (!isSpot){
+                makeVisible();
+            }
             spotColor.put(color,strand-1);
             colorSports.add(color);
             isOk = true;
@@ -516,7 +505,13 @@ public class SpiderWeb {
      * @return Una lista de los colores de los puentes.
      */
     public ArrayList<String> bridges() {
-        return  colorBridges;
+        StringBuilder message = new StringBuilder();
+        for (String color : colorBridges) {
+            message.append(color).append("\n");
+        }
+        JOptionPane.showMessageDialog(null, message.toString(), "Colores de Puentes", JOptionPane.INFORMATION_MESSAGE);
+
+        return null;
     }
 
     /**
@@ -562,7 +557,7 @@ public class SpiderWeb {
         for (int i = 0; i < strands; i++) {
             ArrayList<Bridges> bridges = bridgesByStrand.get(i);
             for (Bridges bridge : bridges) {
-                if (bridge.getColor()==color ) {
+                if (Objects.equals(bridge.getColor(), color)) {
                     if (strands-1 == i){
                         strandsWithBridge.add(i + 1);
                         strandsWithBridge.add(1);
@@ -577,11 +572,15 @@ public class SpiderWeb {
             }
         }
         //manda el mensaje por una ventanita
-        String strandsMessage = "Strand por los que atraviesa el puente:\n";
-        for (Integer strand : strandsWithBridge) {
-            strandsMessage += strand + "\n";
+        StringBuilder strandsMessage = new StringBuilder("Strand por los que atraviesa el puente:\n");
+        for (int i = 0; i < strandsWithBridge.size(); i++) {
+            strandsMessage.append(strandsWithBridge.get(i));
+            // Agregar coma si no es el último elemento
+            if (i < strandsWithBridge.size() - 1) {
+                strandsMessage.append(", ");
+            }
         }
-        JOptionPane.showMessageDialog(null, strandsMessage, "Strand", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, strandsMessage.toString(), "Strand", JOptionPane.INFORMATION_MESSAGE);
         return strandsWithBridge;
         }
 
