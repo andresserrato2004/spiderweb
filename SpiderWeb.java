@@ -29,7 +29,7 @@ public class SpiderWeb {
     private float angleFirstStrand;
     private float angleSecondStrand;
     private float strand;
-    private final boolean isVisible;
+    private boolean isVisible;
     private boolean isBridges;
     boolean isSpot = true;
     private angles list;
@@ -130,6 +130,7 @@ public class SpiderWeb {
             }
             spider.makeVisible();
             isBridges = true;
+            isVisible = true;
 
         }
     }
@@ -150,6 +151,8 @@ public class SpiderWeb {
         spider.makeInvisible();
         isBridges = false;
         isSpot = true;
+        isVisible = false;
+
 
     }
 
@@ -222,7 +225,9 @@ public class SpiderWeb {
             bridge.changeColor(color);
             hideBridges();
             bridgesColor.put(color, bridge);
-            showBridges();
+            if (!isSpot){
+                showBridges();
+            }
             int index = 0;
             for (int i =  0; i<strands; i++){
                 ArrayList<Bridges> listBridge = bridgesByStrand.get(i);
@@ -264,7 +269,10 @@ public class SpiderWeb {
                 }
                 index = 0;
             }
-        showBridges();
+        if (isBridges){
+            showBridges();
+        }
+
     }
 
     /**
@@ -334,7 +342,9 @@ public class SpiderWeb {
             Strands arm = lineList.get(strand);
             arm.changeColor("black");
             lineList.set(strand, arm);
-            makeVisible();
+            if(!isSpot){
+                makeVisible();
+            }
             spotColor.remove(color);
             colorSports.remove(color);
             isOk = true;
@@ -592,7 +602,7 @@ public class SpiderWeb {
      * de los brazos con el nuevo número de brazos y hace visible nuevamente la red de telaraña.
      */
     public void addStrand(){
-        makeInvisible();
+
         strands += 1;
         list = new angles(radio, strands);
         this.angle = list.getCant();
@@ -613,7 +623,9 @@ public class SpiderWeb {
             lineList.set(strand, arm);
         }
         eraseRecorrido();
-        makeVisible();
+        if (!isSpot){
+            makeVisible();
+        }
     }
 
     /**
@@ -622,12 +634,11 @@ public class SpiderWeb {
      * @param porcentage El porcentaje por el cual se aumentará el tamaño de la red.
      */
     public boolean enlarge(int porcentage) {
-        makeInvisible();
         if (porcentage < 0) {
             JOptionPane.showMessageDialog(null, "No se puede agrandar con numeros negativos.", "Error", JOptionPane.INFORMATION_MESSAGE);
-            makeVisible(); 
             isOk = false;
         }else{
+            makeInvisible();
             this.radio = radio * (100 + porcentage) / 100;
             list = new angles(radio, strands);
             this.angle = list.getCant();
@@ -640,7 +651,10 @@ public class SpiderWeb {
                 arm.changeColor(color);
                 lineList.set(strand, arm);
             }
-            makeVisible();
+            if (!isSpot) {
+
+                makeVisible();
+            }
             isOk = true;
         }
         return isOk;
@@ -670,15 +684,6 @@ public class SpiderWeb {
      * Cierra la ventana.
      */
     public void finish() {
-        makeInvisible();
-        if (spider != null) {
-            spider.makeInvisible();
-            spider = null;
-        }
-        lineList.clear();
-        bridgesColor.clear();
-        spotColor.clear();
-        bridgesByStrand.clear();
         System.exit(0);
     }
 
