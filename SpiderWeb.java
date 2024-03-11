@@ -32,6 +32,7 @@ public class SpiderWeb {
     private float strand;
     private final boolean isVisible;
     private boolean isBridges;
+    boolean isSpot ;
     private Circle circle;
     private angles list;
     private List<Pair<Float, Float>> lists;
@@ -69,7 +70,7 @@ public class SpiderWeb {
         this.lineList = new ArrayList<Strands>();
         xStard = 300;
         yStard = 300;
-
+        spider = new Spider((int) xStard, (int) yStard);
         for(int i = 0; i < strands ;i++){
             bridgesByStrand.put(i, new ArrayList<>());
         }
@@ -89,6 +90,7 @@ public class SpiderWeb {
         this.lineList = new ArrayList<Strands>();
         xStard = 300;
         yStard = 300;
+        spider = new Spider((int) xStard, (int) yStard);
         for(int i = 0; i < strands ;i++){
             bridgesByStrand.put(i, new ArrayList<>());
         }
@@ -99,6 +101,7 @@ public class SpiderWeb {
      * Calcula las coordenadas de los brazos de la telaraña y crea líneas para representarlos.
      */
     private void cordenates(){
+
         for (Pair<Float, Float> pair : lists){
             float x;
             float y;
@@ -107,6 +110,7 @@ public class SpiderWeb {
             Strands arm = new Strands(xStard, yStard, x+xStard, yStard-y);
             lineList.add(arm);
         }
+
     }
 
 
@@ -117,19 +121,27 @@ public class SpiderWeb {
      * nuevamente los elementos.
      */
     public void makeVisible(){
-        if(!isVisible){
+        if(!isVisible && !isSpot){
+            for (String color : bridgesColor.keySet()) {
+                Bridges bridge = bridgesColor.get(color);
+                bridge.makeVisible();
+            }
+
+            for(Strands arms : lineList){
+                arms.makeVisible();
+
+            }
+            spider.makeVisible();
+
+            isBridges = true;
+
+        }
+        if (isVisible && isSpot){
             for(Strands arms : lineList){
                 arms.makeVisible();
             }
-            spider = new Spider((int) xStard, (int) yStard);
-
-            for (String color : bridgesColor.keySet()) {
-            Bridges bridge = bridgesColor.get(color);
-            bridge.makeVisible();
-            }
             spider.makeVisible();
             isBridges = true;
-
         }
 
     }
@@ -294,7 +306,7 @@ public class SpiderWeb {
      * @param strand El número del brazo donde se agregará el punto de referencia.
      */
    public void addSpot(String color, int strand){
-       System.out.println(lineList);
+        isSpot = false;
         boolean colorRepe = false;
         for(String color0 : colorSports){
             if (Objects.equals(color0, color)) {
@@ -309,12 +321,13 @@ public class SpiderWeb {
             Strands arm = lineList.get(strand-1);
             arm.changeColor(color);
             lineList.set(strand-1,arm);
+
             makeVisible();
             spotColor.put(color,strand-1);
             colorSports.add(color);
             isOk = true;
         }
-       System.out.println(lineList);
+
     }
 
     /**
@@ -355,7 +368,7 @@ public class SpiderWeb {
     private void showBridges(){
         for(String color: bridgesColor.keySet()){
             Bridges bridge = bridgesColor.get(color);
-            System.out.println(bridge);
+
             bridge.makeVisible();
         }
 
@@ -428,8 +441,6 @@ public class SpiderWeb {
         ArrayList<ArrayList<Integer>> walk = new ArrayList<ArrayList<Integer>>();
         hilosTomados = new ArrayList<Integer>();
         while (finishWalk){
-            System.out.println(spotColor);
-            System.out.println(colorSports);
             if (spotColor.get(colorSports.get(0)) == strand){
                 hilosTomados.add(strand +1);
                 finishWalk = false;
@@ -460,7 +471,7 @@ public class SpiderWeb {
                 strand += 1;
             }else{
                 finishWalk = false;
-                System.out.println("No termina el camino.");
+
             }
         }
         return walk;
@@ -477,7 +488,7 @@ public class SpiderWeb {
         ArrayList<String> spots = new ArrayList<String>();
         for (String color : colorSports){
             int hilos = (int) this.strand;
-            System.out.println(colorSports);
+
             while (finishWalk){
                 if (spotColor.get(color) == hilos-1 && lineList.get(hilos-1).getColor() == color){
                     finishWalk = false;
@@ -504,7 +515,6 @@ public class SpiderWeb {
      * @return Una lista de los colores de los puentes.
      */
     public ArrayList<String> bridges() {
-        System.out.println(colorBridges);
         return  colorBridges;
     }
 
@@ -702,7 +712,7 @@ public class SpiderWeb {
             this.list = new ArrayList<>();
             float totalAngle;
             float angle;
-            angle = 0;
+            angle = 1;
             totalAngle = 360;
             this.cant = totalAngle/count;
             while (angle < totalAngle){
