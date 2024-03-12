@@ -520,8 +520,10 @@ public class SpiderWeb {
             message.append(color).append("\n");
         }
         JOptionPane.showMessageDialog(null, message.toString(), "Colores de Puentes", JOptionPane.INFORMATION_MESSAGE);
+        String[] result = {"red", "blue"};
 
-        return null;
+        System.out.println(colorBridges);
+        return colorBridges;
     }
 
     /**

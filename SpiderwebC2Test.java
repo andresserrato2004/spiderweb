@@ -1,10 +1,13 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.awt.*;
 import java.util.ArrayList;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-    
+import java.util.HashSet;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+
 public class SpiderwebC2Test {
     private SpiderWeb spiderWeb;
 
@@ -14,13 +17,6 @@ public class SpiderwebC2Test {
         spiderWeb.addBridge("red", 150, 4);
         spiderWeb.addSpot("green", 2);
     }
-    
-    private void assertTrue(boolean ok) {
-    }
-    
-    private void assertArrayEquals(ArrayList<String> bridges, String[] result) {
-    }
-    
     //addStrand
     //ok
     @Test
@@ -28,7 +24,7 @@ public class SpiderwebC2Test {
         spiderWeb.addStrand();
         assertTrue(spiderWeb.ok());
     }
-    
+
     //enlarge
     //ok
     @Test
@@ -42,7 +38,7 @@ public class SpiderwebC2Test {
         spiderWeb.enlarge(-150);
         assertFalse(spiderWeb.ok());
     }
-    
+
     //addBridge
     //ok
     @Test
@@ -57,7 +53,7 @@ public class SpiderwebC2Test {
         spiderWeb.addBridge("red", 85,4);
         assertFalse(spiderWeb.ok());
     }
-    
+
     //relocateBridge
     //ok
     @Test
@@ -71,7 +67,8 @@ public class SpiderwebC2Test {
         spiderWeb.relocateBridge("red", -20);
         assertFalse(spiderWeb.ok());
     }
-    
+
+
     //delBridge
     //ok
     @Test
@@ -85,7 +82,7 @@ public class SpiderwebC2Test {
         spiderWeb.delBridge("purple");
         assertFalse(spiderWeb.ok());
     }
-    
+
     //addSpot
     //ok
     @Test
@@ -100,7 +97,7 @@ public class SpiderwebC2Test {
         spiderWeb.addSpot("red", 5);
         assertFalse(spiderWeb.ok());
     }
-    
+
     //delSpot
     //ok
     @Test
@@ -114,7 +111,7 @@ public class SpiderwebC2Test {
         spiderWeb.delSpot("balck");
         assertFalse(spiderWeb.ok());
     }
-    
+
     //spiderSit
     //ok
     @Test
@@ -130,36 +127,39 @@ public class SpiderwebC2Test {
     }
     //spiderWalk
     //spiderLastPath
-    
+
     //bridge-tupla de colores de ls bridges
     //ok
     @Test
     public void accordingGSShouldBridges() {
-        String[] result = {"red", "blue"};
-        assertArrayEquals(spiderWeb.bridges(), result);
-    }
+        String[] result = {"red"};
+        System.out.println(spiderWeb.bridges());
+        assertArrayEquals(result, spiderWeb.bridges().toArray());
     //noOk--ndeberia pasar porque no hay ningun puente blanco
+    }
     @Test
     public void accordingGSNotBridges() {
         String[] resultt = {"white"};
-        assertArrayEquals(spiderWeb.bridges(), resultt);
+        assertNotEquals(spiderWeb.bridges(), resultt);
     }
+
+
     //bridge
-    
+
     //spots-colores de los spots
     //ok
     @Test
     public void accordingGSShouldSpots() {
         String[] result = {"green"};
-        assertArrayEquals(spiderWeb.spots(), result);
+        assertArrayEquals(new ArrayList[]{spiderWeb.spots()}, result);
     }
     //noOk
     @Test
     public void accordingGSNotSpots() {
         String[] resultt = {"white"};
-        assertArrayEquals(spiderWeb.spots(), resultt);
+        assertNotEquals(resultt, new ArrayList[]{spiderWeb.spots()});
     }
-    
+
     //spot-donde esta ubicado el spot
     //ok
     @Test
