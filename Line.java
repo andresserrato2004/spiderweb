@@ -21,12 +21,12 @@ import java.awt.geom.Line2D;
  * @version (18/02/2024)
  */
 public class Line {
-    private String color;
-    private boolean isVisible;
-    private float x1;
-    private float x2;
-    private float y1;
-    private float y2;
+    protected String color;
+    protected boolean isVisible;
+    protected float x1;
+    protected float x2;
+    protected float y1;
+    protected float y2;
     
     /**
      * Constructor de la clase Line.
@@ -111,7 +111,7 @@ public class Line {
      * Dibuja la línea con las especificaciones actuales en la pantalla.
      * Este método es utilizado internamente y no está destinado a ser llamado directamente.
      */
-    private void draw() {
+    protected void draw() {
         if (isVisible) {
             Canvas canvas = Canvas.getCanvas();
             Line2D line = new Line2D.Float(x1, y1, x2, y2);
@@ -124,7 +124,7 @@ public class Line {
      * Borra la línea de la pantalla.
      * Este método es utilizado internamente y no está destinado a ser llamado directamente.
      */
-    private void erase() {
+    protected void erase() {
         if (isVisible) {
             Canvas canvas = Canvas.getCanvas();
             canvas.erase(this);

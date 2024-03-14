@@ -45,12 +45,12 @@ public class SpiderwebC2Test {
     public void accordingGSShouldAddBridge() {
         spiderWeb.addBridge("blue",179, 4);
         assertTrue(spiderWeb.ok());
-        //assertArrayEquals( spiderWeb.spots(), valorDevolver);
     }
     //noOk
     @Test
     public void accordingGSNotShouldAddBridge() {
-        spiderWeb.addBridge("red", 85,4);
+        spiderWeb.addBridge("yellow", 85,4);
+        spiderWeb.addBridge("yellow", 80,1);
         assertFalse(spiderWeb.ok());
     }
 
@@ -58,12 +58,14 @@ public class SpiderwebC2Test {
     //ok
     @Test
     public void accordingGSShouldRelocateBridge() {
+        spiderWeb.addBridge("red", 85,4);
         spiderWeb.relocateBridge("red", 230);
         assertTrue(spiderWeb.ok());
     }
     //noOk
     @Test
     public void accordingGSNotShouldRelocateBridge() {
+        spiderWeb.addBridge("red", 85,4);
         spiderWeb.relocateBridge("red", -20);
         assertFalse(spiderWeb.ok());
     }
@@ -73,12 +75,14 @@ public class SpiderwebC2Test {
     //ok
     @Test
     public void accordingGSShouldDelBridge() {
+        spiderWeb.addBridge("red", 85,4);
         spiderWeb.delBridge("red");
         assertTrue(spiderWeb.ok());
     }
     //noOk
     @Test
     public void accordingGSNotShouldDelBridge() {
+        spiderWeb.addBridge("red", 85,4);
         spiderWeb.delBridge("purple");
         assertFalse(spiderWeb.ok());
     }
@@ -125,7 +129,20 @@ public class SpiderwebC2Test {
         spiderWeb.spiderSit(-4);
         assertFalse(spiderWeb.ok());
     }
+
     //spiderWalk
+    //ok
+    public void accordingGSShouldSpiderWalk() {
+        spiderWeb.spiderSit(1);
+        spiderWeb.spiderWalk(true);
+        assertTrue(spiderWeb.ok());
+    }
+    //noOk
+    public void accordingGSShouldNotSpiderWalk() {
+        spiderWeb.spiderWalk(true);
+        assertTrue(spiderWeb.ok());
+    }
+
     //spiderLastPath
 
     //bridge-tupla de colores de ls bridges

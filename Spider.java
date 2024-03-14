@@ -60,13 +60,13 @@ public class Spider {
         body.changeColor("black");
         organizeHead();
         organizeFeet();
-        organizeRectangle();
+        //organizeRectangle();
     }
     
     /*
      * Organiza el rectángulo que representa el cuerpo de la araña.
      * Este método es utilizado internamente y no está destinado a ser llamado directamente.
-     */
+     
     private void organizeRectangle() {
         this.rectangle = new Rectangle();
         rectangle.changeSize(10, 20);
@@ -74,6 +74,7 @@ public class Spider {
         rectangle.moveHorizontal(body.getxPosition() - 64);
         rectangle.changeColor("green");
     }
+    */
     
     /*
      * Organiza la cabeza de la araña.
@@ -143,7 +144,7 @@ public class Spider {
      * 
      * @return La posición x actual de la araña.
      */
-    public int getXPosition() {
+    public float getXPosition() {
         return body.getxPosition() + (body.getDiameter() / 2);
     }
 
@@ -152,7 +153,7 @@ public class Spider {
      * 
      * @return La posición y actual de la araña.
      */
-    public int getYPosition() {
+    public float getYPosition() {
         return body.getyPosition() + (body.getDiameter() / 2);
     }
     
@@ -162,9 +163,9 @@ public class Spider {
      * @param xdistance La nueva coordenada x de la posición de la araña.
      * @param ydistance La nueva coordenada y de la posición de la araña.
      */
-   public void moveTo(int xdistance, int ydistance) {
-        int dx = xdistance - getXPosition();
-        int dy = ydistance - getYPosition();
+   public void moveTo(float xdistance, float ydistance) {
+        float dx = xdistance - getXPosition();
+        float dy = ydistance - getYPosition();
         body.moveHorizontal(dx);
         body.moveVertical(dy);
         makeInvisible();
@@ -178,8 +179,13 @@ public class Spider {
         }
    }
 
+   public boolean isSpiderSitting(){
+       return this.isSitting;
+   }
+
    public void spiderSit(){
        head.changeColor("yellow");
+       this.isSitting = true;
    }
 }
 

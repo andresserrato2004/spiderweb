@@ -13,8 +13,8 @@ public class Circle{
     public static final double PI=3.1416;
     
     private int diameter;
-    private int xPosition;
-    private int yPosition;
+    private float xPosition;
+    private float yPosition;
     private String color;
     private boolean isVisible;
     
@@ -87,7 +87,7 @@ public class Circle{
      * Move the circle horizontally.
      * @param distance the desired distance in pixels
      */
-    public void moveHorizontal(int distance){
+    public void moveHorizontal(float distance){
         erase();
         xPosition += distance;
         draw();
@@ -97,7 +97,7 @@ public class Circle{
      * Move the circle vertically.
      * @param distance the desired distance in pixels
      */
-    public void moveVertical(int distance){
+    public void moveVertical(float distance){
         erase();
         yPosition += distance;
         draw();
@@ -107,8 +107,8 @@ public class Circle{
      * Slowly move the circle horizontally.
      * @param distance the desired distance in pixels
      */
-    public void slowMove(int xdistance, int ydistance) {
-    int deltaX, deltaY;
+    public void slowMove(float xdistance, float ydistance) {
+    float deltaX, deltaY;
 
     if (xdistance < 0) {
         deltaX = -5;
@@ -158,15 +158,15 @@ public class Circle{
         draw();
     }
 
-    public int getDiameter(){
+    public float getDiameter(){
         return diameter;
     }
     
-    public int getxPosition(){
+    public float getxPosition(){
         return xPosition;
     }
     
-    public int getyPosition(){
+    public float getyPosition(){
         return yPosition;
     }
 }
