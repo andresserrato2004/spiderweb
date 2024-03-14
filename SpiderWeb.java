@@ -720,10 +720,12 @@ public class SpiderWeb {
                 arm.changeColor(color);
                 lineList.set(strand, arm);
             }
-            if (!isSpot) {
 
+            if (externalCall && !isVisible) {
                 makeVisible();
+                externalCall = false;
             }
+
             isOk = true;
         }
         return isOk;
