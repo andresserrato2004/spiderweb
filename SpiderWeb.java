@@ -46,6 +46,8 @@ public class SpiderWeb {
     private List<Integer> hilosTomados;
     private boolean isOk;
     private ArrayList<Line> recorrido = new ArrayList<Line>();
+    private boolean isStrand;
+    private int aCum;
 
     /**
      * Constructor de la clase spiderWeb.
@@ -133,6 +135,7 @@ public class SpiderWeb {
             isVisible = true;
 
         }
+        aCum += 1;
     }
 
     /**
@@ -152,6 +155,10 @@ public class SpiderWeb {
         isBridges = false;
         isSpot = true;
         isVisible = false;
+        
+        if (isStrand){
+            isSpot = false;
+        }
 
 
     }
@@ -671,7 +678,13 @@ public class SpiderWeb {
      * de los brazos con el nuevo número de brazos y hace visible nuevamente la red de telaraña.
      */
     public void addStrand(){
+<<<<<<< HEAD
         makeInvisible();
+=======
+
+        makeInvisible();
+        isStrand = true;
+>>>>>>> 6a8b5a6328ca9d12993ce1bfc27fa2bac5dc9d5b
         strands += 1;
         list = new angles(radio, strands);
         this.angle = list.getCant();
@@ -694,8 +707,14 @@ public class SpiderWeb {
             lineList.set(strand, arm);
         }
         eraseRecorrido();
+<<<<<<< HEAD
         makeVisible();
 
+=======
+        if (aCum != 0){
+            makeVisible();
+        }
+>>>>>>> 6a8b5a6328ca9d12993ce1bfc27fa2bac5dc9d5b
     }
 
     /**
