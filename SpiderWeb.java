@@ -122,6 +122,8 @@ public class SpiderWeb {
      */
     public void makeVisible(){
         isSpot = false;
+
+        System.out.println(isBridges+"hola ");
         if(!isVisible && !isSpot){
             for (String color : bridgesColor.keySet()) {
                 Bridges bridge = bridgesColor.get(color);
@@ -264,7 +266,8 @@ public class SpiderWeb {
         y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
         Bridges bridge = new Bridges (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge,bridgesColor.get(color).hiloInicial,bridgesColor.get(color).hiloFinal, distance );
         bridge.changeColor(color);
-        bridge.makeVisible();
+
+        System.out.println("hola ");
         hideBridges();
         bridgesColor.put(color, bridge);
         int index = 0;
@@ -279,6 +282,7 @@ public class SpiderWeb {
                 index = 0;
             }
         if (isBridges){
+            System.out.println(isBridges+"isBridges ");
             showBridges();
         }
 
@@ -351,7 +355,6 @@ public class SpiderWeb {
             Strands arm = lineList.get(strand);
             arm.changeColor("black");
             lineList.set(strand, arm);
-            arm.makeVisible();
             if(!isSpot){
                 makeVisible();
             }
@@ -375,9 +378,9 @@ public class SpiderWeb {
      * Muestra todos los puentes de la red de telaraña.
      */
     private void showBridges(){
+        System.out.println(isBridges+"isBridges ");
         for(String color: bridgesColor.keySet()){
             Bridges bridge = bridgesColor.get(color);
-
             bridge.makeVisible();
         }
 
@@ -680,6 +683,7 @@ public class SpiderWeb {
             for (Bridges l : bridgesByStrand.get(strand)){
                 float distance = l.distance;
                 l.makeInvisible();
+
                 relocateBridgeAutomatico(l.getColor(), distance);
             }
         }
