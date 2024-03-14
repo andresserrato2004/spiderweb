@@ -1,5 +1,8 @@
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.JOptionPane;
+import java.lang.String;
 
 /**
  * Clase que representa una red de telaraña con puentes y puntos de referencia.
@@ -48,6 +51,9 @@ public class SpiderWeb {
     private ArrayList<Line> recorrido = new ArrayList<Line>();
     private boolean isStrand;
     private boolean externalCall;
+    private String[][] bridgesArray;
+
+
 
     /**
      * Constructor de la clase spiderWeb.
@@ -77,9 +83,13 @@ public class SpiderWeb {
         cordenates();
     }
 
-    public SpiderWeb(int strand, int favoritestrand, ArrayList<ArrayList <Integer>> bridges){
+    public SpiderWeb(int strand, int favoritestrand, int[][] bridgesData){
+
+
         radio = 200;
         this.strands = strand;
+        Canvas canvas = new Canvas("SpiderWeb Canvas", 700, 700, Color.white);
+
         this.list = new angles(radio, strands);
         this.angle = list.getCant();
         this.lists = list.getList();
@@ -94,7 +104,15 @@ public class SpiderWeb {
         for(int i = 0; i < strands ;i++){
             bridgesByStrand.put(i, new ArrayList<>());
         }
+        for (int[] bridgeData : bridgesData) {
+            int firststrand = bridgeData[1];
+            int distance = bridgeData[0];
+            String color = canvas.generateRandomColor();
+            addBridge(color, distance, firststrand);
+        }
         cordenates();
+        addSpot("yellow", favoritestrand);
+
     }
 
     /**

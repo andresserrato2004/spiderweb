@@ -50,7 +50,7 @@ public class Canvas{
      * @param height  the desired height for the canvas
      * @param bgClour  the desired background colour of the canvas
      */
-    private Canvas(String title, int width, int height, Color bgColour){
+    Canvas(String title, int width, int height, Color bgColour){
         frame = new JFrame();
         canvas = new CanvasPane();
         frame.setContentPane(canvas);
@@ -110,26 +110,47 @@ public class Canvas{
     }
 
     /**
+     * Genera un color aleatorio en formato hexadecimal.
+     *
+     * @return Un string que representa un color en formato hexadecimal.
+     */
+    public String generateRandomColor() {
+        Random random = new Random();
+        int nextInt = random.nextInt(256*256*256);
+        String colorCode = String.format("#%06x", nextInt);
+        return colorCode;
+    }
+
+    /**
      * Set the foreground colour of the Canvas.
-     * @param  newColour   the new colour for the foreground of the Canvas 
+     * @param  colorString   the new colour for the foreground of the Canvas
      */
     public void setForegroundColor(String colorString){
-        if(colorString.equals("red"))
-            graphic.setColor(Color.red);
-        else if(colorString.equals("black"))
-            graphic.setColor(Color.black);
-        else if(colorString.equals("blue"))
-            graphic.setColor(Color.blue);
-        else if(colorString.equals("yellow"))
-            graphic.setColor(Color.yellow);
-        else if(colorString.equals("green"))
-            graphic.setColor(Color.green);
-        else if(colorString.equals("magenta"))
-            graphic.setColor(Color.magenta);
-        else if(colorString.equals("white"))
-            graphic.setColor(Color.white);
-        else
-            graphic.setColor(Color.black);
+        if(colorString.startsWith("#")) {
+            // Parse color from hexadecimal string
+            int r = Integer.parseInt(colorString.substring(1, 3), 16);
+            int g = Integer.parseInt(colorString.substring(3, 5), 16);
+            int b = Integer.parseInt(colorString.substring(5, 7), 16);
+            graphic.setColor(new Color(r, g, b));
+        } else {
+            // Existing color handling code
+            if(colorString.equals("red"))
+                graphic.setColor(Color.red);
+            else if(colorString.equals("black"))
+                graphic.setColor(Color.black);
+            else if(colorString.equals("blue"))
+                graphic.setColor(Color.blue);
+            else if(colorString.equals("yellow"))
+                graphic.setColor(Color.yellow);
+            else if(colorString.equals("green"))
+                graphic.setColor(Color.green);
+            else if(colorString.equals("magenta"))
+                graphic.setColor(Color.magenta);
+            else if(colorString.equals("white"))
+                graphic.setColor(Color.white);
+            else
+                graphic.setColor(Color.black);
+        }
     }
 
     /**
