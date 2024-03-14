@@ -47,7 +47,6 @@ public class SpiderWeb {
     private boolean isOk;
     private ArrayList<Line> recorrido = new ArrayList<Line>();
     private boolean isStrand;
-    private int aCum;
 
     /**
      * Constructor de la clase spiderWeb.
@@ -135,7 +134,6 @@ public class SpiderWeb {
             isVisible = true;
 
         }
-        aCum += 1;
     }
 
     /**
@@ -155,10 +153,6 @@ public class SpiderWeb {
         isBridges = false;
         isSpot = true;
         isVisible = false;
-        
-        if (isStrand){
-            isSpot = false;
-        }
 
 
     }
@@ -464,7 +458,7 @@ public class SpiderWeb {
     /**
      * Determina el siguiente puente que tiene que tomar la araña teniendo en cuenta que solo puede ir hacia adelante.
      *
-     * @param listBridge es una lista de puentes que tiene el hilo donde esta actualmente la araña
+     * @param listBrigde es una lista de puentes que tiene el hilo donde esta actualmente la araña
      * @param strand es el hilo donde esta parada la araña
      * @param xSpiderActual ySpiderActual es la posicion actual de la araña para poder calcular cual brige
      * @return devuelve un Map de un elemento que indica si encontro el bridge y el puente mas cercano hacia adelante de la araña.
@@ -686,6 +680,7 @@ public class SpiderWeb {
         makeInvisible();
         makeInvisible();
         isStrand = true;
+        makeInvisible();
         strands += 1;
         list = new angles(radio, strands);
         this.angle = list.getCant();
@@ -709,9 +704,7 @@ public class SpiderWeb {
         }
         eraseRecorrido();
         makeVisible();
-        if (aCum != 0){
-            makeVisible();
-        }
+
     }
 
     /**
