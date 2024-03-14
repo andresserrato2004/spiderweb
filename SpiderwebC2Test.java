@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.LinkedTransferQueue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -168,7 +169,9 @@ public class SpiderwebC2Test {
     @Test
     public void accordingGSShouldSpots() {
         String[] result = {"green"};
-        assertArrayEquals(new ArrayList[]{spiderWeb.spots()}, result);
+        spiderWeb.addSpot("green", 4);
+
+        assertArrayEquals(result, spiderWeb.spots().toArray());
     }
     //noOk
     @Test
@@ -181,8 +184,10 @@ public class SpiderwebC2Test {
     //ok
     @Test
     public void accordingGSShouldSpot() {
+        spiderWeb.addSpot("red", 4);
         spiderWeb.spot("red");
-        assertTrue(spiderWeb.ok());
+        int result = 4;
+        assertEquals(result, spiderWeb.spot("red"));
     }
     //noOk
     @Test

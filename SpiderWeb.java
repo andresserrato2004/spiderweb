@@ -356,7 +356,11 @@ public class SpiderWeb {
             arm.changeColor("black");
             lineList.set(strand, arm);
             if(!isSpot){
-                makeVisible();
+                for(Strands arms : lineList){
+                    arms.makeVisible();
+                }
+                spider.makeVisible();
+
             }
             spotColor.remove(color);
             colorSports.remove(color);
@@ -602,7 +606,7 @@ public class SpiderWeb {
             spotColorsMessage.append(color).append("\n");
         }
         JOptionPane.showMessageDialog(null, spotColorsMessage.toString(), "Colores de los spots", JOptionPane.INFORMATION_MESSAGE);
-        return null;
+        return colorSports;
         }
     
     /**
