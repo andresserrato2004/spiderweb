@@ -521,8 +521,8 @@ public class SpiderWeb {
                     }
                    else{
                        strand += 1;
-                    }               
-                   
+                    }
+
                }else {
                    if(strand == 0){
                     strand = strands -1;
@@ -540,7 +540,11 @@ public class SpiderWeb {
                 walk.add(finishPoint);
                 foundBridge = true;
             } else {
-                strand += 1;
+                if (spotColor.get(colorSports.get(0)) != strand){
+                    walk = new ArrayList<>();
+                    break;
+                }
+               strand += 1;
                 if (strand >= strands-1) {
                     walk = new ArrayList<>();
                     break;
@@ -678,13 +682,10 @@ public class SpiderWeb {
      * de los brazos con el nuevo número de brazos y hace visible nuevamente la red de telaraña.
      */
     public void addStrand(){
-<<<<<<< HEAD
-        makeInvisible();
-=======
 
         makeInvisible();
+        makeInvisible();
         isStrand = true;
->>>>>>> 6a8b5a6328ca9d12993ce1bfc27fa2bac5dc9d5b
         strands += 1;
         list = new angles(radio, strands);
         this.angle = list.getCant();
@@ -707,14 +708,10 @@ public class SpiderWeb {
             lineList.set(strand, arm);
         }
         eraseRecorrido();
-<<<<<<< HEAD
         makeVisible();
-
-=======
         if (aCum != 0){
             makeVisible();
         }
->>>>>>> 6a8b5a6328ca9d12993ce1bfc27fa2bac5dc9d5b
     }
 
     /**
