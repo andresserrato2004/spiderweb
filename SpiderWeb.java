@@ -47,6 +47,7 @@ public class SpiderWeb {
     private boolean isOk;
     private ArrayList<Line> recorrido = new ArrayList<Line>();
     private boolean isStrand;
+    private boolean externalCall;
 
     /**
      * Constructor de la clase spiderWeb.
@@ -132,7 +133,7 @@ public class SpiderWeb {
             spider.makeVisible();
             isBridges = true;
             isVisible = true;
-
+            externalCall = true;
         }
     }
 
@@ -298,17 +299,6 @@ public class SpiderWeb {
             bridgesColor.remove(color);
             colorBridges.remove(color);
             bridgesNoUsed.remove(color);
-            int index2 = 0;
-            for (int i =  0; i<strands; i++){
-                ArrayList<Bridges> listBridge = bridgesByStrand.get(i);
-                for (Bridges l : listBridge){
-                    if (Objects.equals(l.getColor(), color)){
-                        bridgesByStrand.get(i).remove(index2);
-                    }
-                    index2 += 1;
-                }
-                index2 = 0;
-            }
             isOk= true;
         }
         return isOk;
@@ -677,8 +667,6 @@ public class SpiderWeb {
      */
     public void addStrand(){
 
-        makeInvisible();
-        makeInvisible();
         isStrand = true;
         makeInvisible();
         strands += 1;
@@ -703,8 +691,10 @@ public class SpiderWeb {
             lineList.set(strand, arm);
         }
         eraseRecorrido();
-        makeVisible();
-
+        if (externalCall && !isVisible) {
+            makeVisible();
+            externalCall = false;
+        }
     }
 
     /**
