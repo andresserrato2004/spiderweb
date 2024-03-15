@@ -87,8 +87,6 @@ public class Line {
      */
     public void makeVisible() {
         isVisible = true;
-
-        System.out.println("isBridges ");
         draw();
     }
     

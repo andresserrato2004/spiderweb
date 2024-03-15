@@ -25,7 +25,6 @@ public class Spider {
     private int xPosition;
     private int yPosition;
     private boolean isSitting;
-    private Rectangle rectangle;
     
     /**
      * Crea una nueva araña en la posición especificada por las coordenadas (xPosition, yPosition).
@@ -60,21 +59,8 @@ public class Spider {
         body.changeColor("black");
         organizeHead();
         organizeFeet();
-        //organizeRectangle();
     }
-    
-    /*
-     * Organiza el rectángulo que representa el cuerpo de la araña.
-     * Este método es utilizado internamente y no está destinado a ser llamado directamente.
-     
-    private void organizeRectangle() {
-        this.rectangle = new Rectangle();
-        rectangle.changeSize(10, 20);
-        rectangle.moveVertical(body.getyPosition() + 16);
-        rectangle.moveHorizontal(body.getxPosition() - 64);
-        rectangle.changeColor("green");
-    }
-    */
+
     
     /*
      * Organiza la cabeza de la araña.

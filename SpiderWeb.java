@@ -141,7 +141,6 @@ public class SpiderWeb {
     public void makeVisible(){
         isSpot = false;
 
-        System.out.println(isBridges+"hola ");
         if(!isVisible && !isSpot){
             for (String color : bridgesColor.keySet()) {
                 Bridges bridge = bridgesColor.get(color);
@@ -154,6 +153,9 @@ public class SpiderWeb {
             isBridges = true;
             isVisible = true;
             externalCall = true;
+            for (Line l: recorrido){
+                l.makeVisible();
+            }
         }
     }
 
@@ -174,7 +176,9 @@ public class SpiderWeb {
         isBridges = false;
         isSpot = true;
         isVisible = false;
-
+        for (Line l: recorrido){
+            l.makeInvisible();
+        }
 
     }
 
@@ -285,7 +289,7 @@ public class SpiderWeb {
         Bridges bridge = new Bridges (xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard -y2Bridge,bridgesColor.get(color).hiloInicial,bridgesColor.get(color).hiloFinal, distance );
         bridge.changeColor(color);
 
-        System.out.println("hola ");
+
         hideBridges();
         bridgesColor.put(color, bridge);
         int index = 0;
@@ -300,7 +304,6 @@ public class SpiderWeb {
                 index = 0;
             }
         if (isBridges){
-            System.out.println(isBridges+"isBridges ");
             showBridges();
         }
 
@@ -400,7 +403,6 @@ public class SpiderWeb {
      * Muestra todos los puentes de la red de telaraña.
      */
     private void showBridges(){
-        System.out.println(isBridges+"isBridges ");
         for(String color: bridgesColor.keySet()){
             Bridges bridge = bridgesColor.get(color);
             bridge.makeVisible();
@@ -608,8 +610,6 @@ public class SpiderWeb {
         }
         JOptionPane.showMessageDialog(null, message.toString(), "Colores de Puentes", JOptionPane.INFORMATION_MESSAGE);
         String[] result = {"red", "blue"};
-
-        System.out.println(colorBridges);
         return colorBridges;
     }
 
@@ -657,16 +657,9 @@ public class SpiderWeb {
             ArrayList<Bridges> bridges = bridgesByStrand.get(i);
             for (Bridges bridge : bridges) {
                 if (Objects.equals(bridge.getColor(), color)) {
-                    if (strands-1 == i){
-                        strandsWithBridge.add(i + 1);
-                        strandsWithBridge.add(1);
-                        break;
-                    }
-                    else{
-                        strandsWithBridge.add(i + 1);
-                        strandsWithBridge.add(i+2);
-                        break;
-                    }
+                    strandsWithBridge.add(i + 1);
+                    break;
+
                 }
             }
         }
