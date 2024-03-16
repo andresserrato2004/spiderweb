@@ -49,9 +49,6 @@ public class SpiderWeb {
     private List<Integer> hilosTomados;
     private boolean isOk;
     private ArrayList<Line> recorrido = new ArrayList<Line>();
-    private boolean isStrand;
-    private boolean externalCall;
-    private String[][] bridgesArray;
 
 
 
@@ -152,7 +149,6 @@ public class SpiderWeb {
             spider.makeVisible();
             isBridges = true;
             isVisible = true;
-            externalCall = true;
             for (Line l: recorrido){
                 l.makeVisible();
             }
@@ -506,65 +502,42 @@ public class SpiderWeb {
      * @return Una lista de listas de enteros que representan los puntos a lo largo del brazo de la telaraña hasta el primer puente encontrado.
      */
     private ArrayList<ArrayList<Float>> isPosible(int strand) {
-        ArrayList<ArrayList<Float>> walk = new ArrayList<ArrayList<Float>>();
-        hilosTomados = new ArrayList<Integer>();
+        ArrayList<ArrayList<Float>> walk = new ArrayList<>();
+        hilosTomados = new ArrayList<>();
         float xSpiderActual = 300;
         float ySpiderActual = 300;
         boolean foundBridge = false;
-        while (!foundBridge) {
-            Map<Boolean,Bridges> brigdeMap = nextBridge(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
-            ArrayList<Boolean> ba = new ArrayList<Boolean>(brigdeMap.keySet());
-            boolean b = ba.get(0);
-           if (bridgesByStrand.get(strand).size() > 0 && b) {
-               hilosTomados.add(strand + 1);
-               Bridges bridge = brigdeMap.get(b);
-               ArrayList<Float> points = bridge.returnPointAcomodados(strand);
-               ArrayList<Float> firstPoint = new ArrayList<Float>();
-               ArrayList<Float> secondPoint = new ArrayList<Float>();
-               firstPoint.addAll(Arrays.asList(points.get(0),points.get(1)));//agrego los elementos del array de una sola vez
-               secondPoint.addAll(Arrays.asList(points.get(2),points.get(3)));
-               xSpiderActual = points.get(2);
-               ySpiderActual = points.get(3);
-               walk.addAll(Arrays.asList(firstPoint,secondPoint));
-               if (bridge.hiloInicial == strand){
-                   if (strand== strands-1){
-                        strand = 0;
-                    }
-                   else{
-                       strand += 1;
-                    }
 
-               }else {
-                   if(strand == 0){
-                    strand = strands -1;
-                    }
-                    else{
-                       strand-=1;
-                    }
-               }
-               foundBridge = false;
-            }else if (spotColor.get(colorSports.get(0)) == strand) {
+        while (!foundBridge) {
+            Map<Boolean,Bridges> bridgeMap = nextBridge(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
+            boolean bridgeExists = new ArrayList<>(bridgeMap.keySet()).get(0);
+
+            if (bridgesByStrand.get(strand).size() > 0 && bridgeExists) {
                 hilosTomados.add(strand + 1);
-                ArrayList<Float> finishPoint = new ArrayList<Float>();
+                Bridges bridge = bridgeMap.get(bridgeExists);
+                ArrayList<Float> points = bridge.returnPointAcomodados(strand);
+                ArrayList<Float> firstPoint = new ArrayList<>(Arrays.asList(points.get(0),points.get(1)));
+                ArrayList<Float> secondPoint = new ArrayList<>(Arrays.asList(points.get(2),points.get(3)));
+                xSpiderActual = points.get(2);
+                ySpiderActual = points.get(3);
+                walk.addAll(Arrays.asList(firstPoint,secondPoint));
+                strand = (bridge.hiloInicial == strand) ? (strand == strands-1 ? 0 : strand + 1) : (strand == 0 ? strands -1 : strand - 1);
+            } else if (spotColor.get(colorSports.get(0)) == strand) {
+                hilosTomados.add(strand + 1);
                 Strands arm = lineList.get(strand);
-                finishPoint.addAll(Arrays.asList(arm.getX2(),arm.getY2()));
+                ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(arm.getX2(),arm.getY2()));
                 walk.add(finishPoint);
                 foundBridge = true;
             } else {
-                if (spotColor.get(colorSports.get(0)) != strand){
-                    walk = new ArrayList<>();
+                if (spotColor.get(colorSports.get(0)) != strand) {
+                    walk.clear();
                     break;
                 }
-               strand += 1;
-                if (strand >= strands-1) {
-                    walk = new ArrayList<>();
-                    break;
-                }
+                strand = (strand >= strands-1) ? 0 : strand + 1;
             }
         }
         return walk;
     }
-
 
     /**
      * Devuelve una lista de colores de los spots que son alcanzables desde la posición actual de la araña en la telaraña.
@@ -684,8 +657,7 @@ public class SpiderWeb {
      * de los brazos con el nuevo número de brazos y hace visible nuevamente la red de telaraña.
      */
     public void addStrand(){
-
-        isStrand = true;
+        boolean wasVisible = isVisible;
         makeInvisible();
         strands += 1;
         list = new angles(radio, strands);
@@ -698,7 +670,6 @@ public class SpiderWeb {
             for (Bridges l : bridgesByStrand.get(strand)){
                 float distance = l.distance;
                 l.makeInvisible();
-
                 relocateBridgeAutomatico(l.getColor(), distance);
             }
         }
@@ -710,9 +681,9 @@ public class SpiderWeb {
             lineList.set(strand, arm);
         }
         eraseRecorrido();
-        if (externalCall && !isVisible) {
+        if (wasVisible && !isVisible) {
             makeVisible();
-            externalCall = false;
+
         }
     }
 
@@ -726,6 +697,7 @@ public class SpiderWeb {
             JOptionPane.showMessageDialog(null, "No se puede agrandar con numeros negativos.", "Error", JOptionPane.INFORMATION_MESSAGE);
             isOk = false;
         }else{
+            boolean wasVisible = isVisible;
             makeInvisible();
             this.radio = radio * (100 + porcentage) / 100;
             list = new angles(radio, strands);
@@ -739,10 +711,8 @@ public class SpiderWeb {
                 arm.changeColor(color);
                 lineList.set(strand, arm);
             }
-
-            if (externalCall && !isVisible) {
+            if (wasVisible && !isVisible) {
                 makeVisible();
-                externalCall = false;
             }
 
             isOk = true;
