@@ -195,7 +195,9 @@ public class SpiderWeb {
             }
         }
         if (colorRepe){
-            JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
+            }
             isOk = false;
         }else{
             angleFirstStrand = (firstStrand - 1) * angle;
@@ -242,7 +244,9 @@ public class SpiderWeb {
         angleFirstStrand = (bridgeStrand.get(color) - 1) * angle;
         angleSecondStrand = bridgeStrand.get(color) * angle;
         if (distance < 0) {
-            JOptionPane.showMessageDialog(null, "No se puede reubicar el puente con una distancia negativa.");
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "No se puede reubicar el puente con una distancia negativa.");
+            }
             isOk = false;
         }else{
             xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
@@ -313,8 +317,10 @@ public class SpiderWeb {
     public boolean delBridge(String color){
         Bridges delbridge = bridgesColor.get(color);
         if (delbridge == null) {
-            JOptionPane.showMessageDialog(null, "El puente no existe.");
-            this.isOk = false; 
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "El puente no existe.");
+            }
+            this.isOk = false;
         } else {
             delbridge.makeInvisible();
             bridgesColor.remove(color);
@@ -341,7 +347,9 @@ public class SpiderWeb {
         }
         if (colorRepe){
             isOk = false;
-            JOptionPane.showMessageDialog(null, "No se puede añadir spot del mismo color.");
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "No se puede añadir spot del mismo color.");
+            }
         }else{
             Strands arm = lineList.get(strand-1);
             arm.changeColor(color);
@@ -364,7 +372,9 @@ public class SpiderWeb {
      */
     public void delSpot(String color){
         if (!spotColor.containsKey(color)) {
-            JOptionPane.showMessageDialog(null, "El spot no existe.");
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "El spot no existe.");
+            }
             this.isOk = false;
         } else {
             int strand = spotColor.get(color);
@@ -417,7 +427,9 @@ public class SpiderWeb {
             spider.spiderSit();
             isOk = true;
         }else{
-            JOptionPane.showMessageDialog(null, "El strand no existe para sentar a la araña.");
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "El strand no existe para sentar a la araña.");
+            }
             isOk = false;
         }
     }
@@ -431,7 +443,9 @@ public class SpiderWeb {
         if (this.spider.isSpiderSitting()) {
             ArrayList<ArrayList<Float>> walk = isPosible((int) strand - 1);
             if(walk.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "La araña no tiene posibilidad de llegar al camino preferido desde el hilo:"+ strand, "No llega al hilo preferido", JOptionPane.INFORMATION_MESSAGE);
+                if (isVisible) {
+                    JOptionPane.showMessageDialog(null, "La araña no tiene posibilidad de llegar al camino preferido desde el hilo:"+ strand, "No llega al hilo preferido", JOptionPane.INFORMATION_MESSAGE);
+                }
                 return;
             }
             if (advance) {
@@ -457,7 +471,9 @@ public class SpiderWeb {
                 eraseRecorrido();
             }
         }else{
-            JOptionPane.showMessageDialog(null, "La araña no puede caminar", "Error en caminar", JOptionPane.INFORMATION_MESSAGE);
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "La araña no puede caminar", "Error en caminar", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 
@@ -581,8 +597,9 @@ public class SpiderWeb {
         for (String color : colorBridges) {
             message.append(color).append("\n");
         }
-        JOptionPane.showMessageDialog(null, message.toString(), "Colores de Puentes", JOptionPane.INFORMATION_MESSAGE);
-        String[] result = {"red", "blue"};
+        if (isVisible){
+            JOptionPane.showMessageDialog(null, message.toString(), "Colores de Puentes", JOptionPane.INFORMATION_MESSAGE);
+        }
         return colorBridges;
     }
 
@@ -596,7 +613,9 @@ public class SpiderWeb {
         for (String color : colorSports) {
             spotColorsMessage.append(color).append("\n");
         }
-        JOptionPane.showMessageDialog(null, spotColorsMessage.toString(), "Colores de los spots", JOptionPane.INFORMATION_MESSAGE);
+        if (isVisible){
+            JOptionPane.showMessageDialog(null, spotColorsMessage.toString(), "Colores de los spots", JOptionPane.INFORMATION_MESSAGE);
+        }
         return colorSports;
         }
     
@@ -608,7 +627,9 @@ public class SpiderWeb {
      */   
     public int spot(String color) {
         if (!spotColor.containsKey(color)) {
-            JOptionPane.showMessageDialog(null, "El spot de color " + color + " no existe en la telaraña.");
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "El spot de color " + color + " no existe en la telaraña.");
+            }
             isOk = false;
             return -1;
         } else {
@@ -645,9 +666,11 @@ public class SpiderWeb {
                 strandsMessage.append(", ");
             }
         }
-        JOptionPane.showMessageDialog(null, strandsMessage.toString(), "Strand", JOptionPane.INFORMATION_MESSAGE);
-        return strandsWithBridge;
+        if (isVisible){
+            JOptionPane.showMessageDialog(null, strandsMessage.toString(), "Strand", JOptionPane.INFORMATION_MESSAGE);
         }
+        return strandsWithBridge;
+    }
 
 
     /**
@@ -694,7 +717,9 @@ public class SpiderWeb {
      */
     public boolean enlarge(int porcentage) {
         if (porcentage < 0) {
-            JOptionPane.showMessageDialog(null, "No se puede agrandar con numeros negativos.", "Error", JOptionPane.INFORMATION_MESSAGE);
+            if(isVisible){
+                JOptionPane.showMessageDialog(null, "No se puede agrandar con numeros negativos.", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
             isOk = false;
         }else{
             boolean wasVisible = isVisible;
