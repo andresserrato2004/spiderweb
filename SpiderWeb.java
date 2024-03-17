@@ -49,6 +49,7 @@ public class SpiderWeb {
     private List<Integer> hilosTomados;
     private boolean isOk;
     private ArrayList<Line> recorrido = new ArrayList<Line>();
+    private ArrayList<Bridges> used = new ArrayList<Bridges>();
 
 
 
@@ -206,7 +207,6 @@ public class SpiderWeb {
             yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
             x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
             y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
-            // Creación y configuración del puente
             int endStrand = firstStrand;
             if(firstStrand == strands){
                 endStrand = 0;
@@ -444,7 +444,7 @@ public class SpiderWeb {
             ArrayList<ArrayList<Float>> walk = isPosible((int) strand - 1);
             if(walk.isEmpty()) {
                 if (isVisible) {
-                    JOptionPane.showMessageDialog(null, "La araña no tiene posibilidad de llegar al camino preferido desde el hilo:"+ strand, "No llega al hilo preferido", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "La araña no tiene posibilidad de llegar al camino preferido desde el hilo:" + strand, "No llega al hilo preferido", JOptionPane.INFORMATION_MESSAGE);
                 }
                 return;
             }
@@ -477,6 +477,8 @@ public class SpiderWeb {
         }
     }
 
+
+
     private void eraseRecorrido(){
         for (Line l: recorrido){
             l.makeInvisible();
@@ -501,8 +503,8 @@ public class SpiderWeb {
         for (Bridges b: listBrigde){
             ArrayList<Float> points = b.returnPoint(strand);
             float distance = (float) Math.sqrt(Math.pow(points.get(0) - xStard, 2)+ Math.pow(points.get(1) - yStard, 2));
-            // nos fijamos que la distancia sea mayor a la distancia de la araña asi tomamos un puente que esta hacia delante de la araña y ademas nos aseguramos que sea el mas cercano a la araña 
-            if (distance > distanceSpider && distance-distanceSpider < distanceMinSB){ 
+            // nos fijamos que la distancia sea mayor a la distancia de la araña asi tomamos un puente que esta hacia delante de la araña y ademas nos aseguramos que sea el mas cercano a la araña
+            if (distance > distanceSpider && distance-distanceSpider < distanceMinSB){
                 foundBridge = true;
                 distanceMinSB = b.distance - distanceSpider;
                 bridges = b;
@@ -511,23 +513,25 @@ public class SpiderWeb {
         brigdeMap.put(foundBridge, bridges);
         return brigdeMap;
     }
+
+
+
     /**
      * Determina si es posible avanzar a lo largo del brazo de la telaraña desde una posición dada hasta el primer puente encontrado.
      *
      * @param strand El número del brazo de la telaraña desde el que se quiere comprobar si es posible avanzar.
      * @return Una lista de listas de enteros que representan los puntos a lo largo del brazo de la telaraña hasta el primer puente encontrado.
      */
+
     private ArrayList<ArrayList<Float>> isPosible(int strand) {
         ArrayList<ArrayList<Float>> walk = new ArrayList<>();
         hilosTomados = new ArrayList<>();
         float xSpiderActual = 300;
         float ySpiderActual = 300;
         boolean foundBridge = false;
-
         while (!foundBridge) {
             Map<Boolean,Bridges> bridgeMap = nextBridge(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
             boolean bridgeExists = new ArrayList<>(bridgeMap.keySet()).get(0);
-
             if (bridgesByStrand.get(strand).size() > 0 && bridgeExists) {
                 hilosTomados.add(strand + 1);
                 Bridges bridge = bridgeMap.get(bridgeExists);
@@ -554,6 +558,10 @@ public class SpiderWeb {
         }
         return walk;
     }
+
+
+
+
 
     /**
      * Devuelve una lista de colores de los spots que son alcanzables desde la posición actual de la araña en la telaraña.
