@@ -50,6 +50,8 @@ public class SpiderWeb {
     private boolean isOk;
     private ArrayList<Line> recorrido = new ArrayList<Line>();
     private ArrayList<Bridges> used = new ArrayList<Bridges>();
+    private float strand2;
+    private final Canvas canvas = new Canvas("SpiderWeb Canvas", 700, 700, Color.white);
 
 
 
@@ -86,7 +88,6 @@ public class SpiderWeb {
 
         radio = 200;
         this.strands = strand;
-        Canvas canvas = new Canvas("SpiderWeb Canvas", 700, 700, Color.white);
 
         this.list = new angles(radio, strands);
         this.angle = list.getCant();
@@ -441,35 +442,39 @@ public class SpiderWeb {
      */
     public void spiderWalk(boolean advance) {
         if (this.spider.isSpiderSitting()) {
-            ArrayList<ArrayList<Float>> walk = isPosible((int) strand - 1);
-            if(walk.isEmpty()) {
-                if (isVisible) {
-                    JOptionPane.showMessageDialog(null, "La araña no tiene posibilidad de llegar al camino preferido desde el hilo:" + strand, "No llega al hilo preferido", JOptionPane.INFORMATION_MESSAGE);
+                this.strand2 = strand;
+
+                ArrayList<ArrayList<Float>> walk = isPosible((int) strand2 - 1);
+                System.out.println(strand2 + "que esto ");
+                if (walk.isEmpty()) {
+                    if (isVisible) {
+                        JOptionPane.showMessageDialog(null, "La araña no tiene posibilidad de llegar al camino preferido desde el hilo:" + strand, "No llega al hilo preferido", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    return;
                 }
-                return;
-            }
-            if (advance) {
-                float xAnterior = 300;
-                float yAnterior = 300;
-                for (ArrayList<Float> point : walk) {
-                    spider.moveTo(point.get(0), point.get(1));
-                    Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
-                    l.changeColor("blue");
-                    l.makeVisible();
-                    recorrido.add(l);
-                    xAnterior = point.get(0);
-                    yAnterior = point.get(1);
+                if (advance) {
+                    float xAnterior = 300;
+                    float yAnterior = 300;
+                    for (ArrayList<Float> point : walk) {
+                        spider.moveTo(point.get(0), point.get(1));
+                        Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
+                        l.changeColor("blue");
+                        l.makeVisible();
+                        recorrido.add(l);
+                        xAnterior = point.get(0);
+                        yAnterior = point.get(1);
+                    }
+                } else {
+                    ArrayList<Float> finishPoint = new ArrayList<Float>();
+                    finishPoint.addAll(Arrays.asList((float) 300, (float) 300));
+                    walk.add(0, finishPoint);
+                    for (int i = walk.size() - 1; i >= 0; i--) {
+                        ArrayList<Float> point = walk.get(i);
+                        spider.moveTo(point.get(0), point.get(1));
+                    }
+                    eraseRecorrido();
                 }
-            } else {
-                ArrayList<Float> finishPoint = new ArrayList<Float>();
-                finishPoint.addAll(Arrays.asList((float)300,(float)300));
-                walk.add(0, finishPoint);
-                for (int i = walk.size() - 1; i >= 0; i--) {
-                    ArrayList<Float> point = walk.get(i);
-                    spider.moveTo(point.get(0), point.get(1));
-                }
-                eraseRecorrido();
-            }
+
         }else{
             if (isVisible) {
                 JOptionPane.showMessageDialog(null, "La araña no puede caminar", "Error en caminar", JOptionPane.INFORMATION_MESSAGE);
@@ -499,17 +504,26 @@ public class SpiderWeb {
         float distanceSpider = (float) Math.sqrt(Math.pow(xSpiderActual - xStard, 2) + Math.pow(ySpiderActual - yStard, 2));
         Bridges bridges = new Bridges(0,0,0,0,1,2,0);
         Map<Boolean,Bridges> brigdeMap = new HashMap<Boolean,Bridges>();
+        float distanceBidge = 0;
         boolean foundBridge = false;
         for (Bridges b: listBrigde){
             ArrayList<Float> points = b.returnPoint(strand);
             float distance = (float) Math.sqrt(Math.pow(points.get(0) - xStard, 2)+ Math.pow(points.get(1) - yStard, 2));
+            distanceBidge = distance;
             // nos fijamos que la distancia sea mayor a la distancia de la araña asi tomamos un puente que esta hacia delante de la araña y ademas nos aseguramos que sea el mas cercano a la araña
-            if (distance > distanceSpider && distance-distanceSpider < distanceMinSB){
+            if ((distance > distanceSpider && distance-distanceSpider < distanceMinSB)&& !used.contains(b)){
                 foundBridge = true;
                 distanceMinSB = b.distance - distanceSpider;
                 bridges = b;
+                used.add(b);
             }
         }
+
+        if(!foundBridge){
+            String color = canvas.generateRandomColor();
+            addBridge(color ,(int) distanceBidge + 1 , strand + 1);
+        }
+
         brigdeMap.put(foundBridge, bridges);
         return brigdeMap;
     }
@@ -529,7 +543,8 @@ public class SpiderWeb {
         float xSpiderActual = 300;
         float ySpiderActual = 300;
         boolean foundBridge = false;
-        while (!foundBridge) {
+        while (!foundBridge && (strand < spotColor.get(colorSports.get(0)))) {
+            System.out.println(strand+"ispo");
             Map<Boolean,Bridges> bridgeMap = nextBridge(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
             boolean bridgeExists = new ArrayList<>(bridgeMap.keySet()).get(0);
             if (bridgesByStrand.get(strand).size() > 0 && bridgeExists) {
@@ -542,18 +557,7 @@ public class SpiderWeb {
                 ySpiderActual = points.get(3);
                 walk.addAll(Arrays.asList(firstPoint,secondPoint));
                 strand = (bridge.hiloInicial == strand) ? (strand == strands-1 ? 0 : strand + 1) : (strand == 0 ? strands -1 : strand - 1);
-            } else if (spotColor.get(colorSports.get(0)) == strand) {
-                hilosTomados.add(strand + 1);
-                Strands arm = lineList.get(strand);
-                ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(arm.getX2(),arm.getY2()));
-                walk.add(finishPoint);
-                foundBridge = true;
-            } else {
-                if (spotColor.get(colorSports.get(0)) != strand) {
-                    walk.clear();
-                    break;
-                }
-                strand = (strand >= strands-1) ? 0 : strand + 1;
+                strand2 = strand;
             }
         }
         return walk;
@@ -586,7 +590,6 @@ public class SpiderWeb {
                 else{
                     finishWalk = false;
                 }
-                
             }
             finishWalk = true;
         }
