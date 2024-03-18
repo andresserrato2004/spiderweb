@@ -445,7 +445,7 @@ public class SpiderWeb {
                 this.strand2 = strand;
 
                 ArrayList<ArrayList<Float>> walk = isPosible((int) strand2 - 1);
-                System.out.println(strand2 + "que esto ");
+                //System.out.println(strand2 + "que esto ");
                 if (walk.isEmpty()) {
                     if (isVisible) {
                         JOptionPane.showMessageDialog(null, "La araña no tiene posibilidad de llegar al camino preferido desde el hilo:" + strand, "No llega al hilo preferido", JOptionPane.INFORMATION_MESSAGE);
@@ -544,7 +544,7 @@ public class SpiderWeb {
         float ySpiderActual = 300;
         boolean foundBridge = false;
         while (!foundBridge && (strand < spotColor.get(colorSports.get(0)))) {
-            System.out.println(strand+"ispo");
+
             Map<Boolean,Bridges> bridgeMap = nextBridge(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
             boolean bridgeExists = new ArrayList<>(bridgeMap.keySet()).get(0);
             if (bridgesByStrand.get(strand).size() > 0 && bridgeExists) {
@@ -595,8 +595,7 @@ public class SpiderWeb {
         }
         return spots;
     }
-    
-    
+
     
     /**
      * Devuelve una lista de los colores de los puentes en la red de telaraña.
