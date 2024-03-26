@@ -191,7 +191,7 @@ public class SpiderWeb {
 
     public void addBridge(String color, int distance, int firstStrand){
         //System.out.println(firstStrand+"strand33");
-        if (!verifyBridge(color,distance, firstStrand)) {
+        if (!verifyBridge(color,distance, firstStrand, true)) {
             isOk = false;
             return;
         }
@@ -216,49 +216,47 @@ public class SpiderWeb {
         }
     }
 
-    public boolean verifyBridge(String color, int distance, int firstStrand) {
+    public boolean verifyBridge(String color, int distance, int firstStrand, boolean showMessage) {
 
-        if (colorBridges.contains(color)) {
-            if (isVisible) {
-                JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
+    if (colorBridges.contains(color)) {
+        if (isVisible && showMessage) {
+            JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
+        }
+        return false;
+    }
+
+    int previousStrand = (firstStrand == 1) ? strands - 1 : firstStrand - 2;
+    int nextStrand = (firstStrand == strands) ? 0 : firstStrand;
+
+    for (Bridges bridge : bridgesByStrand.get(firstStrand - 1)) {
+        if (bridge.getDistance() == distance) {
+            if(isVisible && showMessage){
+                JOptionPane.showMessageDialog(null, "Ya existe un puente en este strand a la misma distancia.");
             }
             return false;
         }
-
-        int previousStrand = (firstStrand == 1) ? strands - 1 : firstStrand - 2;
-        int nextStrand = (firstStrand == strands) ? 0 : firstStrand;
-        //System.out.println(firstStrand-1+"strand0");
-
-        for (Bridges bridge : bridgesByStrand.get(firstStrand - 1)) {
-            if (bridge.getDistance() == distance) {
-                if(isVisible){
-                    JOptionPane.showMessageDialog(null, "Ya existe un puente en este strand a la misma distancia.");
-                }
-                return false;
-            }
-        }
-
-
-        for (Bridges bridge : bridgesByStrand.get(previousStrand)) {
-            if (bridge.getDistance() == distance) {
-                if(isVisible){
-                    JOptionPane.showMessageDialog(null, "Ya existe un puente en el strand adyacente a la misma distancia.");
-                }
-                return false;
-            }
-        }
-
-        for (Bridges bridge : bridgesByStrand.get(nextStrand)) {
-            if (bridge.getDistance() == distance) {
-                if(isVisible){
-                    JOptionPane.showMessageDialog(null, "Ya existe un puente en el strand adyacente a la misma distancia.");
-                }
-                return false;
-            }
-        }
-
-        return true;
     }
+
+    for (Bridges bridge : bridgesByStrand.get(previousStrand)) {
+        if (bridge.getDistance() == distance) {
+            if(isVisible && showMessage){
+                JOptionPane.showMessageDialog(null, "Ya existe un puente en el strand adyacente a la misma distancia.");
+            }
+            return false;
+        }
+    }
+
+    for (Bridges bridge : bridgesByStrand.get(nextStrand)) {
+        if (bridge.getDistance() == distance) {
+            if(isVisible && showMessage){
+                JOptionPane.showMessageDialog(null, "Ya existe un puente en el strand adyacente a la misma distancia.");
+            }
+            return false;
+        }
+    }
+
+    return true;
+}
      /**
      * Relocaliza un puente existente en la red de telaraña.
      *
@@ -351,6 +349,9 @@ public class SpiderWeb {
             bridgesColor.remove(color);
             colorBridges.remove(color);
             bridgesNoUsed.remove(color);
+            // Remove bridge from the list of bridges by strand
+            bridgesByStrand.get(delbridge.hiloInicial).remove(delbridge);
+            bridgesByStrand.get(delbridge.hiloFinal).remove(delbridge);
             isOk= true;
         }
         return isOk;
@@ -580,6 +581,9 @@ public class SpiderWeb {
                 foundBridge = true;
             } else {
                 if (spotColor.get(colorSports.get(0)) != strand) {
+                    Strands arm = lineList.get(strand);
+                    ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(arm.getX2(),arm.getY2()));
+                    walk.add(finishPoint);
                     break;
                 }
                 strand = (strand >= strands-1) ? 0 : strand + 1;

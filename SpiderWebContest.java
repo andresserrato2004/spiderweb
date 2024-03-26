@@ -22,9 +22,12 @@ public class SpiderWebContest {
     // n es el número de hilos, s es el hilo favorito de la araña
     static int n, s;
 
-    private ArrayList<int[]> vec = new ArrayList<>();
     private SpiderWeb spiderweb;
     private final Canvas canva = new  Canvas("spiderwebcontest", 800, 800, Color.WHITE);
+    private boolean simulatefake = false;
+
+    private ArrayList<Object> colors = new ArrayList<>();
+
 
     /**
      * updateMin es una funcion que se usa para actualizar el valor de un nodo del segment tree por el minimo entre el actual y el valor que se le pasa
@@ -204,48 +207,84 @@ public class SpiderWebContest {
     }
 
 
-   private ArrayList<int[]> createBridges(ArrayList<int[]> bridges, int sit) {
-    ArrayList<int[]> vec1 = new ArrayList<>();
-    ArrayList<int[]> newBidges = new ArrayList<>();
+    private ArrayList<int[]> createBridges1(ArrayList<int[]> bridges, int sit) {
+        ArrayList<int[]> vec1 = new ArrayList<>();
+        ArrayList<int[]> newBidges = new ArrayList<>();
+        int cantBridges = query(sit, 1, n, 1);
+        for (int strand = n; strand >= 1; strand--) {
+            for (int distance = 1; distance < spiderweb.getRadio(); distance++) {
+                String color = canva.generateRandomColor();
+                if (spiderweb.verifyBridge(color, distance, strand,false)) {
+                    int[] pair = new int[]{distance, strand};
+                    bridges.add(pair);
+                    vec1 = new ArrayList<>(bridges);
+                    vec1.sort((a, b) -> b[0] - a[0]);
+                    build(1, n, 1);
+                    nodeUpdater(vec1);
 
-    int cantBridges = query(sit, 1, n, 1);
-    for (int strand = 1; strand <= n; strand++) {
-        for (int distance = 1; distance < spiderweb.getRadio(); distance++) {
-            String color = canva.generateRandomColor();
-            if (spiderweb.verifyBridge(color, distance, strand)) {
-                int[] pair = new int[]{distance, strand};
-                bridges.add(pair);
-                vec1 = new ArrayList<>(bridges);
-                vec1.sort((a, b) -> b[0] - a[0]);
-                build(1, n, 1);
-                nodeUpdater(vec1);
-
-                if (query(sit, 1, n, 1) >= cantBridges) {
-                    // Eliminar el último puente añadido
-                    bridges.remove(bridges.size() - 1);
-                } else {
-                    System.out.println("Se puso un puente en el hilo " + strand + " con distancia " + distance);
-                    cantBridges = query(sit, 1, n, 1);
-                    newBidges.add(pair);
+                    if (query(sit, 1, n, 1) >= cantBridges) {
+                        // Eliminar el último puente añadido
+                        bridges.remove(bridges.size() - 1);
+                    } else {
+                        cantBridges = query(sit, 1, n, 1);
+                        newBidges.add(pair);
+                        colors.add(color);
+                        spiderweb.addBridge(color, pair[0], pair[1]);
+                    }
                 }
             }
         }
+        return newBidges;
     }
 
-    System.out.println(query(sit, 1, n, 1)+"final");
+
+   private ArrayList<int[]> createBridges(ArrayList<int[]> bridges, int sit) {
+        ArrayList<int[]> vec1 = new ArrayList<>();
+        ArrayList<int[]> newBidges = new ArrayList<>();
+
+        int cantBridges = query(sit, 1, n, 1);
+
+        for (int strand = 1; strand <= n; strand++) {
+            for (int distance = 1; distance < spiderweb.getRadio(); distance++) {
+                String color = canva.generateRandomColor();
+                if (spiderweb.verifyBridge(color, distance, strand,false)) {
+                    int[] pair = new int[]{distance, strand};
+                    bridges.add(pair);
+                    vec1 = new ArrayList<>(bridges);
+                    vec1.sort((a, b) -> b[0] - a[0]);
+                    build(1, n, 1);
+                    nodeUpdater(vec1);
+
+                    if (query(sit, 1, n, 1) >= cantBridges) {
+                        // Eliminar el último puente añadido
+                        bridges.remove(bridges.size() - 1);
+                    } else {
+                        cantBridges = query(sit, 1, n, 1);
+                        newBidges.add(pair);
+                        colors.add(color);
+                        spiderweb.addBridge(color, pair[0], pair[1]);
+                    }
+                }
+            }
+        }
     return newBidges;
-}
+    }
     /**
      * La función main es la función principal del programa, en esta función se lee la entrada del problema y se llama a las funciones necesarias para resolver el problema
      */
     public void simulate(int strands, int favorite, int[][] bridges, int strand){
+        ArrayList<int[]> vec = new ArrayList<>();
 
         // se leen los valores de n, m y s, siendo n el número de hilos, m el número de puentes y s el hilo favorito de la araña
         n = strands;
         int m = bridges.length;
         s = favorite;
-
-        spiderweb = new SpiderWeb(strands,favorite,bridges);
+        if (!simulatefake) {
+            spiderweb = new SpiderWeb(strands, favorite, bridges);
+        }
+        // se crea la telaraña
+        colors.clear();
+        spiderweb.spiderSit(strand);
         initialitesegmentree();
         // se lee la entrada de los puentes y se guardan en un vector
         vec = readBridges(bridges, m);
@@ -256,22 +295,44 @@ public class SpiderWebContest {
         nodeUpdater(vec);
 
         ArrayList<int[]> newbridges = createBridges(vec, strand);
+        if(query(strand, 1, n, 1) != 0){
+            for (Object color1 : colors) {
+                spiderweb.delBridge((String) color1);
+            }
+            vec = readBridges(bridges, m);
+            vec.sort((a, b) -> b[0] - a[0]);
+            build(1, n, 1);
+            nodeUpdater(vec);
+
+            colors.clear();
+
+            newbridges = createBridges1(vec, strand);
+
+        }
+        System.out.println(query(strand, 1, n, 1));
+
         makeVisilbe();
 
-        for (int[] pair : newbridges) {
-            System.out.println("Puente en el hilo " + pair[1] + " con distancia " + pair[0]);
-            String color = canva.generateRandomColor();
-            spiderweb.addBridge(color, pair[0], pair[1]);
+        spiderweb.spiderWalk(true);
+        spiderweb.spiderWalk(false);
+
+        for (Object color1 : colors) {
+            spiderweb.delBridge((String) color1);
         }
 
-        // se recorre el vector de puentes y se van actualizando los valores de los nodos del segment tree con los puentes que se van poniendo en la telaraña
-        // se imprimen los valores de los nodos del segment tree
-        for (int i = 1; i <= n; ++i) {
-            System.out.println(query(i, 1, n, 1));
-        }
     }
 
-    public void makeVisilbe (){
+    public void simulate(int strands, int favorite, int[][] bridges){
+        spiderweb = new SpiderWeb(strands,favorite,bridges);
+        simulatefake = true;
+        for (int i = 1; i <= strands; i++) {
+            simulate(strands, favorite, bridges, i);
+        }
+
+    }
+
+
+        public void makeVisilbe (){
         spiderweb.makeVisible();
     }
     public void makeInvisible (){
@@ -280,6 +341,8 @@ public class SpiderWebContest {
     public void finish (){
         spiderweb.finish();
     }
-
+    public void walk(){
+        spiderweb.spiderWalk(true);
+    }
 }
 
