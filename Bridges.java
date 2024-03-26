@@ -40,4 +40,8 @@ public class Bridges extends Line{
         return points;
     }
 
+    public float getDistance(){
+        return distance;
+    }
+
 }

@@ -20,7 +20,7 @@ import java.lang.String;
  * @version 18/02/2024
  */
 public class SpiderWeb {
-    private int radio;
+    public int radio;
     private int strands;
     private float angle;
     private final float xStard;
@@ -188,53 +188,77 @@ public class SpiderWeb {
      * @param distance La distancia desde el centro hasta el punto donde comienza el puente.
      * @param firstStrand El número del brazo donde se conectará el puente.
      */
-    public void addBridge(String color, int distance, int firstStrand){
-        boolean colorRepe = false;
-        for(String color0 : colorBridges){
-            if (Objects.equals(color0, color)) {
-                colorRepe = true;
-                break;
-            }
-        }
-        if (colorRepe){
-            if (isVisible) {
-                JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
-            }
-            isOk = false;
-        }else{
-            angleFirstStrand = (firstStrand - 1) * angle;
-            angleSecondStrand = firstStrand * angle;
-            xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
-            yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
-            x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
-            y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
-            int endStrand = firstStrand;
-            if(firstStrand == strands){
-                endStrand = 0;
-            }
-            Bridges bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard - y2Bridge,firstStrand-1,endStrand, distance);
-            bridge.changeColor(color);
-            bridgesColor.put(color, bridge);
-            colorBridges.add(color);
-            bridgesNoUsed.add(color);
-            bridgesByStrand.get(firstStrand-1).add(bridge);
-            if(firstStrand == strands){
-                bridgesByStrand.get(0).add(bridge);    
-            }
-            else
-            {
-                bridgesByStrand.get(firstStrand).add(bridge);
-            }
-            
-            bridgeStrand.put(color, firstStrand);
-            isOk = true;
-            if (isBridges){
-                bridge.makeVisible();
-            }
 
+    public void addBridge(String color, int distance, int firstStrand){
+        //System.out.println(firstStrand+"strand33");
+        if (!verifyBridge(color,distance, firstStrand)) {
+            isOk = false;
+            return;
+        }
+        angleFirstStrand = (firstStrand - 1) * angle;
+        angleSecondStrand = firstStrand * angle;
+        xBridge = distance * (float)Math.cos(Math.toRadians(angleFirstStrand));
+        yBridge = distance * (float)Math.sin(Math.toRadians(angleFirstStrand));
+        x2Bridge = distance * (float)Math.cos(Math.toRadians(angleSecondStrand));
+        y2Bridge = distance * (float)Math.sin(Math.toRadians(angleSecondStrand));
+        int endStrand = (firstStrand == strands) ? 0 : firstStrand;
+        Bridges bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge , yStard - y2Bridge,firstStrand-1,endStrand, distance);
+        bridge.changeColor(color);
+        bridgesColor.put(color, bridge);
+        colorBridges.add(color);
+        bridgesNoUsed.add(color);
+        bridgesByStrand.get(firstStrand-1).add(bridge);
+        bridgesByStrand.get(endStrand).add(bridge);
+        bridgeStrand.put(color, firstStrand);
+        isOk = true;
+        if (isBridges){
+            bridge.makeVisible();
         }
     }
 
+    public boolean verifyBridge(String color, int distance, int firstStrand) {
+
+        if (colorBridges.contains(color)) {
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
+            }
+            return false;
+        }
+
+        int previousStrand = (firstStrand == 1) ? strands - 1 : firstStrand - 2;
+        int nextStrand = (firstStrand == strands) ? 0 : firstStrand;
+        //System.out.println(firstStrand-1+"strand0");
+
+        for (Bridges bridge : bridgesByStrand.get(firstStrand - 1)) {
+            if (bridge.getDistance() == distance) {
+                if(isVisible){
+                    JOptionPane.showMessageDialog(null, "Ya existe un puente en este strand a la misma distancia.");
+                }
+                return false;
+            }
+        }
+
+
+        for (Bridges bridge : bridgesByStrand.get(previousStrand)) {
+            if (bridge.getDistance() == distance) {
+                if(isVisible){
+                    JOptionPane.showMessageDialog(null, "Ya existe un puente en el strand adyacente a la misma distancia.");
+                }
+                return false;
+            }
+        }
+
+        for (Bridges bridge : bridgesByStrand.get(nextStrand)) {
+            if (bridge.getDistance() == distance) {
+                if(isVisible){
+                    JOptionPane.showMessageDialog(null, "Ya existe un puente en el strand adyacente a la misma distancia.");
+                }
+                return false;
+            }
+        }
+
+        return true;
+    }
      /**
      * Relocaliza un puente existente en la red de telaraña.
      *
@@ -749,7 +773,6 @@ public class SpiderWeb {
             if (wasVisible && !isVisible) {
                 makeVisible();
             }
-
             isOk = true;
         }
         return isOk;
@@ -846,6 +869,10 @@ public class SpiderWeb {
      */
     public boolean ok(){
         return isOk;
+    }
+
+    public int getRadio() {
+        return radio;
     }
 
 
