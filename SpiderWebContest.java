@@ -245,7 +245,7 @@ public class SpiderWebContest {
         int cantBridges = query(sit, 1, n, 1);
 
         for (int strand = 1; strand <= n; strand++) {
-            for (int distance = 1; distance < spiderweb.getRadio(); distance++) {
+            for (int distance = spiderweb.getRadio() ; distance > 1; distance--) {
                 String color = canva.generateRandomColor();
                 if (spiderweb.verifyBridge(color, distance, strand,false)) {
                     int[] pair = new int[]{distance, strand};
