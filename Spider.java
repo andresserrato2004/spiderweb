@@ -36,7 +36,8 @@ public class Spider {
         this.body = new Circle();
         this.xPosition = xPosition;
         this.yPosition = yPosition;
-        this.feet = new ArrayList<Line>();  
+        System.out.println(yPosition);
+        this.feet = new ArrayList<Line>();
         beginDraw();
     }
     
@@ -54,8 +55,9 @@ public class Spider {
      * Este método es utilizado internamente y no está destinado a ser llamado directamente.
      */
     private void beginDraw() {
-        body.moveVertical(xPosition - body.getDiameter());
+        body.moveVertical(yPosition - body.getDiameter());
         body.moveHorizontal(xPosition - body.getDiameter());
+        body.changeSize(20);
         body.changeColor("black");
         organizeHead();
         organizeFeet();
@@ -68,9 +70,9 @@ public class Spider {
      */
     private void organizeHead() {
         this.head = new Circle();
-        head.changeSize(10);
+        head.changeSize(6);
         head.moveVertical(body.getyPosition() - (body.getDiameter() / 3) - 15);
-        head.moveHorizontal(body.getxPosition() - body.getDiameter() / 3);
+        head.moveHorizontal(body.getxPosition() - (body.getDiameter()/2 + 3));
         head.changeColor("red");
     }
     
@@ -79,27 +81,13 @@ public class Spider {
      * Este método es utilizado internamente y no está destinado a ser llamado directamente.
      */
     private void organizeFeet() {
-        feet.clear();        
-        int j = 30;
-        for (int i = 1; i <=8; i ++){
-            if (i <= 4){
-                feet.add(new Line(body.getxPosition() + head.getDiameter() / 2, body.getyPosition() + head.getDiameter(), body.getxPosition() + 40, body.getyPosition() + j));
-                if  (i != 3){
-                    j -= 10;
-                }else{
-                    j -= 5;
-                }
-            }else if (i == 5) {
-                j = 30;                 
-                feet.add(new Line(body.getxPosition() + head.getDiameter(), body.getyPosition() + head.getDiameter(), body.getxPosition() - 15, body.getyPosition() + j));
-            }else{
-                if  (i != 7){
-                    j -= 10;
-                }else{
-                    j -= 5;
-                }
-                feet.add(new Line(body.getxPosition() + head.getDiameter(), body.getyPosition() + head.getDiameter(), body.getxPosition() - 15, body.getyPosition() + j));
-            }
+        feet.clear();
+        int centerX = (int) (body.getxPosition() + body.getDiameter() / 2 - 1);
+        int centerY = (int) (body.getyPosition() + body.getDiameter() / 2 - 1);
+        for (int i = 1; i <= 8; i++) {
+            int endX = centerX + (i <= 4 ? 20 : -20);
+            int endY = centerY + (i <= 4 ? (3 - i) * 10 : (i - 6) * 10);
+            feet.add(new Line(centerX, centerY, endX, endY));
         }
     }
     

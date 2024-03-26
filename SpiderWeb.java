@@ -76,7 +76,7 @@ public class SpiderWeb {
         this.lineList = new ArrayList<Strands>();
         xStard = 300;
         yStard = 300;
-        spider = new Spider((int) xStard, (int) yStard);
+        spider = new Spider((int) xStard , (int) yStard + 5);
         for(int i = 0; i < strands ;i++){
             bridgesByStrand.put(i, new ArrayList<>());
         }
@@ -99,7 +99,7 @@ public class SpiderWeb {
         this.lineList = new ArrayList<Strands>();
         xStard = 300;
         yStard = 300;
-        spider = new Spider((int) xStard, (int) yStard);
+        spider = new Spider((int) xStard , (int) yStard + 5);
         for(int i = 0; i < strands ;i++){
             bridgesByStrand.put(i, new ArrayList<>());
         }
@@ -528,30 +528,20 @@ public class SpiderWeb {
         float distanceSpider = (float) Math.sqrt(Math.pow(xSpiderActual - xStard, 2) + Math.pow(ySpiderActual - yStard, 2));
         Bridges bridges = new Bridges(0,0,0,0,1,2,0);
         Map<Boolean,Bridges> brigdeMap = new HashMap<Boolean,Bridges>();
-        float distanceBidge = 0;
         boolean foundBridge = false;
         for (Bridges b: listBrigde){
             ArrayList<Float> points = b.returnPoint(strand);
             float distance = (float) Math.sqrt(Math.pow(points.get(0) - xStard, 2)+ Math.pow(points.get(1) - yStard, 2));
-            distanceBidge = distance;
             // nos fijamos que la distancia sea mayor a la distancia de la araña asi tomamos un puente que esta hacia delante de la araña y ademas nos aseguramos que sea el mas cercano a la araña
-            if ((distance > distanceSpider && distance-distanceSpider < distanceMinSB)&& !used.contains(b)){
+            if (distance > distanceSpider && distance-distanceSpider < distanceMinSB){
                 foundBridge = true;
                 distanceMinSB = b.distance - distanceSpider;
                 bridges = b;
-                used.add(b);
             }
         }
-
-        if(!foundBridge){
-            String color = canvas.generateRandomColor();
-            addBridge(color ,(int) distanceBidge + 1 , strand + 1);
-        }
-
         brigdeMap.put(foundBridge, bridges);
         return brigdeMap;
     }
-
 
 
     /**
@@ -567,10 +557,11 @@ public class SpiderWeb {
         float xSpiderActual = 300;
         float ySpiderActual = 300;
         boolean foundBridge = false;
-        while (!foundBridge && (strand < spotColor.get(colorSports.get(0)))) {
 
+        while (!foundBridge) {
             Map<Boolean,Bridges> bridgeMap = nextBridge(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
             boolean bridgeExists = new ArrayList<>(bridgeMap.keySet()).get(0);
+
             if (bridgesByStrand.get(strand).size() > 0 && bridgeExists) {
                 hilosTomados.add(strand + 1);
                 Bridges bridge = bridgeMap.get(bridgeExists);
@@ -581,12 +572,21 @@ public class SpiderWeb {
                 ySpiderActual = points.get(3);
                 walk.addAll(Arrays.asList(firstPoint,secondPoint));
                 strand = (bridge.hiloInicial == strand) ? (strand == strands-1 ? 0 : strand + 1) : (strand == 0 ? strands -1 : strand - 1);
-                strand2 = strand;
+            } else if (spotColor.get(colorSports.get(0)) == strand) {
+                hilosTomados.add(strand + 1);
+                Strands arm = lineList.get(strand);
+                ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(arm.getX2(),arm.getY2()));
+                walk.add(finishPoint);
+                foundBridge = true;
+            } else {
+                if (spotColor.get(colorSports.get(0)) != strand) {
+                    break;
+                }
+                strand = (strand >= strands-1) ? 0 : strand + 1;
             }
         }
         return walk;
     }
-
 
 
 
