@@ -106,7 +106,8 @@ public class Circle{
 
     /**
      * Slowly move the circle horizontally.
-     * @param distance the desired distance in pixels
+     * @param ydistance the desired distance in pixels
+     * @param xdistance the desired distance in pixels
      */
     public void slowMove(float xdistance, float ydistance) {
         float deltaX, deltaY;
