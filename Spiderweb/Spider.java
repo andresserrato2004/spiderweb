@@ -1,3 +1,6 @@
+package Spiderweb;
+import shapes.*;
+
 import java.util.*;
 /**
  * La clase Spider representa una araña en un lienzo.

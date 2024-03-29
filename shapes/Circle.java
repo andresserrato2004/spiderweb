@@ -1,23 +1,24 @@
+package shapes;
 import java.awt.*;
 import java.awt.geom.*;
 
 /**
  * A circle that can be manipulated and that draws itself on a canvas.
- * 
+ *
  * @author  Michael Kolling and David J. Barnes
- * @version 1.0.  (15 July 2000) 
+ * @version 1.0.  (15 July 2000)
  */
 
 public class Circle{
 
     public static final double PI=3.1416;
-    
+
     private int diameter;
     private float xPosition;
     private float yPosition;
     private String color;
     private boolean isVisible;
-    
+
 
     public Circle(){
         diameter = 30;
@@ -27,12 +28,12 @@ public class Circle{
         isVisible = false;
     }
 
-       
+
     public void makeVisible(){
         isVisible = true;
         draw();
     }
-    
+
     public void makeInvisible(){
         erase();
         isVisible = false;
@@ -41,9 +42,9 @@ public class Circle{
     private void draw(){
         if(isVisible) {
             Canvas canvas = Canvas.getCanvas();
-            canvas.draw(this, color, 
-                new Ellipse2D.Double(xPosition, yPosition, 
-                diameter, diameter));
+            canvas.draw(this, color,
+                    new Ellipse2D.Double(xPosition, yPosition,
+                            diameter, diameter));
             canvas.wait(10);
         }
     }
@@ -54,7 +55,7 @@ public class Circle{
             canvas.erase(this);
         }
     }
-    
+
     /**
      * Move the circle a few pixels to the right.
      */
@@ -108,33 +109,33 @@ public class Circle{
      * @param distance the desired distance in pixels
      */
     public void slowMove(float xdistance, float ydistance) {
-    float deltaX, deltaY;
+        float deltaX, deltaY;
 
-    if (xdistance < 0) {
-        deltaX = -5;
-        xdistance = -xdistance;
-    } else {
-        deltaX = 5;
-    }
-
-    if (ydistance < 0) {
-        deltaY = -5;
-        ydistance = -ydistance;
-    } else {
-        deltaY = 5;
-    }
-
-    for (int i = 0; i < Math.max(xdistance, ydistance); i++) {
-        if (i < xdistance) {
-            xPosition += deltaX;
-            draw();
+        if (xdistance < 0) {
+            deltaX = -5;
+            xdistance = -xdistance;
+        } else {
+            deltaX = 5;
         }
-        
-        if (i < ydistance) {
-            yPosition -= deltaY;
-            draw();
+
+        if (ydistance < 0) {
+            deltaY = -5;
+            ydistance = -ydistance;
+        } else {
+            deltaY = 5;
         }
-    }
+
+        for (int i = 0; i < Math.max(xdistance, ydistance); i++) {
+            if (i < xdistance) {
+                xPosition += deltaX;
+                draw();
+            }
+
+            if (i < ydistance) {
+                yPosition -= deltaY;
+                draw();
+            }
+        }
     }
 
 
@@ -149,7 +150,7 @@ public class Circle{
     }
 
     /**
-     * Change the color. 
+     * Change the color.
      * @param newColor the new color. Valid colors are "red", "yellow", "blue", "green",
      * "magenta" and "black".
      */
@@ -161,11 +162,11 @@ public class Circle{
     public float getDiameter(){
         return diameter;
     }
-    
+
     public float getxPosition(){
         return xPosition;
     }
-    
+
     public float getyPosition(){
         return yPosition;
     }

@@ -1,3 +1,5 @@
+package Spiderweb;
+
 public class Spot extends Line{
     /**
      * Constructor de la clase Line.

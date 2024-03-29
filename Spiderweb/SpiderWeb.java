@@ -1,3 +1,7 @@
+package Spiderweb;
+
+import shapes.Canvas;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;

@@ -1,3 +1,6 @@
+package Spiderweb;
+import shapes.*;
+import shapes.Canvas;
 
 import java.awt.*;
 import java.util.*;
@@ -23,7 +26,7 @@ public class SpiderWebContest {
     static int n, s;
 
     private SpiderWeb spiderweb;
-    private final Canvas canva = new  Canvas("spiderwebcontest", 800, 800, Color.WHITE);
+    private final Canvas canva = new  Canvas("SpiderWebcontest", 800, 800, Color.WHITE);
     private boolean simulatefake = false;
 
     private ArrayList<Object> colors = new ArrayList<>();
@@ -351,7 +354,7 @@ public class SpiderWebContest {
         for (int i = 1; i <= strands; i++) {
             ans[i - 1] = query(i, 1, n, 1);
         }
-        return ans; 
+        return ans;
     }
 
 

@@ -1,3 +1,7 @@
+package Spiderweb;
+
+import shapes.*;
+
 import java.awt.geom.Line2D;
 
 /**

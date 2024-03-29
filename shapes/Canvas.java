@@ -1,3 +1,4 @@
+package shapes;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -6,7 +7,7 @@ import java.util.*;
 /**
  * Canvas is a class to allow for simple graphical drawing on a canvas.
  * This is a modification of the general purpose Canvas, specially made for
- * the BlueJ "shapes" example. 
+ * the BlueJ "shapes" example.
  *
  * @author: Bruce Quig
  * @author: Michael Kolling (mik)
@@ -26,8 +27,8 @@ public class Canvas{
      */
     public static Canvas getCanvas(){
         if(canvasSingleton == null) {
-            canvasSingleton = new Canvas("BlueJ Shapes Demo", 700, 700, 
-                                         Color.white);
+            canvasSingleton = new Canvas("BlueJ Shapes Demo", 700, 700,
+                    Color.white);
         }
         canvasSingleton.setVisible(true);
         return canvasSingleton;
@@ -42,7 +43,7 @@ public class Canvas{
     private Image canvasImage;
     private List <Object> objects;
     private HashMap <Object,ShapeDescription> shapes;
-    
+
     /**
      * Create a Canvas.
      * @param title  title to appear in Canvas Frame
@@ -50,7 +51,7 @@ public class Canvas{
      * @param height  the desired height for the canvas
      * @param bgClour  the desired background colour of the canvas
      */
-    Canvas(String title, int width, int height, Color bgColour){
+    public Canvas(String title, int width, int height, Color bgColour){
         frame = new JFrame();
         canvas = new CanvasPane();
         frame.setContentPane(canvas);
@@ -67,7 +68,7 @@ public class Canvas{
      * when made visible. This method can also be used to bring an already
      * visible canvas to the front of other windows.
      * @param visible  boolean value representing the desired visibility of
-     * the canvas (true or false) 
+     * the canvas (true or false)
      */
     public void setVisible(boolean visible){
         if(graphic == null) {
@@ -89,19 +90,19 @@ public class Canvas{
      * @param  color            the color of the shape
      * @param  shape            the shape object to be drawn on the canvas
      */
-     // Note: this is a slightly backwards way of maintaining the shape
-     // objects. It is carefully designed to keep the visible shape interfaces
-     // in this project clean and simple for educational purposes.
+    // Note: this is a slightly backwards way of maintaining the shape
+    // objects. It is carefully designed to keep the visible shape interfaces
+    // in this project clean and simple for educational purposes.
     public void draw(Object referenceObject, String color, Shape shape){
         objects.remove(referenceObject);   // just in case it was already there
         objects.add(referenceObject);      // add at the end
         shapes.put(referenceObject, new ShapeDescription(shape, color));
         redraw();
     }
- 
+
     /**
      * Erase a given shape's from the screen.
-     * @param  referenceObject  the shape object to be erased 
+     * @param  referenceObject  the shape object to be erased
      */
     public void erase(Object referenceObject){
         objects.remove(referenceObject);   // just in case it was already there
@@ -157,7 +158,7 @@ public class Canvas{
      * Wait for a specified number of milliseconds before finishing.
      * This provides an easy way to specify a small delay which can be
      * used when producing animations.
-     * @param  milliseconds  the number 
+     * @param  milliseconds  the number
      */
     public void wait(int milliseconds){
         try{
@@ -173,11 +174,11 @@ public class Canvas{
     private void redraw(){
         erase();
         for(Iterator i=objects.iterator(); i.hasNext(); ) {
-                       shapes.get(i.next()).draw(graphic);
+            shapes.get(i.next()).draw(graphic);
         }
         canvas.repaint();
     }
-       
+
     /**
      * Erase the whole canvas. (Does not repaint.)
      */
@@ -200,7 +201,7 @@ public class Canvas{
             g.drawImage(canvasImage, 0, 0, null);
         }
     }
-    
+
     /************************************************************************
      * Inner class CanvasPane - the actual canvas component contained in the
      * Canvas frame. This is essentially a JPanel with added capability to
