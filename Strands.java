@@ -6,8 +6,3 @@ public class Strands extends Line{
 
     }
 }
-
-
-
-
-

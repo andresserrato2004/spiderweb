@@ -36,7 +36,6 @@ public class Spider {
         this.body = new Circle();
         this.xPosition = xPosition;
         this.yPosition = yPosition;
-        System.out.println(yPosition);
         this.feet = new ArrayList<Line>();
         beginDraw();
     }

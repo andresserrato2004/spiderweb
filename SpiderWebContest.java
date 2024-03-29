@@ -332,7 +332,7 @@ public class SpiderWebContest {
     }
 
 
-        public void makeVisilbe (){
+    public void makeVisilbe (){
         spiderweb.makeVisible();
     }
     public void makeInvisible (){
