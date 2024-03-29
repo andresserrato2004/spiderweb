@@ -351,7 +351,7 @@ public class SpiderWebContest {
         for (int i = 1; i <= strands; i++) {
             ans[i - 1] = query(i, 1, n, 1);
         }
-        return ans;
+        return ans; 
     }
 
 
