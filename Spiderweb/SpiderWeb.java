@@ -5,6 +5,7 @@ import shapes.Canvas;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import javax.lang.model.type.ArrayType;
 import javax.swing.JOptionPane;
 import java.lang.String;
 
@@ -46,10 +47,11 @@ public class SpiderWeb {
     private final Spider spider;
     private final ArrayList<String> colorBridges = new ArrayList<String>();
     private final ArrayList<String> colorSports = new ArrayList<String>();
+    private final ArrayList<Bridges> bridgesUsed  = new ArrayList<Bridges>();
     private final Map<String, Bridges> bridgesColor;
     private final Map<String, Integer> bridgeStrand = new HashMap<>();
     private final Map<String, Tuple> spotColor;
-
+    private Map<Bridges, String> bridgesType = new HashMap<>();
     private final Map<Integer, ArrayList<Bridges>> bridgesByStrand = new HashMap<Integer, ArrayList<Bridges>>();
     private final ArrayList<String> bridgesNoUsed = new ArrayList<String>();
     private List<Integer> hilosTomados;
@@ -58,7 +60,10 @@ public class SpiderWeb {
     private final ArrayList<Bridges> used = new ArrayList<Bridges>();
     private int strandFinish;
     private final Canvas canvas = new Canvas("SpiderWeb Canvas", 700, 700, Color.white);
-    private String tipe = "";
+    private String tipeSpot = "";
+    private String tipeBridge = "";
+    private String colorTipeBridge;
+    private Bridges bridgetipe;
 
 
     /**
@@ -210,6 +215,12 @@ public class SpiderWeb {
      */
 
     public void addBridge(String color, int distance, int firstStrand) {
+
+        String type = tipeBridge;
+        if(Objects.equals(type, "")){
+            type = "normal";
+        }
+
         if (!verifyBridge(color, distance, firstStrand, true)) {
             isOk = false;
             return;
@@ -229,11 +240,36 @@ public class SpiderWeb {
         bridgesByStrand.get(firstStrand - 1).add(bridge);
         bridgesByStrand.get(endStrand).add(bridge);
         bridgeStrand.put(color, firstStrand);
+        bridgesType.put(bridge, type);
         isOk = true;
         if (isBridges) {
             bridge.makeVisible();
         }
     }
+
+    public void addBridge(String type, String color, int distance, int firstStrand) {
+        this.tipeBridge = type;
+        addBridge(color, distance, firstStrand);
+        this.tipeBridge = "";
+    }
+
+    private void TypeBridge(){
+        String color = colorTipeBridge;
+        System.out.println(tipeBridge);
+        if(Objects.equals(tipeBridge, "transformer")){
+            ArrayList<Integer> strands = bridge(color);
+            int Strand = strands.get(0);
+            addSpot(color, Strand);
+        }else if (Objects.equals(tipeBridge,"weak")){
+            delBridge(color);
+        }//else if (Objects.equals(tipeBridge,"mobile")){
+
+        //}
+
+    }
+
+
+
 
     public boolean verifyBridge(String color, int distance, int firstStrand, boolean showMessage) {
 
@@ -358,14 +394,24 @@ public class SpiderWeb {
      * @param color El color del puente que se desea eliminar.
      */
     public boolean delBridge(String color) {
+        this.colorTipeBridge = color;
         Bridges delbridge = bridgesColor.get(color);
+        String type = bridgesType.get(delbridge);
         if (delbridge == null) {
             if (isVisible) {
                 JOptionPane.showMessageDialog(null, "El puente no existe.");
             }
             isOk = false;
-        } else {
+            return isOk;
+        }
+
+        if(!Objects.equals(type, "fixed")){
             delbridge.makeInvisible();
+            if(Objects.equals(type, "transformer")){
+                this.tipeBridge = type;
+                TypeBridge();
+                this.tipeBridge = "";
+            }
             bridgesColor.remove(color);
             colorBridges.remove(color);
             bridgesNoUsed.remove(color);
@@ -373,8 +419,15 @@ public class SpiderWeb {
             bridgesByStrand.get(delbridge.hiloInicial).remove(delbridge);
             bridgesByStrand.get(delbridge.hiloFinal).remove(delbridge);
             isOk = true;
+            return isOk;
+        }else{
+            if(isVisible) {
+                JOptionPane.showMessageDialog(null, "No se puede eliminar un puente fixed.");
+                isOk = false;
+                return isOk;
+            }
         }
-        return isOk;
+        return false;
     }
 
     /**
@@ -384,7 +437,7 @@ public class SpiderWeb {
      * @param strand El número del brazo donde se agregará el punto de referencia.
      */
     public void addSpot(String color, int strand) {
-        String type = tipe;
+        String type = tipeSpot;
         if(Objects.equals(type, "")){
             type = "normal";
         }
@@ -406,9 +459,9 @@ public class SpiderWeb {
     }
 
     public void addSpot(String type, String color, int strand) {
-        this.tipe = type;
+        this.tipeSpot = type;
         addSpot(color, strand);
-        this.tipe = "";
+        this.tipeSpot = "";
     }
 
 
@@ -422,11 +475,13 @@ public class SpiderWeb {
         }
 
         // Verificar si ya existe un spot en el strand
-        if (spotColor.containsValue(strand)) {
-            if (isVisible && showMessage) {
-                JOptionPane.showMessageDialog(null, "Ya existe un spot en este strand.");
+        for(Tuple tuple : spotColor.values()){
+            if(tuple.getNumber() == strand){
+                if (isVisible && showMessage) {
+                    JOptionPane.showMessageDialog(null, "Ya existe un spot en este strand.");
+                }
+                return false;
             }
-            return false;
         }
 
         return true;
@@ -435,10 +490,8 @@ public class SpiderWeb {
     private void typeSpot() {
         String tipo = "";
         for (Map.Entry<String, Tuple> entry : spotColor.entrySet()) {
-            System.out.println(entry.getValue().getNumber()+"numero " + strandFinish +" strandFinish");
             if (entry.getValue().getNumber() == strandFinish + 1 ){
                 tipo = entry.getValue().getType();
-                System.out.println(tipo);
             }
         }
         if(Objects.equals(tipo, "bouncy")) {
@@ -524,20 +577,31 @@ public class SpiderWeb {
      * @param advance Indica si la araña debe avanzar en el brazo o retroceder.
      */
     public void spiderWalk(boolean advance) {
+        bridgesUsed.clear();
         if (this.spider.isSpiderSitting()) {
 
             ArrayList<ArrayList<Float>> walk = isPosible((int) strand - 1);
             if (advance) {
                 float xAnterior = 300;
                 float yAnterior = 300;
+                int num = 0;
                 for (ArrayList<Float> point : walk) {
                     spider.moveTo(point.get(0), point.get(1));
+
                     Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
                     l.changeColor("blue");
                     l.makeVisible();
                     recorrido.add(l);
                     xAnterior = point.get(0);
                     yAnterior = point.get(1);
+                }
+                for (Bridges bridge: bridgesUsed) {
+                    if(bridgesType.containsKey(bridge)){
+                        tipeBridge = bridgesType.get(bridge);
+                        colorTipeBridge = bridge.getColor();
+                        TypeBridge();
+                        tipeBridge = "";
+                    }
                 }
             } else {
                 ArrayList<Float> finishPoint = new ArrayList<Float>();
@@ -590,6 +654,7 @@ public class SpiderWeb {
                 bridges = b;
             }
         }
+        bridgesUsed.add(bridges);
         brigdeMap.put(foundBridge, bridges);
         return brigdeMap;
     }
@@ -611,6 +676,7 @@ public class SpiderWeb {
 
         while (!foundBridge) {
             Map<Boolean, Bridges> bridgeMap = nextBridge(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
+
             boolean bridgeExists = new ArrayList<>(bridgeMap.keySet()).get(0);
 
             if (bridgesByStrand.get(strand).size() > 0 && bridgeExists) {
