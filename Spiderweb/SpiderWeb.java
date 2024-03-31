@@ -255,17 +255,22 @@ public class SpiderWeb {
 
     private void TypeBridge(boolean istypebridge){
         String color = colorTipeBridge;
-        System.out.println(tipeBridge);
         if(Objects.equals(tipeBridge, "transformer") && istypebridge){
             ArrayList<Integer> strands = bridge(color);
             int Strand = strands.get(0);
             addSpot(color, Strand);
         }else if (Objects.equals(tipeBridge,"weak")){
             delBridge(color);
-        }//else if (Objects.equals(tipeBridge,"mobile")){
+        }else if (Objects.equals(tipeBridge,"mobile")){
+            Bridges bridge = bridgesColor.get(color);
+            float newDistance = bridge.getDistance()* 1.2f;
+            System.out.println(bridge.hiloInicial  + "a");
+            int newStrand = (bridge.hiloInicial == strands - 1) ? 0 : bridge.hiloInicial + 2;
 
-        //}
-
+            delBridge(color);
+            tipeBridge = "";
+            addBridge(color, (int) newDistance, newStrand);
+        }
     }
 
 
@@ -368,7 +373,6 @@ public class SpiderWeb {
         Bridges bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, bridgesColor.get(color).hiloInicial, bridgesColor.get(color).hiloFinal, distance);
         bridge.changeColor(color);
 
-
         hideBridges();
         bridgesColor.put(color, bridge);
         int index = 0;
@@ -413,6 +417,7 @@ public class SpiderWeb {
                 this.tipeBridge = "";
             }
             bridgesColor.remove(color);
+            bridgesType.remove(delbridge); // Aquí se elimina el puente de bridgesType
             colorBridges.remove(color);
             bridgesNoUsed.remove(color);
             // Remove bridge from the list of bridges by strand
@@ -586,35 +591,32 @@ public class SpiderWeb {
                 float xAnterior = 300;
                 float yAnterior = 300;
                 int num = 0;
-                for (ArrayList<Float> point : walk) {
-                    spider.moveTo(point.get(0), point.get(1));
-
-                    Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
-                    l.changeColor("blue");
-                    l.makeVisible();
-                    recorrido.add(l);
-                    xAnterior = point.get(0);
-                    yAnterior = point.get(1);
-                }
-                for (Bridges bridge: bridgesUsed) {
-                    if(bridgesType.containsKey(bridge)){
-                        tipeBridge = bridgesType.get(bridge);
-                        colorTipeBridge = bridge.getColor();
-                        TypeBridge(false);
-                        tipeBridge = "";
-                    }
-                }
+//                for (ArrayList<Float> point : walk) {
+//                    spider.moveTo(point.get(0), point.get(1));
+//                    Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
+//                    l.changeColor("blue");
+//                    l.makeVisible();
+//                    recorrido.add(l);
+//                    xAnterior = point.get(0);
+//                    yAnterior = point.get(1);
+//                }
+//                for (Bridges bridge: bridgesUsed) {
+//                    if(bridgesType.containsKey(bridge)){
+//                        tipeBridge = bridgesType.get(bridge);
+//                        colorTipeBridge = bridge.getColor();
+//                        TypeBridge(false);
+//                        tipeBridge = "";
+//                    }
+//                }
                 typeSpot();
             } else {
                 ArrayList<ArrayList<Float>> walk = isPosible1((int) strandFinish);
                 float xAnterior = spider.getXPosition();
                 float yAnterior = spider.getYPosition();
-                int num = 0;
                 for (ArrayList<Float> point : walk) {
                     spider.moveTo(point.get(0), point.get(1));
                     Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
                     l.changeColor("green");
-                    System.out.println("x: " + point.get(0) + " y: " + point.get(1));
                     l.makeVisible();
                     recorrido.add(l);
                     xAnterior = point.get(0);
@@ -628,6 +630,18 @@ public class SpiderWeb {
             }
         }
 
+    }
+
+
+    private void spidermove(ArrayList<ArrayList<Float>> walk, float xAnterior, float yAnterior) {
+        for (ArrayList<Float> point : walk) {
+            Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
+            l.changeColor("blue");
+            l.makeVisible();
+            recorrido.add(l);
+            xAnterior = point.get(0);
+            yAnterior = point.get(1);
+        }
     }
 
 
@@ -663,6 +677,9 @@ public class SpiderWeb {
                 bridges = b;
             }
         }
+        //bridge is type mobile
+
+
         bridgesUsed.add(bridges);
         brigdeMap.put(foundBridge, bridges);
         return brigdeMap;
@@ -685,7 +702,7 @@ public class SpiderWeb {
             bridges = b;
         }
     }
-    System.out.println(foundBridge + "xde");
+
     brigdeMap.put(foundBridge, bridges);
     return brigdeMap;
     }
@@ -699,32 +716,44 @@ public class SpiderWeb {
      */
 
     private ArrayList<ArrayList<Float>> isPosible(int strand) {
-        ArrayList<ArrayList<Float>> walk = new ArrayList<>();
         hilosTomados = new ArrayList<>();
-        float xSpiderActual = 300;
-        float ySpiderActual = 300;
+        float xSpiderActual = spider.getXPosition();
+        float ySpiderActual = spider.getYPosition();
 
         boolean foundBridge = false;
+        float xAnterior = 300;
+        float yAnterior = 300;
+        ArrayList<ArrayList<Float>> walk = new ArrayList<>();
 
         while (!foundBridge) {
             Map<Boolean, Bridges> bridgeMap = nextBridge(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
-
             boolean bridgeExists = new ArrayList<>(bridgeMap.keySet()).get(0);
-
             if (bridgesByStrand.get(strand).size() > 0 && bridgeExists) {
                 hilosTomados.add(strand + 1);
                 Bridges bridge = bridgeMap.get(bridgeExists);
                 ArrayList<Float> points = bridge.returnPointAcomodados(strand);
                 ArrayList<Float> firstPoint = new ArrayList<>(Arrays.asList(points.get(0), points.get(1)));
                 ArrayList<Float> secondPoint = new ArrayList<>(Arrays.asList(points.get(2), points.get(3)));
+                spider.moveTo(points.get(0), points.get(1));
+                spider.moveTo(points.get(2), points.get(3));
+
                 xSpiderActual = points.get(2);
                 ySpiderActual = points.get(3);
                 walk.addAll(Arrays.asList(firstPoint, secondPoint));
                 strand = (bridge.hiloInicial == strand) ? (strand == strands - 1 ? 0 : strand + 1) : (strand == 0 ? strands - 1 : strand - 1);
+                tipeBridge = bridgesType.get(bridge);
+                colorTipeBridge = bridge.getColor();
+                spidermove(walk, xAnterior, yAnterior);
+                if(Objects.equals(tipeBridge, "mobile")){
+                    TypeBridge(false);
+                }
+                tipeBridge = "";
             } else {
-                    Strands arm = lineList.get(strand);
+                Strands arm = lineList.get(strand);
                     ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(arm.getX2(), arm.getY2()));
+                    spider.moveTo(arm.getX2(), arm.getY2());
                     walk.add(finishPoint);
+                    spidermove(walk, xAnterior, yAnterior);
                     break;
             }
         }
@@ -735,8 +764,6 @@ public class SpiderWeb {
     private ArrayList<ArrayList<Float>> isPosible1(int strand) {
     ArrayList<ArrayList<Float>> walk = new ArrayList<>();
     hilosTomados = new ArrayList<>();
-    System.out.println(strand + "strand");
-    System.out.println(bridgesByStrand.get(strand) + "size");
     float xSpiderActual = spider.getXPosition();
     float ySpiderActual = spider.getYPosition();
 
