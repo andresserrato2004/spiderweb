@@ -253,10 +253,10 @@ public class SpiderWeb {
         this.tipeBridge = "";
     }
 
-    private void TypeBridge(){
+    private void TypeBridge(boolean istypebridge){
         String color = colorTipeBridge;
         System.out.println(tipeBridge);
-        if(Objects.equals(tipeBridge, "transformer")){
+        if(Objects.equals(tipeBridge, "transformer") && istypebridge){
             ArrayList<Integer> strands = bridge(color);
             int Strand = strands.get(0);
             addSpot(color, Strand);
@@ -409,7 +409,7 @@ public class SpiderWeb {
             delbridge.makeInvisible();
             if(Objects.equals(type, "transformer")){
                 this.tipeBridge = type;
-                TypeBridge();
+                TypeBridge(true);
                 this.tipeBridge = "";
             }
             bridgesColor.remove(color);
@@ -580,8 +580,8 @@ public class SpiderWeb {
         bridgesUsed.clear();
         if (this.spider.isSpiderSitting()) {
 
-            ArrayList<ArrayList<Float>> walk = isPosible((int) strand - 1);
             if (advance) {
+                ArrayList<ArrayList<Float>> walk = isPosible((int) strand - 1);
                 float xAnterior = 300;
                 float yAnterior = 300;
                 int num = 0;
@@ -599,17 +599,24 @@ public class SpiderWeb {
                     if(bridgesType.containsKey(bridge)){
                         tipeBridge = bridgesType.get(bridge);
                         colorTipeBridge = bridge.getColor();
-                        TypeBridge();
+                        TypeBridge(false);
                         tipeBridge = "";
                     }
                 }
             } else {
-                ArrayList<Float> finishPoint = new ArrayList<Float>();
-                finishPoint.addAll(Arrays.asList((float) 300, (float) 300));
-                walk.add(0, finishPoint);
-                for (int i = walk.size() - 1; i >= 0; i--) {
-                    ArrayList<Float> point = walk.get(i);
+                ArrayList<ArrayList<Float>> walk = isPosible1((int) strandFinish);
+                float xAnterior = spider.getXPosition();
+                float yAnterior = spider.getYPosition();
+                int num = 0;
+                for (ArrayList<Float> point : walk) {
                     spider.moveTo(point.get(0), point.get(1));
+                    Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
+                    l.changeColor("green");
+                    System.out.println("x: " + point.get(0) + " y: " + point.get(1));
+                    l.makeVisible();
+                    recorrido.add(l);
+                    xAnterior = point.get(0);
+                    yAnterior = point.get(1);
                 }
                 eraseRecorrido();
             }
@@ -659,6 +666,28 @@ public class SpiderWeb {
         return brigdeMap;
     }
 
+    private Map<Boolean, Bridges> nextBridge1(ArrayList<Bridges> listBrigde, int strand, float xSpiderActual, float ySpiderActual) {
+    float distanceMinSB = 3000;
+    float distanceSpider = (float) Math.sqrt(Math.pow(xSpiderActual - xStard, 2) + Math.pow(ySpiderActual - yStard, 2));
+    Bridges bridges = new Bridges(0, 0, 0, 0, 1, 2, 0);
+    Map<Boolean, Bridges> brigdeMap = new HashMap<Boolean, Bridges>();
+    boolean foundBridge = false;
+    for (Bridges b : listBrigde) {
+        ArrayList<Float> points = b.returnPoint(strand);
+        float distance = (float) Math.sqrt(Math.pow(points.get(0) - xStard, 2) + Math.pow(points.get(1) - yStard, 2));
+        System.out.println(distance + "distance" + distanceSpider + "distanceSpider");
+        // nos fijamos que la distancia sea menor a la distancia de la araña asi tomamos un puente que esta hacia abajo de la araña y ademas nos aseguramos que sea el mas cercano a la araña
+        if (distance < distanceSpider && distanceSpider - distance < distanceMinSB) {
+            foundBridge = true;
+            distanceMinSB = distanceSpider - b.distance;
+            bridges = b;
+        }
+    }
+    System.out.println(foundBridge + "xde");
+    brigdeMap.put(foundBridge, bridges);
+    return brigdeMap;
+    }
+
 
     /**
      * Determina si es posible avanzar a lo largo del brazo de la telaraña desde una posición dada hasta el primer puente encontrado.
@@ -672,6 +701,7 @@ public class SpiderWeb {
         hilosTomados = new ArrayList<>();
         float xSpiderActual = 300;
         float ySpiderActual = 300;
+
         boolean foundBridge = false;
 
         while (!foundBridge) {
@@ -708,6 +738,40 @@ public class SpiderWeb {
         this.strandFinish = strand;
         return walk;
     }
+
+    private ArrayList<ArrayList<Float>> isPosible1(int strand) {
+    ArrayList<ArrayList<Float>> walk = new ArrayList<>();
+    hilosTomados = new ArrayList<>();
+    System.out.println(strand + "strand");
+    System.out.println(bridgesByStrand.get(strand) + "size");
+    float xSpiderActual = spider.getXPosition();
+    float ySpiderActual = spider.getYPosition();
+
+    boolean foundBridge = false;
+
+    while (!foundBridge) {
+        Map<Boolean, Bridges> bridgeMap = nextBridge1(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
+
+        boolean bridgeExists = new ArrayList<>(bridgeMap.keySet()).get(0);
+
+        if (bridgesByStrand.get(strand).size() > 0 && bridgeExists) {
+            hilosTomados.add(strand + 1);
+            Bridges bridge = bridgeMap.get(bridgeExists);
+            ArrayList<Float> points = bridge.returnPointAcomodados(strand);
+            ArrayList<Float> firstPoint = new ArrayList<>(Arrays.asList(points.get(0), points.get(1)));
+            ArrayList<Float> secondPoint = new ArrayList<>(Arrays.asList(points.get(2), points.get(3)));
+            xSpiderActual = points.get(2);
+            ySpiderActual = points.get(3);
+            walk.addAll(Arrays.asList(firstPoint, secondPoint));
+            strand = (bridge.hiloInicial == strand) ? (strand == strands - 1 ? 0 : strand + 1) : (strand == 0 ? strands - 1 : strand - 1);
+        } else {
+            ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(xStard, yStard)); // Modificado aquí
+            walk.add(finishPoint);
+            break;
+        }
+    }
+    return walk;
+}
 
 
     /**
