@@ -497,6 +497,7 @@ public class SpiderWeb {
         if(Objects.equals(tipo, "bouncy")) {
             Strands nextStrand = lineList.get((int) strandFinish + 1);
             spider.moveTo(nextStrand.getX2(), nextStrand.getY2());
+            this.strandFinish = strandFinish + 1;
         }
 
         //falta hacer la implemtentacion de tipo killer
@@ -603,6 +604,7 @@ public class SpiderWeb {
                         tipeBridge = "";
                     }
                 }
+                typeSpot();
             } else {
                 ArrayList<ArrayList<Float>> walk = isPosible1((int) strandFinish);
                 float xAnterior = spider.getXPosition();
@@ -625,7 +627,7 @@ public class SpiderWeb {
                 JOptionPane.showMessageDialog(null, "La araña no puede caminar", "Error en caminar", JOptionPane.INFORMATION_MESSAGE);
             }
         }
-        typeSpot();
+
     }
 
 
@@ -719,20 +721,11 @@ public class SpiderWeb {
                 ySpiderActual = points.get(3);
                 walk.addAll(Arrays.asList(firstPoint, secondPoint));
                 strand = (bridge.hiloInicial == strand) ? (strand == strands - 1 ? 0 : strand + 1) : (strand == 0 ? strands - 1 : strand - 1);
-            } else if (getClosestSpot()-1 == strand) {
-                hilosTomados.add(strand + 1);
-                Strands arm = lineList.get(strand);
-                ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(arm.getX2(), arm.getY2()));
-                walk.add(finishPoint);
-                foundBridge = true;
             } else {
-                if (getClosestSpot() != strand) {
                     Strands arm = lineList.get(strand);
                     ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(arm.getX2(), arm.getY2()));
                     walk.add(finishPoint);
                     break;
-                }
-
             }
         }
         this.strandFinish = strand;
@@ -770,6 +763,7 @@ public class SpiderWeb {
             break;
         }
     }
+    this.strandFinish = 0;
     return walk;
 }
 
