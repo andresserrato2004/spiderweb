@@ -590,6 +590,7 @@ public class SpiderWeb {
 
                 typeSpot();
             } else {
+                strandFinish = (strandFinish > strands-1) ? 0 : strandFinish;
                 ArrayList<ArrayList<Float>> walk = isPosible1((int) strandFinish);
                 float xAnterior = spider.getXPosition();
                 float yAnterior = spider.getYPosition();
