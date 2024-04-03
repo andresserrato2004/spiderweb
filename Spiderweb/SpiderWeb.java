@@ -663,12 +663,11 @@ public class SpiderWeb {
                 foundBridge = true;
                 distanceMinSB = b.distance - distanceSpider;
                 bridges = b;
+                bridgesUsed.add(bridges);
             }
         }
         //bridge is type mobile
 
-
-        bridgesUsed.add(bridges);
         brigdeMap.put(foundBridge, bridges);
         return brigdeMap;
     }
@@ -688,9 +687,9 @@ public class SpiderWeb {
             foundBridge = true;
             distanceMinSB = distanceSpider - b.distance;
             bridges = b;
+            bridgesUsed.add(bridges);
         }
     }
-
     brigdeMap.put(foundBridge, bridges);
     return brigdeMap;
     }
@@ -976,9 +975,22 @@ public class SpiderWeb {
      *
      * @return Una lista de cadenas que representan los colores de los puentes sin usar.
      */
-    public ArrayList<String> unUsedBridges() {
-        return bridgesNoUsed;
+    public String[] unUsedBridges() {
+    // Crear una lista para almacenar los colores de los puentes no utilizados
+    ArrayList<String> unUsedBridgesColors = new ArrayList<>(colorBridges);
+
+    // Recorrer la lista de puentes utilizados
+    for (Bridges usedBridge : bridgesUsed) {
+        // Obtener el color del puente utilizado
+        String usedBridgeColor = usedBridge.getColor();
+
+        // Si el color del puente utilizado está en la lista de colores de puentes no utilizados, lo eliminamos
+        unUsedBridgesColors.remove(usedBridgeColor);
     }
+
+    // Convertir la lista de colores de puentes no utilizados a un array y devolverlo
+    return unUsedBridgesColors.toArray(new String[0]);
+}
 
 
     /**
