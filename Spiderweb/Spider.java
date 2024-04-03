@@ -140,14 +140,17 @@ public class Spider {
      * @param ydistance La nueva coordenada y de la posición de la araña.
      */
    public void moveTo(float xdistance, float ydistance) {
-        float dx = xdistance - getXPosition();
-        float dy = ydistance - getYPosition();
-        body.moveHorizontal(dx);
-        body.moveVertical(dy);
-        makeInvisible();
-        organizeFeet();
-        organizeHead();
-        makeVisible();
+       float dx = xdistance - getXPosition();
+       float dy = ydistance - getYPosition();
+       body.moveHorizontal(dx);
+       body.moveVertical(dy);
+       boolean wasVisible = body.getisVisible();
+       makeInvisible();
+       organizeFeet();
+       organizeHead();
+       if (wasVisible){
+           makeVisible();
+       }
         try {
             Thread.sleep(500); 
         } catch (InterruptedException e) {

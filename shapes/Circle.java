@@ -171,4 +171,8 @@ public class Circle{
     public float getyPosition(){
         return yPosition;
     }
+
+    public boolean getisVisible(){
+        return isVisible;
+    }
 }

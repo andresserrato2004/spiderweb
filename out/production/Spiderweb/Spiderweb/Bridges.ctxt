@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=Bridges
+comment1.params=x1\ y1\ x2\ y2\ hiloInicial\ hiloFinal\ distance
+comment1.target=Bridges(float,\ float,\ float,\ float,\ int,\ int,\ float)
+comment2.params=hilo
+comment2.target=java.util.ArrayList\ returnPoint(int)
+comment3.params=hilo
+comment3.target=java.util.ArrayList\ returnPointAcomodados(int)
+comment4.params=
+comment4.target=float\ getDistance()
+numComments=5

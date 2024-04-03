@@ -94,6 +94,7 @@ public class SpiderWeb {
             bridgesByStrand.put(i, new ArrayList<>());
         }
         cordenates();
+        isOk = true;
     }
 
     public SpiderWeb(int strand, int favoritestrand, int[][] bridgesData) {
@@ -125,6 +126,7 @@ public class SpiderWeb {
         }
         cordenates();
         addSpot("yellow", favoritestrand);
+        isOk = true;
     }
 
     /**
@@ -217,14 +219,14 @@ public class SpiderWeb {
 
     public void addBridge(String color, int distance, int firstStrand) {
 
-        String type = tipeBridge;
-        if(Objects.equals(type, "")){
-            type = "normal";
-        }
-
         if (!verifyBridge(color, distance, firstStrand, true)) {
             isOk = false;
             return;
+        }
+
+        String type = tipeBridge;
+        if(Objects.equals(type, "")){
+            type = "normal";
         }
         angleFirstStrand = (firstStrand - 1) * angle;
         angleSecondStrand = firstStrand * angle;
@@ -250,7 +252,12 @@ public class SpiderWeb {
 
     public void addBridge(String type, String color, int distance, int firstStrand) {
         this.tipeBridge = type;
-        addBridge(color, distance, firstStrand);
+        if(verifyBridge(color, distance, firstStrand, true)) {
+            addBridge(color, distance, firstStrand);
+            isOk = true;
+        }else {
+            isOk = false;
+        }
         this.tipeBridge = "";
     }
 
@@ -286,6 +293,20 @@ public class SpiderWeb {
             return false;
         }
 
+        //verifica que el puente no se coloque en un hilo negativo o mayor al numero de hilos
+        if (firstStrand > strands || firstStrand < 1) {
+            if (isVisible && showMessage) {
+                JOptionPane.showMessageDialog(null, "El strand no existe.");
+            }
+            return false;
+        }
+        // verifica que la distancia no sea mayor al radio o menor o igual 0
+        if (distance > radio || distance <= 0) {
+            if (isVisible && showMessage) {
+                JOptionPane.showMessageDialog(null, "La distancia no puede ser mayor al radio.");
+            }
+            return false;
+        }
         int previousStrand = (firstStrand == 1) ? strands - 1 : firstStrand - 2;
         int nextStrand = (firstStrand == strands) ? 0 : firstStrand;
 
@@ -316,6 +337,7 @@ public class SpiderWeb {
             }
         }
 
+
         return true;
     }
 
@@ -326,14 +348,19 @@ public class SpiderWeb {
      * @param distance La nueva distancia desde el centro hasta el punto donde comienza el puente.
      */
     public void relocateBridge(String color, float distance) {
-        angleFirstStrand = (bridgeStrand.get(color) - 1) * angle;
-        angleSecondStrand = bridgeStrand.get(color) * angle;
-        if (distance < 0) {
+        if (distance < 0 || distance > radio ) {
             if (isVisible) {
-                JOptionPane.showMessageDialog(null, "No se puede reubicar el puente con una distancia negativa.");
+                JOptionPane.showMessageDialog(null, "No se puede reubicar el puente con una distancia negativa o mayor a la del radio.");
             }
             isOk = false;
-        } else {
+        }else if(!colorBridges.contains(color)){
+            if (isVisible) {
+                JOptionPane.showMessageDialog(null, "El puente no existe.");
+            }
+            isOk = false;
+        }else{
+            angleFirstStrand = (bridgeStrand.get(color) - 1) * angle;
+            angleSecondStrand = bridgeStrand.get(color) * angle;
             xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
             yBridge = distance * (float) Math.sin(Math.toRadians(angleFirstStrand));
             x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
@@ -490,6 +517,14 @@ public class SpiderWeb {
             }
         }
 
+        // verificar si el strand existe
+        if (strand > strands || strand < 1) {
+            if (isVisible && showMessage) {
+                JOptionPane.showMessageDialog(null, "El strand no existe.");
+            }
+            return false;
+        }
+
         return true;
     }
 
@@ -566,7 +601,7 @@ public class SpiderWeb {
      * @param strand El número del brazo donde se desea que la araña se siente.
      */
     public void spiderSit(int strand) {
-        if (strand > 0) {
+        if (strand > 0 && strand <= strands) {
             this.strand = strand;
             spider.spiderSit();
             isOk = true;
@@ -618,6 +653,7 @@ public class SpiderWeb {
             if (isVisible) {
                 JOptionPane.showMessageDialog(null, "La araña no puede caminar", "Error en caminar", JOptionPane.INFORMATION_MESSAGE);
             }
+            isOk = false;
         }
 
     }
@@ -627,7 +663,9 @@ public class SpiderWeb {
         for (ArrayList<Float> point : walk) {
             Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
             l.changeColor("blue");
-            l.makeVisible();
+            if (isVisible) {
+                l.makeVisible();
+            }
             recorrido.add(l);
             xAnterior = point.get(0);
             yAnterior = point.get(1);
@@ -856,7 +894,7 @@ public class SpiderWeb {
             return -1;
         } else {
             isOk = true;
-            return spotColor.get(color).getNumber() + 1;
+            return spotColor.get(color).getNumber();
         }
     }
 

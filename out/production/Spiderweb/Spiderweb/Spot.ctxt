@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.target=Spot
+comment1.params=x1\ y1\ x2\ y2
+comment1.target=Spot(float,\ float,\ float,\ float)
+comment1.text=\r\n\ Constructor\ de\ la\ clase\ Line.\r\n\ Crea\ una\ nueva\ l\u00EDnea\ con\ los\ puntos\ extremos\ especificados\ por\ las\ coordenadas\ (x1,\ y1)\ y\ (x2,\ y2).\r\n\r\n\ @param\ x1\ La\ coordenada\ x\ del\ primer\ punto.\r\n\ @param\ y1\ La\ coordenada\ y\ del\ primer\ punto.\r\n\ @param\ x2\ La\ coordenada\ x\ del\ segundo\ punto.\r\n\ @param\ y2\ La\ coordenada\ y\ del\ segundo\ punto.\r\n
+numComments=2
