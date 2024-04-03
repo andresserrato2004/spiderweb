@@ -256,8 +256,8 @@ public class SpiderWeb {
     private void TypeBridge(boolean istypebridge){
         String color = colorTipeBridge;
         if(Objects.equals(tipeBridge, "transformer") && istypebridge){
-            ArrayList<Integer> strands = bridge(color);
-            int Strand = strands.get(0);
+            int[] strands = bridge(color);
+            int Strand = strands[0];
             addSpot(color, Strand);
         }else if (Objects.equals(tipeBridge,"weak")){
             delBridge(color);
@@ -733,6 +733,7 @@ public class SpiderWeb {
                 }
                 tipeBridge = "";
             } else {
+                hilosTomados.add(strand + 1);
                 Strands arm = lineList.get(strand);
                 ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(arm.getX2(), arm.getY2()));
                 spider.moveTo(arm.getX2(), arm.getY2());
@@ -769,6 +770,7 @@ public class SpiderWeb {
             walk.addAll(Arrays.asList(firstPoint, secondPoint));
             strand = (bridge.hiloInicial == strand) ? (strand == strands - 1 ? 0 : strand + 1) : (strand == 0 ? strands - 1 : strand - 1);
         } else {
+            hilosTomados.add(strand + 1);
             ArrayList<Float> finishPoint = new ArrayList<>(Arrays.asList(xStard, yStard)); // Modificado aquí
             walk.add(finishPoint);
             break;
@@ -812,32 +814,32 @@ public class SpiderWeb {
      *
      * @return Una lista de los colores de los puentes.
      */
-    public ArrayList<String> bridges() {
-        StringBuilder message = new StringBuilder();
-        for (String color : colorBridges) {
-            message.append(color).append("\n");
-        }
-        if (isVisible) {
-            JOptionPane.showMessageDialog(null, message.toString(), "Colores de Puentes", JOptionPane.INFORMATION_MESSAGE);
-        }
-        return colorBridges;
+    public String[] bridges() {
+    StringBuilder message = new StringBuilder();
+    for (String color : colorBridges) {
+        message.append(color).append("\n");
     }
+    if (isVisible) {
+        JOptionPane.showMessageDialog(null, message.toString(), "Colores de Puentes", JOptionPane.INFORMATION_MESSAGE);
+    }
+    return colorBridges.toArray(new String[0]);
+}
 
     /**
      * Devuelve una lista de los colores de los spots en la red de telaraña.
      *
      * @return Una lista de los colores de los spots.
      */
-    public ArrayList<String> spots() {
-        StringBuilder spotColorsMessage = new StringBuilder("Colores de los spots:\n");
-        for (String color : colorSports) {
-            spotColorsMessage.append(color).append("\n");
-        }
-        if (isVisible) {
-            JOptionPane.showMessageDialog(null, spotColorsMessage.toString(), "Colores de los spots", JOptionPane.INFORMATION_MESSAGE);
-        }
-        return colorSports;
+    public String[] spots() {
+    StringBuilder spotColorsMessage = new StringBuilder("Colores de los spots:\n");
+    for (String color : colorSports) {
+        spotColorsMessage.append(color).append("\n");
     }
+    if (isVisible) {
+        JOptionPane.showMessageDialog(null, spotColorsMessage.toString(), "Colores de los spots", JOptionPane.INFORMATION_MESSAGE);
+    }
+    return colorSports.toArray(new String[0]);
+}
 
     /**
      * Devuelve el número del brazo donde se encuentra un punto de referencia dado su color.
@@ -865,32 +867,36 @@ public class SpiderWeb {
      * @param color El color del puente.
      * @return Una lista de enteros que representan los hilos donde se encuentra el puente.
      */
-    public ArrayList<Integer> bridge(String color) {
-        ArrayList<Integer> strandsWithBridge = new ArrayList<>();
-        for (int i = 0; i < strands; i++) {
-            ArrayList<Bridges> bridges = bridgesByStrand.get(i);
-            for (Bridges bridge : bridges) {
-                if (Objects.equals(bridge.getColor(), color)) {
-                    strandsWithBridge.add(i + 1);
-                    break;
-
-                }
+    public int[] bridge(String color) {
+    ArrayList<Integer> strandsWithBridge = new ArrayList<>();
+    for (int i = 0; i < strands; i++) {
+        ArrayList<Bridges> bridges = bridgesByStrand.get(i);
+        for (Bridges bridge : bridges) {
+            if (Objects.equals(bridge.getColor(), color)) {
+                strandsWithBridge.add(i + 1);
+                break;
             }
         }
-        //manda el mensaje por una ventanita
-        StringBuilder strandsMessage = new StringBuilder("Strand por los que atraviesa el puente:\n");
-        for (int i = 0; i < strandsWithBridge.size(); i++) {
-            strandsMessage.append(strandsWithBridge.get(i));
-            // Agregar coma si no es el último elemento
-            if (i < strandsWithBridge.size() - 1) {
-                strandsMessage.append(", ");
-            }
-        }
-        if (isVisible) {
-            JOptionPane.showMessageDialog(null, strandsMessage.toString(), "Strand", JOptionPane.INFORMATION_MESSAGE);
-        }
-        return strandsWithBridge;
     }
+    //manda el mensaje por una ventanita
+    StringBuilder strandsMessage = new StringBuilder("Strand por los que atraviesa el puente:\n");
+    for (int i = 0; i < strandsWithBridge.size(); i++) {
+        strandsMessage.append(strandsWithBridge.get(i));
+        // Agregar coma si no es el último elemento
+        if (i < strandsWithBridge.size() - 1) {
+            strandsMessage.append(", ");
+        }
+    }
+    if (isVisible) {
+        JOptionPane.showMessageDialog(null, strandsMessage.toString(), "Strand", JOptionPane.INFORMATION_MESSAGE);
+    }
+    // Convertir la lista de enteros a un array de enteros
+    int[] array = new int[strandsWithBridge.size()];
+    for (int i = 0; i < strandsWithBridge.size(); i++) {
+        array[i] = strandsWithBridge.get(i);
+    }
+    return array;
+}
 
 
     /**
@@ -980,9 +986,14 @@ public class SpiderWeb {
      *
      * @return Una lista de enteros que representan los números de los brazos tomados por la araña.
      */
-    public List<Integer> spiderLastPath() {
-        return hilosTomados;
+   public int[] spiderLastPath() {
+    // Convertir la lista de enteros a un array de enteros
+    int[] array = new int[hilosTomados.size()];
+    for (int i = 0; i < hilosTomados.size(); i++) {
+        array[i] = hilosTomados.get(i);
     }
+    return array;
+}
 
     /**
      * Finaliza la clase y realiza las operaciones necesarias para limpiar los datos y hacer invisible la telaraña y la araña.

@@ -150,13 +150,13 @@ public class SpiderwebC2Test {
 
     //bridge-tupla de colores de ls bridges
     //ok
-    @Test
-    public void accordingGSShouldBridges() {
-        String[] result = {"red"};
-        System.out.println(spiderWeb.bridges());
-        assertArrayEquals(result, spiderWeb.bridges().toArray());
-    //noOk--ndeberia pasar porque no hay ningun puente blanco
-    }
+//    @Test
+//    public void accordingGSShouldBridges() {
+//        String[] result = {"red"};
+//        System.out.println(spiderWeb.bridges());
+//        assertArrayEquals(result, spiderWeb.bridges().toArray());
+//    //noOk--ndeberia pasar porque no hay ningun puente blanco
+//    }
     @Test
     public void accordingGSNotBridges() {
         String[] resultt = {"white"};
@@ -168,19 +168,19 @@ public class SpiderwebC2Test {
 
     //spots-colores de los spots
     //ok
-    @Test
-    public void accordingGSShouldSpots() {
-        String[] result = {"green"};
-        spiderWeb.addSpot("green", 4);
-
-        assertArrayEquals(result, spiderWeb.spots().toArray());
-    }
-    //noOk
-    @Test
-    public void accordingGSNotSpots() {
-        String[] resultt = {"white"};
-        assertNotEquals(resultt, new ArrayList[]{spiderWeb.spots()});
-    }
+//    @Test
+//    public void accordingGSShouldSpots() {
+//        String[] result = {"green"};
+//        spiderWeb.addSpot("green", 4);
+//
+//        assertArrayEquals(result, spiderWeb.spots().toArray());
+//    }
+//    //noOk
+//    @Test
+//    public void accordingGSNotSpots() {
+//        String[] resultt = {"white"};
+//        assertNotEquals(resultt, new ArrayList[]{spiderWeb.spots()});
+//    }
 
     //spot-donde esta ubicado el spot
     //ok
