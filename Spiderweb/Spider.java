@@ -27,7 +27,8 @@ public class Spider {
     private ArrayList<Line> feet;
     private int xPosition;
     private int yPosition;
-    private boolean isSitting;
+    boolean isSitting;
+    boolean isLive = true;
     
     /**
      * Crea una nueva araña en la posición especificada por las coordenadas (xPosition, yPosition).

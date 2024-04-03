@@ -171,8 +171,9 @@ public class SpiderWeb {
             for (Spot arms : reversedLineList) {
                 arms.makeVisible();
             }
-
-            spider.makeVisible();
+            if(spider.isLive){
+                spider.makeVisible();
+            }
             isBridges = true;
             isVisible = true;
             for (Line l : recorrido) {
@@ -530,18 +531,35 @@ public class SpiderWeb {
 
     private void typeSpot() {
         String tipo = "";
+        String colorTipeSpot = null;
         for (Map.Entry<String, Tuple> entry : spotColor.entrySet()) {
             if (entry.getValue().getNumber() == strandFinish + 1 ){
                 tipo = entry.getValue().getType();
+                colorTipeSpot = entry.getKey();
             }
         }
         if(Objects.equals(tipo, "bouncy")) {
             Strands nextStrand = lineList.get((int) strandFinish + 1);
             spider.moveTo(nextStrand.getX2(), nextStrand.getY2());
-            this.strandFinish = strandFinish + 1;
+            strandFinish = strandFinish + 1;
+            strandFinish = (strandFinish > strands-1) ? 0 : strandFinish;
+            typeSpot();
         }
 
         //falta hacer la implemtentacion de tipo killer
+        if(Objects.equals(tipo, "killer")) {
+            spider.isLive = false;
+            spider.makeInvisible();
+        }
+
+        //crea un nuevo tipo de spot llamado break
+        if(Objects.equals(tipo, "break")) {
+            delSpot(colorTipeSpot);
+            for(Line l : recorrido){
+                l.makeVisible();
+            }
+        }
+
     }
 
 
@@ -604,6 +622,11 @@ public class SpiderWeb {
         if (strand > 0 && strand <= strands) {
             this.strand = strand;
             spider.spiderSit();
+            if(!spider.isLive) {
+                spider.moveTo(xStard, yStard);
+                spider.makeVisible();
+                spider.isLive = true;
+            }
             isOk = true;
         } else {
             if (isVisible) {
@@ -624,7 +647,6 @@ public class SpiderWeb {
 
             if (advance) {
                 ArrayList<ArrayList<Float>> walk = isPosible((int) strand - 1);
-
                 typeSpot();
             } else {
                 strandFinish = (strandFinish > strands-1) ? 0 : strandFinish;
@@ -646,12 +668,12 @@ public class SpiderWeb {
                 } catch (InterruptedException e) {
                     // Maneja la excepción
                 }
-
                 eraseRecorrido();
+                spider.isSitting = false;
             }
         } else {
             if (isVisible) {
-                JOptionPane.showMessageDialog(null, "La araña no puede caminar", "Error en caminar", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "La araña no puede caminar pues no esta sentada sobre ningún Strand", "Error al caminar", JOptionPane.INFORMATION_MESSAGE);
             }
             isOk = false;
         }
