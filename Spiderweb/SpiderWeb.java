@@ -64,6 +64,7 @@ public class SpiderWeb {
     private String tipeBridge = "";
     private String colorTipeBridge;
     private Bridges bridgetipe;
+    private boolean showmensage = true;
 
 
     /**
@@ -256,7 +257,9 @@ public class SpiderWeb {
     private void TypeBridge(boolean istypebridge){
         String color = colorTipeBridge;
         if(Objects.equals(tipeBridge, "transformer") && istypebridge){
+            showmensage = false;
             int[] strands = bridge(color);
+            showmensage = true;
             int Strand = strands[0];
             addSpot(color, Strand);
         }else if (Objects.equals(tipeBridge,"weak")){
@@ -264,7 +267,6 @@ public class SpiderWeb {
         }else if (Objects.equals(tipeBridge,"mobile")){
             Bridges bridge = bridgesColor.get(color);
             float newDistance = bridge.getDistance()* 1.2f;
-            System.out.println(bridge.hiloInicial  + "a");
             int newStrand = (bridge.hiloInicial == strands - 1) ? 0 : bridge.hiloInicial + 2;
             delBridge(color);
             tipeBridge = "";
@@ -681,7 +683,6 @@ public class SpiderWeb {
     for (Bridges b : listBrigde) {
         ArrayList<Float> points = b.returnPoint(strand);
         float distance = (float) Math.sqrt(Math.pow(points.get(0) - xStard, 2) + Math.pow(points.get(1) - yStard, 2));
-        System.out.println(distance + "distance" + distanceSpider + "distanceSpider");
         // nos fijamos que la distancia sea menor a la distancia de la araña asi tomamos un puente que esta hacia abajo de la araña y ademas nos aseguramos que sea el mas cercano a la araña
         if (distance < distanceSpider && distanceSpider - distance < distanceMinSB) {
             foundBridge = true;
@@ -867,35 +868,35 @@ public class SpiderWeb {
      * @return Una lista de enteros que representan los hilos donde se encuentra el puente.
      */
     public int[] bridge(String color) {
-    ArrayList<Integer> strandsWithBridge = new ArrayList<>();
-    for (int i = 0; i < strands; i++) {
-        ArrayList<Bridges> bridges = bridgesByStrand.get(i);
-        for (Bridges bridge : bridges) {
-            if (Objects.equals(bridge.getColor(), color)) {
-                strandsWithBridge.add(i + 1);
-                break;
+        ArrayList<Integer> strandsWithBridge = new ArrayList<>();
+        for (int i = 0; i < strands; i++) {
+            ArrayList<Bridges> bridges = bridgesByStrand.get(i);
+            for (Bridges bridge : bridges) {
+                if (Objects.equals(bridge.getColor(), color)) {
+                    strandsWithBridge.add(i + 1);
+                    break;
+                }
             }
         }
-    }
-    //manda el mensaje por una ventanita
-    StringBuilder strandsMessage = new StringBuilder("Strand por los que atraviesa el puente:\n");
-    for (int i = 0; i < strandsWithBridge.size(); i++) {
-        strandsMessage.append(strandsWithBridge.get(i));
-        // Agregar coma si no es el último elemento
-        if (i < strandsWithBridge.size() - 1) {
-            strandsMessage.append(", ");
+        //manda el mensaje por una ventanita
+        StringBuilder strandsMessage = new StringBuilder("Strand por los que atraviesa el puente:\n");
+        for (int i = 0; i < strandsWithBridge.size(); i++) {
+            strandsMessage.append(strandsWithBridge.get(i));
+            // Agregar coma si no es el último elemento
+            if (i < strandsWithBridge.size() - 1) {
+                strandsMessage.append(", ");
+            }
         }
+        if (isVisible && showmensage) {
+            JOptionPane.showMessageDialog(null, strandsMessage.toString(), "Strand", JOptionPane.INFORMATION_MESSAGE);
+        }
+        // Convertir la lista de enteros a un array de enteros
+        int[] array = new int[strandsWithBridge.size()];
+        for (int i = 0; i < strandsWithBridge.size(); i++) {
+            array[i] = strandsWithBridge.get(i);
+        }
+        return array;
     }
-    if (isVisible) {
-        JOptionPane.showMessageDialog(null, strandsMessage.toString(), "Strand", JOptionPane.INFORMATION_MESSAGE);
-    }
-    // Convertir la lista de enteros a un array de enteros
-    int[] array = new int[strandsWithBridge.size()];
-    for (int i = 0; i < strandsWithBridge.size(); i++) {
-        array[i] = strandsWithBridge.get(i);
-    }
-    return array;
-}
 
 
     /**
