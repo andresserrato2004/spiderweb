@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=Bouncy
+comment1.params=x1\ y1\ x2\ y2
+comment1.target=Bouncy(float,\ float,\ float,\ float)
+numComments=2

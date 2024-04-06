@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Transformer
+comment1.params=x1\ y1\ x2\ y2\ hiloInicial\ hiloFinal\ distance\ color\ strand
+comment1.target=Transformer(float,\ float,\ float,\ float,\ int,\ int,\ float,\ java.lang.String,\ int)
+comment2.params=color\ strand
+comment2.target=void\ addSpot(java.lang.String,\ int)
+comment3.params=color
+comment3.target=int[]\ bridge(java.lang.String)
+numComments=4

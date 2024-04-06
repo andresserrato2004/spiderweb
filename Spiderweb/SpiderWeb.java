@@ -66,7 +66,6 @@ public class SpiderWeb {
     private Bridges bridgetipe;
     private boolean showmensage = true;
 
-
     /**
      * Constructor de la clase spiderWeb.
      * Crea una nueva red de telaraña con el radio y la cantidad de brazos especificados.
@@ -75,7 +74,6 @@ public class SpiderWeb {
      * @param strands La cantidad de brazos de la telaraña.
      */
     public SpiderWeb(int radio, int strands) {
-
         this.list = new angles(radio, strands);
         this.radio = radio;
         this.strands = strands;
@@ -98,11 +96,8 @@ public class SpiderWeb {
     }
 
     public SpiderWeb(int strand, int favoritestrand, int[][] bridgesData) {
-
-
         radio = 200;
         this.strands = strand;
-
         this.list = new angles(radio, strands);
         this.angle = list.getCant();
         this.lists = list.getList();
@@ -217,14 +212,11 @@ public class SpiderWeb {
      * @param distance    La distancia desde el centro hasta el punto donde comienza el puente.
      * @param firstStrand El número del brazo donde se conectará el puente.
      */
-
     public void addBridge(String color, int distance, int firstStrand) {
-
         if (!verifyBridge(color, distance, firstStrand, true)) {
             isOk = false;
             return;
         }
-
         String type = tipeBridge;
         if(Objects.equals(type, "")){
             type = "normal";
@@ -282,26 +274,19 @@ public class SpiderWeb {
         }
     }
 
-
-
-
     public boolean verifyBridge(String color, int distance, int firstStrand, boolean showMessage) {
-
         if (colorBridges.contains(color)) {
             if (isVisible && showMessage) {
                 JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
             }
             return false;
         }
-
-        //verifica que el puente no se coloque en un hilo negativo o mayor al numero de hilos
         if (firstStrand > strands || firstStrand < 1) {
             if (isVisible && showMessage) {
                 JOptionPane.showMessageDialog(null, "El strand no existe.");
             }
             return false;
         }
-        // verifica que la distancia no sea mayor al radio o menor o igual 0
         if (distance > radio || distance <= 0) {
             if (isVisible && showMessage) {
                 JOptionPane.showMessageDialog(null, "La distancia no puede ser mayor al radio.");
@@ -310,7 +295,6 @@ public class SpiderWeb {
         }
         int previousStrand = (firstStrand == 1) ? strands - 1 : firstStrand - 2;
         int nextStrand = (firstStrand == strands) ? 0 : firstStrand;
-
         for (Bridges bridge : bridgesByStrand.get(firstStrand - 1)) {
             if (bridge.getDistance() == distance) {
                 if (isVisible && showMessage) {
@@ -319,7 +303,6 @@ public class SpiderWeb {
                 return false;
             }
         }
-
         for (Bridges bridge : bridgesByStrand.get(previousStrand)) {
             if (bridge.getDistance() == distance) {
                 if (isVisible && showMessage) {
@@ -328,7 +311,6 @@ public class SpiderWeb {
                 return false;
             }
         }
-
         for (Bridges bridge : bridgesByStrand.get(nextStrand)) {
             if (bridge.getDistance() == distance) {
                 if (isVisible && showMessage) {
@@ -337,8 +319,6 @@ public class SpiderWeb {
                 return false;
             }
         }
-
-
         return true;
     }
 
@@ -392,7 +372,6 @@ public class SpiderWeb {
      * Relocaliza automáticamente un puente en un brazo específico de la red de telaraña.
      */
     private void relocateBridgeAutomatico(String color, float distance) {
-
         angleFirstStrand = (bridgeStrand.get(color) - 1) * angle;
         angleSecondStrand = bridgeStrand.get(color) * angle;
         xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
@@ -437,7 +416,6 @@ public class SpiderWeb {
             isOk = false;
             return isOk;
         }
-
         if(!Objects.equals(type, "fixed")){
             delbridge.makeInvisible();
             if(Objects.equals(type, "transformer")){
@@ -446,10 +424,9 @@ public class SpiderWeb {
                 this.tipeBridge = "";
             }
             bridgesColor.remove(color);
-            bridgesType.remove(delbridge); // Aquí se elimina el puente de bridgesType
+            bridgesType.remove(delbridge); 
             colorBridges.remove(color);
             bridgesNoUsed.remove(color);
-            // Remove bridge from the list of bridges by strand
             bridgesByStrand.get(delbridge.hiloInicial).remove(delbridge);
             bridgesByStrand.get(delbridge.hiloFinal).remove(delbridge);
             isOk = true;
@@ -498,17 +475,13 @@ public class SpiderWeb {
         this.tipeSpot = "";
     }
 
-
     public boolean verifySpot(String color, int strand, boolean showMessage) {
-        // Verificar si el color ya está en uso
         if (spotColor.containsKey(color)) {
             if (isVisible && showMessage) {
                 JOptionPane.showMessageDialog(null, "No se puede añadir spot del mismo color.");
             }
             return false;
         }
-
-        // Verificar si ya existe un spot en el strand
         for(Tuple tuple : spotColor.values()){
             if(tuple.getNumber() == strand){
                 if (isVisible && showMessage) {
@@ -517,15 +490,12 @@ public class SpiderWeb {
                 return false;
             }
         }
-
-        // verificar si el strand existe
         if (strand > strands || strand < 1) {
             if (isVisible && showMessage) {
                 JOptionPane.showMessageDialog(null, "El strand no existe.");
             }
             return false;
         }
-
         return true;
     }
 
@@ -545,14 +515,10 @@ public class SpiderWeb {
             strandFinish = (strandFinish > strands-1) ? 0 : strandFinish;
             typeSpot();
         }
-
-        //falta hacer la implemtentacion de tipo killer
         if(Objects.equals(tipo, "killer")) {
             spider.isLive = false;
             spider.makeInvisible();
         }
-
-        //crea un nuevo tipo de spot llamado break
         if(Objects.equals(tipo, "break")) {
             delSpot(colorTipeSpot);
             if (isVisible) {
@@ -562,7 +528,6 @@ public class SpiderWeb {
             }
         }
     }
-
 
     /**
      * Elimina un punto de referencia de la red de telaraña.
@@ -660,10 +625,8 @@ public class SpiderWeb {
                     yAnterior = point.get(1);
                 }
                 try {
-                    // Pausa la ejecución durante 2000 milisegundos (2 segundos)
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    // Maneja la excepción
                 }
                 eraseRecorrido();
                 spider.isSitting = false;
@@ -677,7 +640,6 @@ public class SpiderWeb {
 
     }
 
-
     private void spidermove(ArrayList<ArrayList<Float>> walk, float xAnterior, float yAnterior) {
         for (ArrayList<Float> point : walk) {
             Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
@@ -690,8 +652,6 @@ public class SpiderWeb {
             yAnterior = point.get(1);
         }
     }
-
-
 
     private void eraseRecorrido() {
         for (Line l : recorrido) {
@@ -717,7 +677,6 @@ public class SpiderWeb {
         for (Bridges b : listBrigde) {
             ArrayList<Float> points = b.returnPoint(strand);
             float distance = (float) Math.sqrt(Math.pow(points.get(0) - xStard, 2) + Math.pow(points.get(1) - yStard, 2));
-            // nos fijamos que la distancia sea mayor a la distancia de la araña asi tomamos un puente que esta hacia delante de la araña y ademas nos aseguramos que sea el mas cercano a la araña
             if (distance > distanceSpider && distance - distanceSpider < distanceMinSB) {
                 foundBridge = true;
                 distanceMinSB = b.distance - distanceSpider;
@@ -725,8 +684,6 @@ public class SpiderWeb {
                 bridgesUsed.add(bridges);
             }
         }
-        //bridge is type mobile
-
         brigdeMap.put(foundBridge, bridges);
         return brigdeMap;
     }
@@ -740,7 +697,6 @@ public class SpiderWeb {
     for (Bridges b : listBrigde) {
         ArrayList<Float> points = b.returnPoint(strand);
         float distance = (float) Math.sqrt(Math.pow(points.get(0) - xStard, 2) + Math.pow(points.get(1) - yStard, 2));
-        // nos fijamos que la distancia sea menor a la distancia de la araña asi tomamos un puente que esta hacia abajo de la araña y ademas nos aseguramos que sea el mas cercano a la araña
         if (distance < distanceSpider && distanceSpider - distance < distanceMinSB) {
             foundBridge = true;
             distanceMinSB = distanceSpider - b.distance;
@@ -751,7 +707,6 @@ public class SpiderWeb {
     brigdeMap.put(foundBridge, bridges);
     return brigdeMap;
     }
-
 
     /**
      * Determina si es posible avanzar a lo largo del brazo de la telaraña desde una posición dada hasta el primer puente encontrado.
@@ -808,9 +763,7 @@ public class SpiderWeb {
     hilosTomados = new ArrayList<>();
     float xSpiderActual = spider.getXPosition();
     float ySpiderActual = spider.getYPosition();
-
     boolean foundBridge = false;
-
     while (!foundBridge) {
         Map<Boolean, Bridges> bridgeMap = nextBridge1(bridgesByStrand.get(strand), strand, xSpiderActual, ySpiderActual);
 
@@ -835,7 +788,7 @@ public class SpiderWeb {
     }
     this.strandFinish = 0;
     return walk;
-}
+    }
 
 
     /**
@@ -863,8 +816,7 @@ public class SpiderWeb {
             finishWalk = true;
         }
         return spots;
-    }
-
+}
 
     /**
      * Devuelve una lista de los colores de los puentes en la red de telaraña.
@@ -917,7 +869,6 @@ public class SpiderWeb {
         }
     }
 
-
     /**
      * Retorna una lista de hilos (strands) en los cuales se encuentra un puente dado su color.
      *
@@ -935,11 +886,9 @@ public class SpiderWeb {
                 }
             }
         }
-        //manda el mensaje por una ventanita
         StringBuilder strandsMessage = new StringBuilder("Strand por los que atraviesa el puente:\n");
         for (int i = 0; i < strandsWithBridge.size(); i++) {
             strandsMessage.append(strandsWithBridge.get(i));
-            // Agregar coma si no es el último elemento
             if (i < strandsWithBridge.size() - 1) {
                 strandsMessage.append(", ");
             }
@@ -947,14 +896,12 @@ public class SpiderWeb {
         if (isVisible && showmensage) {
             JOptionPane.showMessageDialog(null, strandsMessage.toString(), "Strand", JOptionPane.INFORMATION_MESSAGE);
         }
-        // Convertir la lista de enteros a un array de enteros
         int[] array = new int[strandsWithBridge.size()];
         for (int i = 0; i < strandsWithBridge.size(); i++) {
             array[i] = strandsWithBridge.get(i);
         }
         return array;
     }
-
 
     /**
      * Agrega un nuevo brazo a la red de telaraña.
@@ -1034,19 +981,11 @@ public class SpiderWeb {
      * @return Una lista de cadenas que representan los colores de los puentes sin usar.
      */
     public String[] unUsedBridges() {
-    // Crear una lista para almacenar los colores de los puentes no utilizados
     ArrayList<String> unUsedBridgesColors = new ArrayList<>(colorBridges);
-
-    // Recorrer la lista de puentes utilizados
     for (Bridges usedBridge : bridgesUsed) {
-        // Obtener el color del puente utilizado
         String usedBridgeColor = usedBridge.getColor();
-
-        // Si el color del puente utilizado está en la lista de colores de puentes no utilizados, lo eliminamos
         unUsedBridgesColors.remove(usedBridgeColor);
     }
-
-    // Convertir la lista de colores de puentes no utilizados a un array y devolverlo
     return unUsedBridgesColors.toArray(new String[0]);
 }
 
@@ -1057,7 +996,6 @@ public class SpiderWeb {
      * @return Una lista de enteros que representan los números de los brazos tomados por la araña.
      */
    public int[] spiderLastPath() {
-    // Convertir la lista de enteros a un array de enteros
     int[] array = new int[hilosTomados.size()];
     for (int i = 0; i < hilosTomados.size(); i++) {
         array[i] = hilosTomados.get(i);
@@ -1153,24 +1091,18 @@ public class SpiderWeb {
 
     public int getClosestSpot() {
         int closestStrand = -1;
-        int minDistance = strands; // La distancia máxima posible es el número total de strands
-
+        int minDistance = strands; 
         for (Map.Entry<String, Tuple> entry : spotColor.entrySet()) {
             Tuple spot = entry.getValue();
             int spotStrand = spot.getNumber();
-
-            // Calcula la distancia circular entre la araña y el spot
             int distanceClockwise = (spotStrand - (int)strand + strands) % strands;
             int distanceCounterClockwise = (strands - distanceClockwise) % strands;
             int distance = Math.min(distanceClockwise, distanceCounterClockwise);
-
-            // Si la distancia es menor que la mínima actual, actualiza la mínima y el spot más cercano
             if (distance < minDistance) {
                 minDistance = distance;
                 closestStrand = spotStrand;
             }
         }
-
         return closestStrand ;
     }
 
@@ -1195,6 +1127,4 @@ public class SpiderWeb {
     public int getStrandFinish() {
         return strandFinish+1;
     }
-
-
 }
