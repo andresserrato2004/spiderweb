@@ -44,7 +44,7 @@ public class SpiderWeb {
     private List<Pair<Float, Float>> lists;
     private ArrayList<Strands> lineList;
     private ArrayList<Spot> lineListSpot;
-    private final Spider spider;
+    final Spider spider;
     private final ArrayList<String> colorBridges = new ArrayList<String>();
     private final ArrayList<String> colorSports = new ArrayList<String>();
     private final ArrayList<Bridges> bridgesUsed  = new ArrayList<Bridges>();
@@ -555,11 +555,12 @@ public class SpiderWeb {
         //crea un nuevo tipo de spot llamado break
         if(Objects.equals(tipo, "break")) {
             delSpot(colorTipeSpot);
-            for(Line l : recorrido){
-                l.makeVisible();
+            if (isVisible) {
+                for (Line l : recorrido) {
+                    l.makeVisible();
+                }
             }
         }
-
     }
 
 
@@ -576,15 +577,11 @@ public class SpiderWeb {
             this.isOk = false;
         } else {
             int strand = spotColor.get(color).getNumber();
-            Strands arm = lineList.get(strand);
+            Spot arm = lineListSpot.get(strand-1);
             arm.changeColor("black");
-            lineList.set(strand, arm);
+            lineListSpot.set(strand, arm);
             if (!isSpot) {
-                for (Strands arms : lineList) {
-                    arms.makeVisible();
-                }
-                spider.makeVisible();
-
+                arm.makeVisible();
             }
             spotColor.remove(color);
             colorSports.remove(color);
@@ -1189,6 +1186,14 @@ public class SpiderWeb {
 
     public int getRadio() {
         return radio;
+    }
+
+    public boolean isSpiderLive() {
+        return spider.isLive;
+    }
+
+    public int getStrandFinish() {
+        return strandFinish+1;
     }
 
 

@@ -312,8 +312,6 @@ public class SpiderWebContest {
             newbridges = createBridges1(vec, strand);
 
         }
-        System.out.println(query(strand, 1, n, 1));
-
         makeVisilbe();
 
         spiderweb.spiderWalk(true);

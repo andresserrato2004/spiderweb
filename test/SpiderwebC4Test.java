@@ -387,7 +387,39 @@ public class SpiderwebC4Test {
         spiderWeb.spiderWalk(true);
         int[] result = {1, 2, 3, 4, 5};
         assertArrayEquals(result, spiderWeb.spiderLastPath());
-
     }
 
+    @Test
+    public void spotkiller(){
+        spiderWeb.addSpot("killer","red", 1);
+        spiderWeb.spiderSit(1);
+        spiderWeb.spiderWalk(true);
+        assertFalse(spiderWeb.isSpiderLive());
+    }
+
+    @Test
+    public void spotbouncy(){
+        spiderWeb.addSpot("bouncy","red", 1);
+        spiderWeb.spiderSit(1);
+        spiderWeb.spiderWalk(true);
+        int res = 2;
+        assertEquals(res, spiderWeb.getStrandFinish());
+    }
+
+    @Test
+    public void spotbreak(){
+        spiderWeb.addSpot("break","red", 1);
+        spiderWeb.spiderSit(1);
+        spiderWeb.spiderWalk(true);
+        String[] res = {"green"};
+        assertArrayEquals(res, spiderWeb.spots());
+    }
+
+//    @Test
+//    public void bridgefixed(){
+//        spiderWeb.addBridge("fixed","red", 1, 1);
+//        spiderWeb.delBridge("red");
+//        String[] res = {"green","red"};
+//        assertEquals(res, spiderWeb.bridges());
+//    }
 }
