@@ -217,10 +217,11 @@ public class SpiderWeb {
             isOk = false;
             return;
         }
-        String type = tipeBridge;
-        if(Objects.equals(type, "")){
-            type = "normal";
+
+        if(Objects.equals(tipeBridge, "")){
+            tipeBridge = "normal";
         }
+
         angleFirstStrand = (firstStrand - 1) * angle;
         angleSecondStrand = firstStrand * angle;
         xBridge = distance * (float) Math.cos(Math.toRadians(angleFirstStrand));
@@ -229,16 +230,17 @@ public class SpiderWeb {
         y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
         int endStrand = (firstStrand == strands) ? 0 : firstStrand;
         Bridges bridge = null;
-        if  (Objects.equals(tipeBridge, "Fixed")) {
+        if  (Objects.equals(tipeBridge, "fixed")) {
             bridge = new Fixed(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
-        } else if (Objects.equals(tipeBridge, "Transformer")){
+        } else if (Objects.equals(tipeBridge, "transformer")){
             bridge = new Transformer(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
-        } else if (Objects.equals(tipeBridge, "Weak")){
+        } else if (Objects.equals(tipeBridge, "weak")){
             bridge = new Weak(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
-        } else if (Objects.equals(tipeBridge, "Mobile")){
+        } else if (Objects.equals(tipeBridge, "mobile")){
             bridge = new Mobile(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
-        }  
-
+        } else if (Objects.equals(tipeBridge, "normal")){
+            bridge = new Normal(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
+        }
         bridge.changeColor(color);
         bridgesColor.put(color, bridge);
         colorBridges.add(color);
@@ -246,7 +248,7 @@ public class SpiderWeb {
         bridgesByStrand.get(firstStrand - 1).add(bridge);
         bridgesByStrand.get(endStrand).add(bridge);
         bridgeStrand.put(color, firstStrand);
-        bridgesType.put(bridge, type);
+        bridgesType.put(bridge, tipeBridge);
         isOk = true;
         if (isBridges) {
             bridge.makeVisible();
@@ -468,17 +470,17 @@ public class SpiderWeb {
             return;
         }
         Spot arm = lineListSpot.get(strand - 1);
-        if (tipeSpot == "bouncy"){
-            arm = new Bouncy(xStard, yStard, lineListSpot.get(strand - 1).getX1(), lineListSpot.get(strand - 1).getY1());
-        }else if (tipeSpot == "killer"){
-            arm = new Killer(xStard, yStard, lineListSpot.get(strand - 1).getX1(), lineListSpot.get(strand - 1).getY1());
-        }else if (tipeSpot == "Break"){
-            arm = new Break(xStard, yStard, lineListSpot.get(strand - 1).getX1(), lineListSpot.get(strand - 1).getY1());
+        Spot arm1 = lineListSpot.get(strand - 1);
+        if (Objects.equals(tipeSpot, "bouncy")){
+            arm1 = new Bouncy(xStard, yStard, lineListSpot.get(strand - 1).getX1(), lineListSpot.get(strand - 1).getY1());
+        }else if (Objects.equals(tipeSpot, "killer")){
+            arm1 = new Killer(xStard, yStard, lineListSpot.get(strand - 1).getX1(), lineListSpot.get(strand - 1).getY1());
+        }else if (Objects.equals(tipeSpot, "Break")){
+            arm1 = new Break(xStard, yStard, lineListSpot.get(strand - 1).getX1(), lineListSpot.get(strand - 1).getY1());
         }
         arm.changeColor(color);
         lineListSpot.set(strand - 1, arm);
         if (!isSpot) {
-            makeVisible();
             arm.makeVisible();
         }
         Tuple tuple = new Tuple(strand, type);
@@ -599,6 +601,7 @@ public class SpiderWeb {
      * @param strand El número del brazo donde se desea que la araña se siente.
      */
     public void spiderSit(int strand) {
+        eraseRecorrido();
         if (strand > 0 && strand <= strands) {
             this.strand = strand;
             spider.spiderSit();
@@ -947,10 +950,11 @@ public class SpiderWeb {
         }
         for (String color : spotColor.keySet()) {
             int strand = spotColor.get(color).getNumber();
-            Spot arm = lineListSpot.get(strand);
+            System.out.println(strand);
+            Spot arm = lineListSpot.get(strand-1);
             arm.changeColor(color);
 
-            lineListSpot.set(strand, arm);
+            lineListSpot.set(strand-1, arm);
         }
         eraseRecorrido();
         if (wasVisible && !isVisible) {
