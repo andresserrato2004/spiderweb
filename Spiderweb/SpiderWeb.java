@@ -950,7 +950,6 @@ public class SpiderWeb {
         }
         for (String color : spotColor.keySet()) {
             int strand = spotColor.get(color).getNumber();
-            System.out.println(strand);
             Spot arm = lineListSpot.get(strand-1);
             arm.changeColor(color);
 
