@@ -228,7 +228,17 @@ public class SpiderWeb {
         x2Bridge = distance * (float) Math.cos(Math.toRadians(angleSecondStrand));
         y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
         int endStrand = (firstStrand == strands) ? 0 : firstStrand;
-        Bridges bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance);
+        Bridges bridge = null;
+        if  (Objects.equals(tipeBridge, "Fixed")) {
+            bridge = new Fixed(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
+        } else if (Objects.equals(tipeBridge, "Transformer")){
+            bridge = new Transformer(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
+        } else if (Objects.equals(tipeBridge, "Weak")){
+            bridge = new Weak(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
+        } else if (Objects.equals(tipeBridge, "Mobile")){
+            bridge = new Mobile(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
+        }  
+
         bridge.changeColor(color);
         bridgesColor.put(color, bridge);
         colorBridges.add(color);
@@ -240,8 +250,9 @@ public class SpiderWeb {
         isOk = true;
         if (isBridges) {
             bridge.makeVisible();
+
         }
-    }
+        }
 
     public void addBridge(String type, String color, int distance, int firstStrand) {
         this.tipeBridge = type;
@@ -262,6 +273,7 @@ public class SpiderWeb {
             showmensage = true;
             int Strand = strands[0];
             addSpot(color, Strand);
+            
         }else if (Objects.equals(tipeBridge,"weak")){
             delBridge(color);
         }else if (Objects.equals(tipeBridge,"mobile")){
@@ -380,7 +392,6 @@ public class SpiderWeb {
         y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
         Bridges bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, bridgesColor.get(color).hiloInicial, bridgesColor.get(color).hiloFinal, distance);
         bridge.changeColor(color);
-
         hideBridges();
         bridgesColor.put(color, bridge);
         int index = 0;
@@ -457,6 +468,13 @@ public class SpiderWeb {
             return;
         }
         Spot arm = lineListSpot.get(strand - 1);
+        if (tipeSpot == "bouncy"){
+            arm = new Bouncy(xStard, yStard, lineListSpot.get(strand - 1).getX1(), lineListSpot.get(strand - 1).getY1());
+        }else if (tipeSpot == "killer"){
+            arm = new Killer(xStard, yStard, lineListSpot.get(strand - 1).getX1(), lineListSpot.get(strand - 1).getY1());
+        }else if (tipeSpot == "Break"){
+            arm = new Break(xStard, yStard, lineListSpot.get(strand - 1).getX1(), lineListSpot.get(strand - 1).getY1());
+        }
         arm.changeColor(color);
         lineListSpot.set(strand - 1, arm);
         if (!isSpot) {
