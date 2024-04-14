@@ -95,6 +95,17 @@ public class SpiderWeb {
         isOk = true;
     }
 
+    /**
+ * This is a constructor for the SpiderWeb class.
+ * It creates a new SpiderWeb object with a specified number of strands, a favorite strand, and an array of bridge data.
+ * Each bridge is represented by an array of two integers, where the first integer is the distance of the bridge from the center of the web,
+ * and the second integer is the strand number where the bridge starts.
+ * The constructor also adds a spot at the favorite strand.
+ *
+ * @param strand The number of strands in the spider web.
+ * @param favoritestrand The strand number where a spot will be added.
+ * @param bridgesData A 2D array containing the data for each bridge to be added to the spider web.
+ */
     public SpiderWeb(int strand, int favoritestrand, int[][] bridgesData) {
         radio = 200;
         this.strands = strand;
@@ -271,6 +282,18 @@ public class SpiderWeb {
 
     }
 
+    /**
+     * This method is used to add a bridge to the spider web.
+     * It first sets the type of the bridge, then verifies if the bridge can be added.
+     * If the bridge can be added, it adds the bridge and sets the status to true.
+     * If the bridge cannot be added, it sets the status to false.
+     * After the operation, it resets the type of the bridge to an empty string.
+     *
+     * @param type The type of the bridge to be added.
+     * @param color The color of the bridge to be added.
+     * @param distance The distance from the center of the web to the start of the bridge.
+     * @param firstStrand The strand number where the bridge starts.
+     */
     public void addBridge(String type, String color, int distance, int firstStrand) {
         this.tipeBridge = type;
         if(verifyBridge(color, distance, firstStrand, true)) {
@@ -282,9 +305,18 @@ public class SpiderWeb {
         this.tipeBridge = "";
     }
 
+    /**
+     * This method is used to add distinctive features to a bridge based on its type.
+     * It creates a number of circles on the bridge based on the bridge type.
+     * The circles are added to an ArrayList and stored in a map with the bridge as the key.
+     * The value in the map is a List of Objects, where the first object is the bridge type and the second object is the ArrayList of circles.
+     *
+     * @param bridge The bridge to which the distinctive features are to be added.
+     * @param color The color of the distinctive features.
+     */
     private void distintive(Bridges bridge, String color){
         ArrayList<Integer> midPoint = bridge.getMidPoint();
-        int circleCount = tipeBridge.equals("fixed") ? 1 : tipeBridge.equals("transformer") ? 2 : tipeBridge.equals("weak") ? 3 : 4;
+        int circleCount = tipeBridge.equals("fixed") ? 1 : tipeBridge.equals("transformer") ? 2 : tipeBridge.equals("weak") ? 3 : tipeBridge.equals("mobile") ? 4:0;
 
         ArrayList<Circle> circles = new ArrayList<>();
 
@@ -301,6 +333,16 @@ public class SpiderWeb {
 
         bridgesType.put(bridge, value);
     }
+
+    /**
+     * This method is used to handle different types of bridges in the spider web.
+     * Depending on the type of the bridge, it performs different actions.
+     * For a "transformer" bridge, it adds a spot at the start of the bridge.
+     * For a "weak" bridge, it deletes the bridge.
+     * For a "mobile" bridge, it moves the bridge to a new location.
+     *
+     * @param istypebridge A boolean flag indicating if the bridge is of a specific type.
+     */
 
     private void TypeBridge(boolean istypebridge){
         String color = colorTipeBridge;
@@ -323,54 +365,108 @@ public class SpiderWeb {
         }
     }
 
+    /**
+     * This method is used to verify if a bridge can be added to the spider web.
+     * It checks if the color of the bridge already exists, if the strand number is valid, and if the distance is valid.
+     * It also checks if there is already a bridge at the same distance on the current, previous, and next strand.
+     * If any of these checks fail, the method returns false, indicating that the bridge cannot be added.
+     * If all checks pass, the method returns true, indicating that the bridge can be added.
+     *
+     * @param color The color of the bridge to be added.
+     * @param distance The distance from the center of the web to the start of the bridge.
+     * @param firstStrand The strand number where the bridge starts.
+     * @param showMessage A boolean flag indicating if a message should be shown when a check fails.
+     * @return A boolean value indicating if the bridge can be added (true) or not (false).
+     */
+
     public boolean verifyBridge(String color, int distance, int firstStrand, boolean showMessage) {
-        if (colorBridges.contains(color)) {
-            if (isVisible && showMessage) {
-                JOptionPane.showMessageDialog(null, "No se puede añadir puente del mismo color.");
-            }
+        if (isColorExists(color, showMessage) || !isStrandValid(firstStrand, showMessage) || !isDistanceValid(distance, showMessage)) {
             return false;
         }
-        if (firstStrand > strands || firstStrand < 1) {
-            if (isVisible && showMessage) {
-                JOptionPane.showMessageDialog(null, "El strand no existe.");
-            }
-            return false;
-        }
-        if (distance > radio || distance <= 0) {
-            if (isVisible && showMessage) {
-                JOptionPane.showMessageDialog(null, "La distancia no puede ser mayor al radio.");
-            }
-            return false;
-        }
+
         int previousStrand = (firstStrand == 1) ? strands - 1 : firstStrand - 2;
         int nextStrand = (firstStrand == strands) ? 0 : firstStrand;
-        for (Bridges bridge : bridgesByStrand.get(firstStrand - 1)) {
-            if (bridge.getDistance() == distance) {
-                if (isVisible && showMessage) {
-                    JOptionPane.showMessageDialog(null, "Ya existe un puente en este strand a la misma distancia.");
-                }
-                return false;
-            }
+
+        return !(isBridgeExistsAtDistance(firstStrand-1, distance, showMessage) ||
+                 isBridgeExistsAtDistance(previousStrand, distance, showMessage) ||
+                 isBridgeExistsAtDistance(nextStrand, distance, showMessage));
+    }
+
+    /**
+     * This method checks if a bridge of a certain color already exists in the spider web.
+     * If a bridge of the same color exists, it shows a message and returns true.
+     * If no bridge of the same color exists, it returns false.
+     *
+     * @param color The color of the bridge to be checked.
+     * @param showMessage A boolean flag indicating if a message should be shown when a bridge of the same color exists.
+     * @return A boolean value indicating if a bridge of the same color exists (true) or not (false).
+     */
+    private boolean isColorExists(String color, boolean showMessage) {
+        if (colorBridges.contains(color)) {
+            showMessage("No se puede añadir puente del mismo color.", showMessage);
+            return true;
         }
-        for (Bridges bridge : bridgesByStrand.get(previousStrand)) {
-            if (bridge.getDistance() == distance) {
-                if (isVisible && showMessage) {
-                    JOptionPane.showMessageDialog(null, "Ya existe un puente en el strand adyacente a la misma distancia.");
-                }
-                return false;
-            }
-        }
-        for (Bridges bridge : bridgesByStrand.get(nextStrand)) {
-            if (bridge.getDistance() == distance) {
-                if (isVisible && showMessage) {
-                    JOptionPane.showMessageDialog(null, "Ya existe un puente en el strand adyacente a la misma distancia.");
-                }
-                return false;
-            }
+        return false;
+    }
+
+    /**
+     * This method checks if a strand number is valid.
+     * If the strand number is not within the range of existing strands, it shows a message and returns false.
+     * If the strand number is valid, it returns true.
+     *
+     * @param strand The strand number to be checked.
+     * @param showMessage A boolean flag indicating if a message should be shown when the strand number is not valid.
+     * @return A boolean value indicating if the strand number is valid (true) or not (false).
+     */
+    private boolean isStrandValid(int strand, boolean showMessage) {
+        if (strand > strands || strand < 1) {
+            showMessage("El strand no existe.", showMessage);
+            return false;
         }
         return true;
     }
 
+    /**
+     * This method checks if a distance value is valid.
+     * If the distance is not within the range of the spider web's radius, it shows a message and returns false.
+     * If the distance is valid, it returns true.
+     *
+     * @param distance The distance to be checked.
+     * @param showMessage A boolean flag indicating if a message should be shown when the distance is not valid.
+     * @return A boolean value indicating if the distance is valid (true) or not (false).
+     */
+    private boolean isDistanceValid(int distance, boolean showMessage) {
+        if (distance > radio || distance <= 0) {
+            showMessage("La distancia no puede ser mayor al radio.", showMessage);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * This method checks if a bridge already exists at a certain distance on a certain strand.
+     * If a bridge exists at the same distance on the strand, it shows a message and returns true.
+     * If no bridge exists at the same distance on the strand, it returns false.
+     *
+     * @param strand The strand number to be checked.
+     * @param distance The distance to be checked.
+     * @param showMessage A boolean flag indicating if a message should be shown when a bridge exists at the same distance on the strand.
+     * @return A boolean value indicating if a bridge exists at the same distance on the strand (true) or not (false).
+     */
+    private boolean isBridgeExistsAtDistance(int strand, int distance, boolean showMessage) {
+        for (Bridges bridge : bridgesByStrand.get(strand)) {
+            if (bridge.getDistance() == distance) {
+                showMessage("Ya existe un puente en este strand a la misma distancia.", showMessage);
+                return true;
+            }
+        }
+        return false;
+    }
+    private void showMessage(String message, boolean showMessage) {
+        if (isVisible && showMessage) {
+            JOptionPane.showMessageDialog(null, message);
+        }
+    }
     /**
      * Relocaliza un puente existente en la red de telaraña.
      *
@@ -494,7 +590,7 @@ public class SpiderWeb {
     }
 
     /**
-     * Agrega un punto de referencia a la red de telaraña.
+     * Agrega un spot a la red de telaraña.
      *
      * @param color  El color del punto de referencia.
      * @param strand El número del brazo donde se agregará el punto de referencia.
@@ -548,9 +644,15 @@ public class SpiderWeb {
         }
         spotype.put(spot, circles);
 
-
     }
 
+    /**
+     * Agrega un tipo spot a la red de telaraña.
+     *
+     * @param color  El color del punto de referencia.
+     * @param strand El número del brazo donde se agregará el punto de referencia.
+     * @param type   El tipo de spot que se desea agregar.
+     */
 
     public void addSpot(String type, String color, int strand) {
         this.tipeSpot = type;
@@ -558,6 +660,17 @@ public class SpiderWeb {
         this.tipeSpot = "";
     }
 
+    /**
+     * This method is used to verify if a spot can be added to the spider web.
+     * It checks if a spot of the same color already exists, if the strand number is valid, and if there is already a spot on the same strand.
+     * If any of these checks fail, the method returns false, indicating that the spot cannot be added.
+     * If all checks pass, the method returns true, indicating that the spot can be added.
+     *
+     * @param color The color of the spot to be added.
+     * @param strand The strand number where the spot will be added.
+     * @param showMessage A boolean flag indicating if a message should be shown when a check fails.
+     * @return A boolean value indicating if the spot can be added (true) or not (false).
+     */
     public boolean verifySpot(String color, int strand, boolean showMessage) {
         if (spotColor.containsKey(color)) {
             if (isVisible && showMessage) {
@@ -582,6 +695,13 @@ public class SpiderWeb {
         return true;
     }
 
+    /**
+     * This method is used to handle different types of spots in the spider web.
+     * Depending on the type of the spot, it performs different actions.
+     * For a "bouncy" spot, it moves the spider to the next strand and recursively calls the method until a non-bouncy spot is encountered.
+     * For a "killer" spot, it kills the spider and makes it invisible.
+     * For a "break" spot, it deletes the spot and makes all the lines in the path visible.
+     */
     private void typeSpot() {
         String tipo = "";
         String colorTipeSpot = null;
@@ -711,7 +831,7 @@ public class SpiderWeb {
                     l.makeVisible();
                     recorrido.add(l);
                     xAnterior = point.get(0);
-                    yAnterior = point.get(1);
+                     yAnterior = point.get(1);
                 }
                 try {
                     Thread.sleep(1000);
@@ -729,6 +849,17 @@ public class SpiderWeb {
 
     }
 
+    /**
+     * This method is used to move the spider along a path in the spider web.
+     * It iterates over a list of points that represent the path, and for each point, it creates a line from the previous point to the current point.
+     * It then changes the color of the line to blue and makes it visible if the spider web is visible.
+     * The line is added to the 'recorrido' list which keeps track of the path that the spider has taken.
+     * After each iteration, the current point becomes the previous point for the next iteration.
+     *
+     * @param walk An ArrayList of ArrayLists of Floats, where each inner ArrayList represents a point on the path and contains the x and y coordinates of the point.
+     * @param xAnterior The x coordinate of the previous point on the path.
+     * @param yAnterior The y coordinate of the previous point on the path.
+     */
     private void spidermove(ArrayList<ArrayList<Float>> walk, float xAnterior, float yAnterior) {
         for (ArrayList<Float> point : walk) {
             Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
@@ -749,14 +880,22 @@ public class SpiderWeb {
         recorrido = new ArrayList<Line>();
     }
 
+
     /**
-     * Determina el siguiente puente que tiene que tomar la araña teniendo en cuenta que solo puede ir hacia adelante.
+     * This method is used to find the next bridge on a given strand that the spider can move to.
+     * It iterates over a list of bridges on the strand, and for each bridge, it calculates the distance from the center of the web to the bridge.
+     * If the distance to the bridge is greater than the current distance of the spider and the difference between the two distances is less than the minimum difference found so far,
+     * it updates the minimum difference and sets the bridge as the next bridge to move to.
+     * After iterating over all bridges, it adds a key-value pair to a map where the key is a boolean indicating if a next bridge was found and the value is the next bridge.
+     * If no next bridge was found, the value is a default bridge with no properties.
      *
-     * @param listBrigde    es una lista de puentes que tiene el hilo donde esta actualmente la araña
-     * @param strand        es el hilo donde esta parada la araña
-     * @param xSpiderActual ySpiderActual es la posicion actual de la araña para poder calcular cual brige
-     * @return devuelve un Map de un elemento que indica si encontro el bridge y el puente mas cercano hacia adelante de la araña.
+     * @param listBrigde An ArrayList of Bridges representing the bridges on the strand.
+     * @param strand The strand number where the spider is currently located.
+     * @param xSpiderActual The current x coordinate of the spider.
+     * @param ySpiderActual The current y coordinate of the spider.
+     * @return A Map where the key is a Boolean indicating if a next bridge was found and the value is the next bridge (if found) or a default bridge (if not found).
      */
+
     private Map<Boolean, Bridges> nextBridge(ArrayList<Bridges> listBrigde, int strand, float xSpiderActual, float ySpiderActual) {
         float distanceMinSB = 3000;
         float distanceSpider = (float) Math.sqrt(Math.pow(xSpiderActual - xStard, 2) + Math.pow(ySpiderActual - yStard, 2));
@@ -778,31 +917,24 @@ public class SpiderWeb {
     }
 
     private Map<Boolean, Bridges> nextBridge1(ArrayList<Bridges> listBrigde, int strand, float xSpiderActual, float ySpiderActual) {
-    float distanceMinSB = 3000;
-    float distanceSpider = (float) Math.sqrt(Math.pow(xSpiderActual - xStard, 2) + Math.pow(ySpiderActual - yStard, 2));
-    Bridges bridges = new Bridges(0, 0, 0, 0, 1, 2, 0);
-    Map<Boolean, Bridges> brigdeMap = new HashMap<Boolean, Bridges>();
-    boolean foundBridge = false;
-    for (Bridges b : listBrigde) {
-        ArrayList<Float> points = b.returnPoint(strand);
-        float distance = (float) Math.sqrt(Math.pow(points.get(0) - xStard, 2) + Math.pow(points.get(1) - yStard, 2));
-        if (distance < distanceSpider && distanceSpider - distance < distanceMinSB) {
-            foundBridge = true;
-            distanceMinSB = distanceSpider - b.distance;
-            bridges = b;
-            bridgesUsed.add(bridges);
+        float distanceMinSB = 3000;
+        float distanceSpider = (float) Math.sqrt(Math.pow(xSpiderActual - xStard, 2) + Math.pow(ySpiderActual - yStard, 2));
+        Bridges bridges = new Bridges(0, 0, 0, 0, 1, 2, 0);
+        Map<Boolean, Bridges> brigdeMap = new HashMap<Boolean, Bridges>();
+        boolean foundBridge = false;
+        for (Bridges b : listBrigde) {
+            ArrayList<Float> points = b.returnPoint(strand);
+            float distance = (float) Math.sqrt(Math.pow(points.get(0) - xStard, 2) + Math.pow(points.get(1) - yStard, 2));
+            if (distance < distanceSpider && distanceSpider - distance < distanceMinSB) {
+                foundBridge = true;
+                distanceMinSB = distanceSpider - b.distance;
+                bridges = b;
+                bridgesUsed.add(bridges);
+            }
         }
+        brigdeMap.put(foundBridge, bridges);
+        return brigdeMap;
     }
-    brigdeMap.put(foundBridge, bridges);
-    return brigdeMap;
-    }
-
-    /**
-     * Determina si es posible avanzar a lo largo del brazo de la telaraña desde una posición dada hasta el primer puente encontrado.
-     *
-     * @param strand El número del brazo de la telaraña desde el que se quiere comprobar si es posible avanzar.
-     * @return Una lista de listas de enteros que representan los puntos a lo largo del brazo de la telaraña hasta el primer puente encontrado.
-     */
 
     private ArrayList<ArrayList<Float>> isPosible(int strand) {
         hilosTomados = new ArrayList<>();
@@ -1178,23 +1310,6 @@ public class SpiderWeb {
         }
     }
 
-    public int getClosestSpot() {
-        int closestStrand = -1;
-        int minDistance = strands;
-        for (Map.Entry<String, Tuple> entry : spotColor.entrySet()) {
-            Tuple spot = entry.getValue();
-            int spotStrand = spot.getNumber();
-            int distanceClockwise = (spotStrand - (int)strand + strands) % strands;
-            int distanceCounterClockwise = (strands - distanceClockwise) % strands;
-            int distance = Math.min(distanceClockwise, distanceCounterClockwise);
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestStrand = spotStrand;
-            }
-        }
-        return closestStrand ;
-    }
-
     /**
      * Devuelve el estado de los metodos.
      *
@@ -1205,14 +1320,34 @@ public class SpiderWeb {
         return isOk;
     }
 
+    /**
+     * This method is used to get the radius of the spider web.
+     * The radius is the distance from the center of the web to the outermost strand.
+     *
+     * @return The radius of the spider web.
+     */
     public int getRadio() {
         return radio;
     }
 
+    /**
+     * This method is used to check if the spider is alive.
+     * If the spider is alive, it can move along the strands and bridges of the spider web.
+     * If the spider is not alive, it cannot move.
+     *
+     * @return A boolean value indicating if the spider is alive (true) or not (false).
+     */
     public boolean isSpiderLive() {
         return spider.isLive;
     }
 
+    /**
+     * This method is used to get the strand number where the spider finished its last move.
+     * The strand number is incremented by 1 before being returned because the internal representation of strands starts from 0,
+     * but for the user, strands are numbered starting from 1.
+     *
+     * @return The strand number where the spider finished its last move, incremented by 1.
+     */
     public int getStrandFinish() {
         return strandFinish+1;
     }
