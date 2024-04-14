@@ -1,11 +1,11 @@
 package Spiderweb;
 
 import shapes.Canvas;
+import shapes.Circle;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import javax.lang.model.type.ArrayType;
 import javax.swing.JOptionPane;
 import java.lang.String;
 
@@ -51,7 +51,7 @@ public class SpiderWeb {
     private final Map<String, Bridges> bridgesColor;
     private final Map<String, Integer> bridgeStrand = new HashMap<>();
     private final Map<String, Tuple> spotColor;
-    private Map<Bridges, String> bridgesType = new HashMap<>();
+    private Map<Bridges, List<Object>> bridgesType = new HashMap<>();
     private final Map<Integer, ArrayList<Bridges>> bridgesByStrand = new HashMap<Integer, ArrayList<Bridges>>();
     private final ArrayList<String> bridgesNoUsed = new ArrayList<String>();
     private List<Integer> hilosTomados;
@@ -63,8 +63,8 @@ public class SpiderWeb {
     private String tipeSpot = "";
     private String tipeBridge = "";
     private String colorTipeBridge;
-    private Bridges bridgetipe;
     private boolean showmensage = true;
+    private Map<Spot, ArrayList<Circle>> spotype = new HashMap<>();
 
     /**
      * Constructor de la clase spiderWeb.
@@ -152,12 +152,16 @@ public class SpiderWeb {
     public void makeVisible() {
         isSpot = false;
         if (!isVisible && !isSpot) {
-            for (String color : bridgesColor.keySet()) {
-                Bridges bridge = bridgesColor.get(color);
+            for (Bridges bridge : bridgesType.keySet()) {
                 bridge.makeVisible();
+                ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(bridge).get(1);
+                for (Circle circle : circles) {
+                    circle.makeVisible();
+                }
             }
             for (Strands arms : lineList) {
                 arms.makeVisible();
+
             }
             ArrayList<Spot> reversedLineList = new ArrayList<>();
             for (int i = lineListSpot.size() - 1; i >= 0; i--) {
@@ -165,6 +169,12 @@ public class SpiderWeb {
             }
             for (Spot arms : reversedLineList) {
                 arms.makeVisible();
+                if (spotype.containsKey(arms)) {
+                    ArrayList<Circle> circles = spotype.get(arms);
+                    for (Circle circle : circles) {
+                        circle.makeVisible();
+                    }
+                }
             }
             if(spider.isLive){
                 spider.makeVisible();
@@ -187,12 +197,16 @@ public class SpiderWeb {
         }
         for (Spot arms : lineListSpot) {
             arms.makeInvisible();
+
         }
 
-        spider.makeInvisible();
-        for (String color : bridgesColor.keySet()) {
-            Bridges bridge = bridgesColor.get(color);
+        for (Bridges bridge : bridgesType.keySet()) {
+            spider.makeInvisible();
             bridge.makeInvisible();
+            ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(bridge).get(1);
+            for (Circle circle : circles) {
+                circle.makeInvisible();
+            }
         }
         spider.makeInvisible();
         isBridges = false;
@@ -236,10 +250,10 @@ public class SpiderWeb {
             bridge = new Transformer(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
         } else if (Objects.equals(tipeBridge, "weak")){
             bridge = new Weak(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
-        } else if (Objects.equals(tipeBridge, "mobile")){
+        } else if (Objects.equals(tipeBridge, "mobile")) {
             bridge = new Mobile(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
-        } else if (Objects.equals(tipeBridge, "normal")){
-            bridge = new Normal(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance, color, firstStrand);
+        }else if (Objects.equals(tipeBridge,"normal")){
+            bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, firstStrand - 1, endStrand, distance);
         }
         bridge.changeColor(color);
         bridgesColor.put(color, bridge);
@@ -248,13 +262,14 @@ public class SpiderWeb {
         bridgesByStrand.get(firstStrand - 1).add(bridge);
         bridgesByStrand.get(endStrand).add(bridge);
         bridgeStrand.put(color, firstStrand);
-        bridgesType.put(bridge, tipeBridge);
         isOk = true;
+        distintive(bridge, color);
         if (isBridges) {
             bridge.makeVisible();
 
         }
-        }
+
+    }
 
     public void addBridge(String type, String color, int distance, int firstStrand) {
         this.tipeBridge = type;
@@ -267,6 +282,26 @@ public class SpiderWeb {
         this.tipeBridge = "";
     }
 
+    private void distintive(Bridges bridge, String color){
+        ArrayList<Integer> midPoint = bridge.getMidPoint();
+        int circleCount = tipeBridge.equals("fixed") ? 1 : tipeBridge.equals("transformer") ? 2 : tipeBridge.equals("weak") ? 3 : 4;
+
+        ArrayList<Circle> circles = new ArrayList<>();
+
+        for (int i = 0; i < circleCount * 2; i += 2) {
+            Circle circle = new Circle(5, midPoint.get(i), midPoint.get(i + 1));
+            circle.changeColor(color);
+            circles.add(circle);
+        }
+
+
+        List<Object> value = new ArrayList<>();
+        value.add(tipeBridge);
+        value.add(circles);
+
+        bridgesType.put(bridge, value);
+    }
+
     private void TypeBridge(boolean istypebridge){
         String color = colorTipeBridge;
         if(Objects.equals(tipeBridge, "transformer") && istypebridge){
@@ -275,7 +310,7 @@ public class SpiderWeb {
             showmensage = true;
             int Strand = strands[0];
             addSpot(color, Strand);
-            
+
         }else if (Objects.equals(tipeBridge,"weak")){
             delBridge(color);
         }else if (Objects.equals(tipeBridge,"mobile")){
@@ -421,7 +456,7 @@ public class SpiderWeb {
     public boolean delBridge(String color) {
         this.colorTipeBridge = color;
         Bridges delbridge = bridgesColor.get(color);
-        String type = bridgesType.get(delbridge);
+        String type = (String) bridgesType.get(delbridge).get(0);
         if (delbridge == null) {
             if (isVisible) {
                 JOptionPane.showMessageDialog(null, "El puente no existe.");
@@ -431,13 +466,17 @@ public class SpiderWeb {
         }
         if(!Objects.equals(type, "fixed")){
             delbridge.makeInvisible();
+            ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(delbridge).get(1);
+            for (Circle circle : circles) {
+                circle.makeInvisible();
+            }
             if(Objects.equals(type, "transformer")){
                 this.tipeBridge = type;
                 TypeBridge(true);
                 this.tipeBridge = "";
             }
             bridgesColor.remove(color);
-            bridgesType.remove(delbridge); 
+            bridgesType.remove(delbridge);
             colorBridges.remove(color);
             bridgesNoUsed.remove(color);
             bridgesByStrand.get(delbridge.hiloInicial).remove(delbridge);
@@ -480,14 +519,41 @@ public class SpiderWeb {
         }
         arm.changeColor(color);
         lineListSpot.set(strand - 1, arm);
+        distintive1(arm, color, type);
         if (!isSpot) {
             arm.makeVisible();
+            ArrayList<Circle> circles =  spotype.get(arm);
+            for (Circle circle : circles) {
+                circle.makeVisible();
+            }
         }
         Tuple tuple = new Tuple(strand, type);
         spotColor.put(color, tuple);
         colorSports.add(color);
         isOk = true;
     }
+
+
+    private void distintive1(Spot spot, String color, String type){
+        ArrayList<Integer> midPoint = spot.getMidPointSpot();
+        System.out.println(midPoint);
+
+        int circleCount = type.equals("bouncy") ? 1 : type.equals("killer") ? 2 : type.equals("break") ? 3 : 0;
+        System.out.println(circleCount);
+
+        ArrayList<Circle> circles = new ArrayList<>();
+
+        for (int i = 0; i < circleCount * 2; i += 2) {
+            Circle circle = new Circle(5, midPoint.get(i), midPoint.get(i + 1));
+            circle.changeColor(color);
+            circles.add(circle);
+        }
+        System.out.println(circles);
+        spotype.put(spot, circles);
+
+
+    }
+
 
     public void addSpot(String type, String color, int strand) {
         this.tipeSpot = type;
@@ -567,7 +633,12 @@ public class SpiderWeb {
             lineListSpot.set(strand, arm);
             if (!isSpot) {
                 arm.makeVisible();
+                ArrayList<Circle> circles = spotype.get(arm);
+                for (Circle circle : circles) {
+                    circle.makeInvisible();
+                }
             }
+            spotype.remove(arm);
             spotColor.remove(color);
             colorSports.remove(color);
             isOk = true;
@@ -758,7 +829,7 @@ public class SpiderWeb {
                 ySpiderActual = points.get(3);
                 walk.addAll(Arrays.asList(firstPoint, secondPoint));
                 strand = (bridge.hiloInicial == strand) ? (strand == strands - 1 ? 0 : strand + 1) : (strand == 0 ? strands - 1 : strand - 1);
-                tipeBridge = bridgesType.get(bridge);
+                tipeBridge = (String) bridgesType.get(bridge).get(0);
                 colorTipeBridge = bridge.getColor();
                 spidermove(walk, xAnterior, yAnterior);
                 if(Objects.equals(tipeBridge, "mobile") || Objects.equals(tipeBridge, "weak")){
@@ -1112,7 +1183,7 @@ public class SpiderWeb {
 
     public int getClosestSpot() {
         int closestStrand = -1;
-        int minDistance = strands; 
+        int minDistance = strands;
         for (Map.Entry<String, Tuple> entry : spotColor.entrySet()) {
             Tuple spot = entry.getValue();
             int spotStrand = spot.getNumber();

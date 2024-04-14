@@ -28,6 +28,14 @@ public class Circle{
         isVisible = false;
     }
 
+    public Circle(int Diameter, int  XPosition, int YPosition){
+        diameter = Diameter;
+        xPosition = XPosition;
+        yPosition = YPosition;
+        color = "blue";
+        isVisible = false;
+    }
+
 
     public void makeVisible(){
         isVisible = true;

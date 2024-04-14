@@ -1,5 +1,6 @@
 package Spiderweb;
 
+
 import java.util.ArrayList;
 
 
@@ -13,7 +14,25 @@ public class Bridges extends Line{
         this.hiloFinal = hiloFinal;
         this.distance = distance;
     }
-    
+
+
+    public ArrayList<Integer> getMidPoint() {
+        ArrayList<Integer> midPoint = new ArrayList<>();
+        int midX = (int) ((x2 + x1) / 2);
+        int midY = (int) ((y2 + y1) / 2);
+        midPoint.add(midX);
+        midPoint.add(midY);
+        midPoint.add((int) ((midX + x2) / 2));
+        midPoint.add((int) ((midY + y2) / 2));
+        midPoint.add((int) ((midX + x1) / 2));
+        midPoint.add((int) ((midY + y1) / 2));
+        midPoint.add((int) ((((midX + x2) / 2))+ x2)/2);
+        midPoint.add((int) ((((midY + y2) / 2))+ y2)/2);
+
+
+        return midPoint;
+    }
+
     public ArrayList<Float> returnPoint(int hilo){
         ArrayList<Float> points = new ArrayList<>();
         if (hilo == hiloFinal){
