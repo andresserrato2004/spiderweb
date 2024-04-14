@@ -456,7 +456,6 @@ public class SpiderWeb {
     public boolean delBridge(String color) {
         this.colorTipeBridge = color;
         Bridges delbridge = bridgesColor.get(color);
-        String type = (String) bridgesType.get(delbridge).get(0);
         if (delbridge == null) {
             if (isVisible) {
                 JOptionPane.showMessageDialog(null, "El puente no existe.");
@@ -464,6 +463,7 @@ public class SpiderWeb {
             isOk = false;
             return isOk;
         }
+        String type = (String) bridgesType.get(delbridge).get(0);
         if(!Objects.equals(type, "fixed")){
             delbridge.makeInvisible();
             ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(delbridge).get(1);
@@ -536,10 +536,8 @@ public class SpiderWeb {
 
     private void distintive1(Spot spot, String color, String type){
         ArrayList<Integer> midPoint = spot.getMidPointSpot();
-        System.out.println(midPoint);
 
         int circleCount = type.equals("bouncy") ? 1 : type.equals("killer") ? 2 : type.equals("break") ? 3 : 0;
-        System.out.println(circleCount);
 
         ArrayList<Circle> circles = new ArrayList<>();
 
@@ -548,7 +546,6 @@ public class SpiderWeb {
             circle.changeColor(color);
             circles.add(circle);
         }
-        System.out.println(circles);
         spotype.put(spot, circles);
 
 

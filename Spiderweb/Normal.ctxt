@@ -1,5 +1,0 @@
-#BlueJ class context
-comment0.target=Normal
-comment1.params=x1\ y1\ x2\ y2\ hiloInicial\ hiloFinal\ distance\ color\ strand
-comment1.target=Normal(float,\ float,\ float,\ float,\ int,\ int,\ float,\ java.lang.String,\ int)
-numComments=2
