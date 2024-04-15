@@ -277,7 +277,10 @@ public class SpiderWeb {
         distintive(bridge, color);
         if (isBridges) {
             bridge.makeVisible();
-
+            ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(bridge).get(1);
+            for (Circle circle : circles) {
+                circle.makeVisible();
+            }
         }
 
     }
@@ -316,7 +319,7 @@ public class SpiderWeb {
      */
     private void distintive(Bridges bridge, String color){
         ArrayList<Integer> midPoint = bridge.getMidPoint();
-        int circleCount = tipeBridge.equals("fixed") ? 1 : tipeBridge.equals("transformer") ? 2 : tipeBridge.equals("weak") ? 3 : tipeBridge.equals("mobile") ? 4:0;
+        int circleCount = tipeBridge.equals("fixed") ? 1 : tipeBridge.equals("transformer") ? 2 : tipeBridge.equals("weak") ? 3 :4;
 
         ArrayList<Circle> circles = new ArrayList<>();
 
@@ -325,8 +328,6 @@ public class SpiderWeb {
             circle.changeColor(color);
             circles.add(circle);
         }
-
-
         List<Object> value = new ArrayList<>();
         value.add(tipeBridge);
         value.add(circles);
