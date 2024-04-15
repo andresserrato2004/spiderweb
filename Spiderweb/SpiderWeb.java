@@ -828,10 +828,12 @@ public class SpiderWeb {
                     spider.moveTo(point.get(0), point.get(1));
                     Line l = new Line(xAnterior, yAnterior, point.get(0), point.get(1));
                     l.changeColor("green");
-                    l.makeVisible();
+                    if(isVisible) {
+                        l.makeVisible();
+                    }
                     recorrido.add(l);
                     xAnterior = point.get(0);
-                     yAnterior = point.get(1);
+                    yAnterior = point.get(1);
                 }
                 try {
                     Thread.sleep(1000);

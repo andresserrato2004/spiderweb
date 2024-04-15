@@ -29,7 +29,6 @@ public class Bridges extends Line{
         midPoint.add((int) ((((midX + x2) / 2))+ x2)/2);
         midPoint.add((int) ((((midY + y2) / 2))+ y2)/2);
 
-
         return midPoint;
     }
 

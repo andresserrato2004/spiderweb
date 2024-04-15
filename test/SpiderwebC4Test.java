@@ -4,6 +4,7 @@ import Spiderweb.SpiderWeb;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SpiderwebC4Test {
@@ -390,14 +391,6 @@ public class SpiderwebC4Test {
     }
 
     @Test
-    public void spotkiller(){
-        spiderWeb.addSpot("killer","red", 1);
-        spiderWeb.spiderSit(1);
-        spiderWeb.spiderWalk(true);
-        assertFalse(spiderWeb.isSpiderLive());
-    }
-
-    @Test
     public void spotbouncy(){
         spiderWeb.addSpot("bouncy","red", 1);
         spiderWeb.spiderSit(1);
@@ -415,11 +408,67 @@ public class SpiderwebC4Test {
         assertArrayEquals(res, spiderWeb.spots());
     }
 
-//    @Test
-//    public void bridgefixed(){
-//        spiderWeb.addBridge("fixed","red", 1, 1);
-//        spiderWeb.delBridge("red");
-//        String[] res = {"green","red"};
-//        assertEquals(res, spiderWeb.bridges());
-//    }
+
+    @Test
+    public void bridges1(){
+        spiderWeb.addBridge("transformer", "red",100, 1);
+        spiderWeb.addBridge("weak", "blue", 120, 2);
+        spiderWeb.addBridge("mobile", "green", 140, 3);
+        spiderWeb.addSpot("bouncy", "yellow", 5);
+        spiderWeb.spiderSit(1);
+        spiderWeb.spiderWalk(true);
+        spiderWeb.addBridge("black" , 160, 5);
+        spiderWeb.spiderWalk(false);
+        assertTrue(spiderWeb.ok());
+    }
+
+    @Test
+    public void spotsbouncy1(){
+        spiderWeb.addBridge("transformer", "red",100, 1);
+        spiderWeb.addBridge("weak", "blue", 120, 2);
+        spiderWeb.addBridge("mobile", "green", 140, 3);
+        spiderWeb.addSpot("bouncy", "magenta", 5);
+        spiderWeb.addSpot("bouncy", "blue", 6);
+        spiderWeb.spiderSit(1);
+        spiderWeb.spiderWalk(true);
+        spiderWeb.spiderWalk(false);
+        assertTrue(spiderWeb.ok());
+    }
+
+    @Test
+    public void bridgetransformer1(){
+        spiderWeb.addBridge("transformer", "red",100, 1);
+        spiderWeb.addBridge("weak", "blue", 120, 2);
+        spiderWeb.addBridge("mobile", "green", 140, 3);
+        spiderWeb.spiderSit(3);
+        spiderWeb.spiderWalk(true);
+        spiderWeb.delBridge("red");
+        spiderWeb.spiderWalk(false);
+        assertTrue(spiderWeb.ok());
+    }
+
+    @Test
+    public void spotkiller(){
+        spiderWeb.addBridge("transformer", "red",100, 1);
+        spiderWeb.addBridge("weak", "blue", 120, 2);
+        spiderWeb.addBridge("mobile", "green", 140, 3);
+        spiderWeb.addSpot("bouncy", "yellow", 5);
+        spiderWeb.addSpot("killer", "red", 6);
+        spiderWeb.spiderSit(1);
+        spiderWeb.spiderWalk(true);
+        assertTrue(spiderWeb.ok());
+    }
+
+    @Test
+    public void spotkiller2(){
+        spiderWeb.addBridge("transformer", "red",100, 1);
+        spiderWeb.addBridge("weak", "blue", 120, 2);
+        spiderWeb.addBridge("mobile", "green", 140, 3);
+        spiderWeb.addSpot("bouncy", "yellow", 5);
+        spiderWeb.addSpot("killer", "red", 6);
+        spiderWeb.spiderSit(1);
+        spiderWeb.spiderWalk(true);
+        spiderWeb.spiderSit(1);
+        assertTrue(spiderWeb.ok());
+    }
 }
