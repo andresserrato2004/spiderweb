@@ -319,7 +319,7 @@ public class SpiderWeb {
      */
     private void distintive(Bridges bridge, String color){
         ArrayList<Integer> midPoint = bridge.getMidPoint();
-        int circleCount = tipeBridge.equals("fixed") ? 1 : tipeBridge.equals("transformer") ? 2 : tipeBridge.equals("weak") ? 3 :4;
+        int circleCount = tipeBridge.equals("fixed") ? 1 : tipeBridge.equals("transformer") ? 2 : tipeBridge.equals("weak") ? 3 : tipeBridge.equals("mobile") ? 4: 0;
 
         ArrayList<Circle> circles = new ArrayList<>();
 
