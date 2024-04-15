@@ -65,6 +65,7 @@ public class SpiderWeb {
     private String colorTipeBridge;
     private boolean showmensage = true;
     private Map<Spot, ArrayList<Circle>> spotype = new HashMap<>();
+    private Map<String, String> bridgesTypes = new HashMap<>();
 
     /**
      * Constructor de la clase spiderWeb.
@@ -212,7 +213,6 @@ public class SpiderWeb {
         }
 
         for (Bridges bridge : bridgesType.keySet()) {
-            spider.makeInvisible();
             bridge.makeInvisible();
             ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(bridge).get(1);
             for (Circle circle : circles) {
@@ -273,6 +273,7 @@ public class SpiderWeb {
         bridgesByStrand.get(firstStrand - 1).add(bridge);
         bridgesByStrand.get(endStrand).add(bridge);
         bridgeStrand.put(color, firstStrand);
+        bridgesTypes.put(color, tipeBridge);
         isOk = true;
         distintive(bridge, color);
         if (isBridges) {
@@ -319,7 +320,7 @@ public class SpiderWeb {
      */
     private void distintive(Bridges bridge, String color){
         ArrayList<Integer> midPoint = bridge.getMidPoint();
-        int circleCount = tipeBridge.equals("fixed") ? 1 : tipeBridge.equals("transformer") ? 2 : tipeBridge.equals("weak") ? 3 : tipeBridge.equals("mobile") ? 4: 0;
+        int circleCount = bridgesTypes.get(color).equals("fixed") ? 1 : bridgesTypes.get(color).equals("transformer") ? 2 : bridgesTypes.get(color).equals("weak") ? 3 : bridgesTypes.get(color).equals("mobile") ? 4: 0;
 
         ArrayList<Circle> circles = new ArrayList<>();
 
@@ -357,7 +358,13 @@ public class SpiderWeb {
         }else if (Objects.equals(tipeBridge,"weak")){
             delBridge(color);
         }else if (Objects.equals(tipeBridge,"mobile")){
-            Bridges bridge = bridgesColor.get(color);
+            Bridges bridge = null;
+            System.out.println(bridgesTypes);
+            for (Bridges bridges : bridgesType.keySet()) {
+                if (bridges.getColor().equals(color)) {
+                     bridge = bridges;
+                }
+            }
             float newDistance = bridge.getDistance()* 1.2f;
             int newStrand = (bridge.hiloInicial == strands - 1) ? 0 : bridge.hiloInicial + 2;
             delBridge(color);
@@ -495,6 +502,8 @@ public class SpiderWeb {
             Bridges bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, bridgesColor.get(color).hiloInicial, bridgesColor.get(color).hiloFinal, distance);
             bridge.changeColor(color);
             hideBridges();
+            bridgesType.remove(bridgesColor.get(color));
+            distintive(bridge, color);
             bridgesColor.put(color, bridge);
             if (!isSpot) {
                 showBridges();
@@ -526,7 +535,7 @@ public class SpiderWeb {
         y2Bridge = distance * (float) Math.sin(Math.toRadians(angleSecondStrand));
         Bridges bridge = new Bridges(xStard + xBridge, yStard - yBridge, xStard + x2Bridge, yStard - y2Bridge, bridgesColor.get(color).hiloInicial, bridgesColor.get(color).hiloFinal, distance);
         bridge.changeColor(color);
-        hideBridges();
+        distintive(bridge, color);
         bridgesColor.put(color, bridge);
         int index = 0;
         for (int i = 0; i < strands; i++) {
@@ -539,7 +548,8 @@ public class SpiderWeb {
             }
             index = 0;
         }
-        if (isBridges) {
+        if (isVisible) {
+            System.out.println("hola");
             showBridges();
         }
 
@@ -560,12 +570,16 @@ public class SpiderWeb {
             isOk = false;
             return isOk;
         }
-        String type = (String) bridgesType.get(delbridge).get(0);
+        String type = bridgesTypes.get(color);
         if(!Objects.equals(type, "fixed")){
-            delbridge.makeInvisible();
-            ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(delbridge).get(1);
-            for (Circle circle : circles) {
-                circle.makeInvisible();
+            for (Bridges bridge : bridgesType.keySet()) {
+                if (bridge.getColor().equals(color)) {
+                    bridge.makeInvisible();
+                    ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(bridge).get(1);
+                    for (Circle circle : circles) {
+                        circle.makeInvisible();
+                    }
+                }
             }
             if(Objects.equals(type, "transformer")){
                 this.tipeBridge = type;
@@ -767,9 +781,12 @@ public class SpiderWeb {
      * Oculta todos los puentes de la red de telaraña.
      */
     private void hideBridges() {
-        for (String color : bridgesColor.keySet()) {
-            Bridges bridge = bridgesColor.get(color);
+        for (Bridges bridge : bridgesType.keySet()) {
             bridge.makeInvisible();
+            ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(bridge).get(1);
+            for (Circle circle : circles) {
+                circle.makeInvisible();
+            }
         }
     }
 
@@ -777,9 +794,13 @@ public class SpiderWeb {
      * Muestra todos los puentes de la red de telaraña.
      */
     private void showBridges() {
-        for (String color : bridgesColor.keySet()) {
-            Bridges bridge = bridgesColor.get(color);
+        for (Bridges bridge : bridgesType.keySet()) {
             bridge.makeVisible();
+            ArrayList<Circle> circles = (ArrayList<Circle>) bridgesType.get(bridge).get(1);
+            System.out.println(circles+"a");
+            for (Circle circle : circles) {
+                circle.makeVisible();
+            }
         }
 
     }
@@ -798,6 +819,7 @@ public class SpiderWeb {
                 spider.moveTo(xStard, yStard);
                 spider.makeVisible();
                 spider.isLive = true;
+                spider.spiderSit();
             }
             isOk = true;
         } else {
@@ -961,8 +983,8 @@ public class SpiderWeb {
                 ySpiderActual = points.get(3);
                 walk.addAll(Arrays.asList(firstPoint, secondPoint));
                 strand = (bridge.hiloInicial == strand) ? (strand == strands - 1 ? 0 : strand + 1) : (strand == 0 ? strands - 1 : strand - 1);
-                tipeBridge = (String) bridgesType.get(bridge).get(0);
                 colorTipeBridge = bridge.getColor();
+                tipeBridge = bridgesTypes.get(colorTipeBridge);
                 spidermove(walk, xAnterior, yAnterior);
                 if(Objects.equals(tipeBridge, "mobile") || Objects.equals(tipeBridge, "weak")){
                     TypeBridge(false);
@@ -1144,6 +1166,8 @@ public class SpiderWeb {
         this.lineListSpot = new ArrayList<>();
         cordenates();
         bridgesByStrand.put(strands - 1, new ArrayList<>());
+        hideBridges();
+        bridgesType.clear();
         for (int strand : bridgesByStrand.keySet()) {
             for (Bridges l : bridgesByStrand.get(strand)) {
                 float distance = l.distance;
